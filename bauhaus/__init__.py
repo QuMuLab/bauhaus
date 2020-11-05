@@ -79,13 +79,16 @@ class _ConstraintBuilder:
         self._variables = tuple(args)
         self._func = func
 
+
     def __hash__(self):
         return hash((self._constraint, self._variables, self._func))
+
 
     def __eq__(self, other):
         if isinstance(other, _ConstraintBuilder):
             return self.__hash__() == other.__hash__()
         raise NotImplemented
+
 
     def __str__(self):
         return f'constraint:{self._constraint}, variables:{self._variables}, function:{self._func}'
@@ -99,6 +102,7 @@ class _ConstraintBuilder:
         inputs = self.get_inputs(encoding)
         return self._constraint(inputs)
 
+
     def get_inputs(self, encoding) -> [Var[]]:
         from inspect import isclass, ismethod
 
@@ -108,37 +112,46 @@ class _ConstraintBuilder:
         if self._func is not None:
             if self._func.__name__ in encoding.propositions:
                 class_name = self._func.__name__
+
                 for instance in encoding.propositions[class_name]:
                     obj = encoding.propositions[class_name][instance]
                     inputs.append(obj._var)
                 return inputs
+
             elif ismethod(self._func) and self._func.__class__ in encoding.propositions:
                 class_name = self._func.__class__
+
                 for instance in encoding.propositions[class_name]:
                     obj = encoding.propositions[class_name][instance]
                     inputs.append({obj._var, self._func(obj)})
                 return inputs
+
             else:
                 # TODO: specify exception
                 raise Exception("Class or instance method should be decorated.")
 
         # Constraint from method call
         for i, arg in enumerate(self._variables):
+
             # if reference is annotated class
             if arg[i].__name__ in encoding.propositions:
                 for instance in encoding.propositions[arg[i].__name__]:
                     inputs.append(encoding.propositions[arg[i].__name__][instance]._var)
+
             # if object, add its nnf.Var attribute
             elif hasattr(arg[i], '_var'):
                 inputs.append(arg._var)
+
             # if nnf.Var
             elif isinstance(arg[i], Var):
                 inputs.append(arg)
+
             else:
                 raise TypeError(arg)
 
         return inputs
-    
+
+
     """ Constraint methods """
 
     def at_least_one(input: [Var[]]) -> NNF:
@@ -153,7 +166,6 @@ class _ConstraintBuilder:
         """ 
         Exactly one variable can be true of the input 
         And(at_most_one, at_least_one) 
-
         """
         pass
 
@@ -184,6 +196,7 @@ class constraint:
     relevant SO: https://stackoverflow.com/questions/42670667/using-classes-as-method-decorators?noredirect=1&lq=1
 
     """
+
     @classmethod
     def _decorate(encoding, constraint_type, args=None, k=None):
         """ Create _ConstraintBuilder objects from constraint method calls """
