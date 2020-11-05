@@ -1,4 +1,4 @@
-# { Bauhaus }
+# Bauhaus
 
 `bauhaus` is a Python package for spinning up logical NNF models from object-oriented Python code. 
 
