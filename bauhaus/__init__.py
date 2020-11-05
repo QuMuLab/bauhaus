@@ -131,6 +131,7 @@ class _ConstraintBuilder:
                 raise Exception("Class or instance method should be decorated.")
 
         # Constraint from method call
+        # TODO: add handling for iterables 
         for i, arg in enumerate(self._variables):
 
             # if reference is annotated class
