@@ -1,6 +1,6 @@
 # Bauhaus
 
-`bauhaus` is a Python package for spinning up logical NNF models from object-oriented Python code. 
+`bauhaus` is a Python package for spinning up propositional logic encodings from object-oriented Python code. 
 
 ## Usage
 Create Encoding objects that you intend to compile to an SAT. Encoding objects will store your model's propositional variables
