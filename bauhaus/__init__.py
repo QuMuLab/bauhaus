@@ -1,9 +1,12 @@
 __version__ = "0.0.1"
 
-from nnf import Var, And, Or, NNF
-from functools import wraps, update_wrapper
 import weakref
+import inspect
+import sys
+from nnf import Var, And, Or, NNF
+from functools import wraps
 from collections import defaultdict
+from constraint_builder import _ConstraintBuilder as cbuilder
 
 
 __all__ = (
@@ -18,17 +21,17 @@ class Encoding:
     def __init__(self):
         """
         Store objects of annotated classes in propositions.
-        Store _ConstraintBuilder objects in constraints to build
+        Store _ConstraintBuilder objects in constraints attribute for
         when user calls encoding.compile()
+
         :propositions: type {class_name: {instances}}
         :constraints: [constraint_type(vars),..., constraint_type(vars)]
         """
         self.propositions = defaultdict(weakref.WeakValueDictionary) 
-        self.constraints = set()
+        self.constraints = set() 
 
 
     def __repr__(self):
-        """ """
         return str(self)
 
 
@@ -37,7 +40,7 @@ class Encoding:
         theory = []
 
         for constraint in self.constraints:
-            theory.append(constraint.build(self))
+            theory.append(constraint.build(self.propositions))
         return And(theory)
 
     
@@ -47,22 +50,22 @@ class Encoding:
         return self.theory.cnf(naive=naive)
 
 
-def proposition(encoding: Encoding, literal=None):
+def proposition(encoding: Encoding, *arg):
     ''' 
     Create a propositional variable from the decorated object
     and add to encoding.proposition
-    Return original object instance or nnf.Var(string)
+    Return original object instance or nnf.Var(obj)
     '''
-    if literal:
-        if isinstance(literal, str):
-            return Var(literal)
+    if arg:
+        if isinstance(arg, object):
+            return Var(arg)
         else:
-            raise TypeError(literal)
+            raise TypeError(arg)
         
-    def wrapper(cls):
-        @wraps(cls)
+    def wrapper(func):
+        @wraps(func)
         def wrapped(*args, **kwargs):
-            ret = cls(*args, **kwargs)
+            ret = func(*args, **kwargs)
             ret._var = Var(ret)
             class_name = ret.__class__.__name__
             encoding.propositions[class_name][id(ret)] = ret
@@ -71,116 +74,9 @@ def proposition(encoding: Encoding, literal=None):
     return wrapper
 
 
-class _ConstraintBuilder:
-
-
-    def __init__(self, constraint, *args, func=None):
-        self._constraint = constraint
-        self._variables = tuple(args)
-        self._func = func
-
-
-    def __hash__(self):
-        return hash((self._constraint, self._variables, self._func))
-
-
-    def __eq__(self, other):
-        if isinstance(other, _ConstraintBuilder):
-            return self.__hash__() == other.__hash__()
-        raise NotImplemented
-
-
-    def __str__(self):
-        return f'constraint:{self._constraint}, variables:{self._variables}, function:{self._func}'
-    
-
-    def build(self, encoding: Encoding) -> NNF:
-        """ 
-        Builds a constraint from a _ConstraintBuilder object and its
-        associated Encoding
-        """
-        inputs = self.get_inputs(encoding)
-        return self._constraint(inputs)
-
-
-    def get_inputs(self, encoding) -> [Var[]]:
-        from inspect import isclass, ismethod
-
-        inputs = []
-        
-        # Annotated a class or its instance method
-        if self._func is not None:
-            if self._func.__name__ in encoding.propositions:
-                class_name = self._func.__name__
-
-                for instance in encoding.propositions[class_name]:
-                    obj = encoding.propositions[class_name][instance]
-                    inputs.append(obj._var)
-                return inputs
-
-            elif ismethod(self._func) and self._func.__class__ in encoding.propositions:
-                class_name = self._func.__class__
-
-                for instance in encoding.propositions[class_name]:
-                    obj = encoding.propositions[class_name][instance]
-                    inputs.append({obj._var, self._func(obj)})
-                return inputs
-
-            else:
-                # TODO: specify exception
-                raise Exception("Class or instance method should be decorated.")
-
-        # Constraint from method call
-        # TODO: add handling for iterables 
-        for i, arg in enumerate(self._variables):
-
-            # if reference is annotated class
-            if arg[i].__name__ in encoding.propositions:
-                for instance in encoding.propositions[arg[i].__name__]:
-                    inputs.append(encoding.propositions[arg[i].__name__][instance]._var)
-
-            # if object, add its nnf.Var attribute
-            elif hasattr(arg[i], '_var'):
-                inputs.append(arg._var)
-
-            # if nnf.Var
-            elif isinstance(arg[i], Var):
-                inputs.append(arg)
-
-            else:
-                raise TypeError(arg)
-
-        return inputs
-
-
-    """ Constraint methods """
-
-    def at_least_one(input: [Var[]]) -> NNF:
-        """ Disjunction across all variables """
-        return Or(input)
-
-    def at_most_one(input: [Var[]]) -> NNF:
-        """ And(Or(~a, ~b)) for all a,b in input """
-        pass
-
-    def exactly_one(input: [Var[]]) -> NNF:
-        """ 
-        Exactly one variable can be true of the input 
-        And(at_most_one, at_least_one) 
-        """
-        pass
-
-    def at_most_k(input: [Var[]], k=1) -> NNF:
-        """ At most k variables can be true """
-        pass
-
-    def implies_all(self, left: Var, right: [Var[]]) -> NNF:
-        """ And(Or(~left, right)) """
-        pass
-
-
 class constraint:
     """
+    TODO: docstrings
     Decorator for class or instance method:
         @constraint.method(e)
         @proposition
@@ -192,45 +88,44 @@ class constraint:
 
     Constraint creation by function call:
         constraint.method(e, *args)
-    
-    TODO: Add handling for instance methods
-    relevant SO: https://stackoverflow.com/questions/42670667/using-classes-as-method-decorators?noredirect=1&lq=1
 
     """
-
     @classmethod
-    def _decorate(encoding, constraint_type, args=None, k=None):
-        """ Create _ConstraintBuilder objects from constraint method calls """
+    def _decorate(cls, encoding, constraint_type, args=None, k=None):
+        """ Create _ConstraintBuilder objects from constraint function calls """
         # method call
         if args:
-            constraint = _ConstraintBuilder(constraint_type, args)
+            constraint = cbuilder(constraint_type, args, k=k)
             encoding.constraints.add(constraint)
-            return constraint
 
         # decorator call
         def wrapper(func):
+
+            # before proposition decorator kicks in
+            constraint = cbuilder(constraint_type, func=func, k=k)
+            encoding.constraints.add(constraint)
+
             @wraps(func)
             def wrapped(*args, **kwargs):
+                # following line equiv to proposition(func(*args, **kwargs))
                 ret = func(*args, **kwargs)
-                constraint = _ConstraintBuilder(constraint_type, func=func)
-                encoding.constraints.add(constraint)
                 return ret
             return wrapped
         return wrapper
 
+
     def at_least_one(encoding, *args):
-        return constraint._decorate(encoding, _ConstraintBuilder.at_least_one, args)
+        return constraint._decorate(encoding, cbuilder.at_least_one, args)
 
     def at_most_one(encoding, *args):
-        return constraint._decorate(encoding, _ConstraintBuilder.at_most_one, args)
+        return constraint._decorate(encoding, cbuilder.at_most_one, args)
 
     def exactly_one(encoding, *args):
-        return constraint._decorate(encoding, _ConstraintBuilder.exactly_one, args)
+        return constraint._decorate(encoding, cbuilder.exactly_one, args)
 
     def at_most_k(encoding, *args, k=1):
-         return constraint._decorate(encoding, _ConstraintBuilder.at_most_k, args, k=k)
+         return constraint._decorate(encoding, cbuilder.at_most_k, args, k=k)
 
     def implies_all(encoding, *args):
-         return constraint._decorate(encoding, _ConstraintBuilder.implies_all, args)
-
+         return constraint._decorate(encoding, cbuilder.implies_all, args)
 
