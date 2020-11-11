@@ -1,5 +1,5 @@
 from nnf import NNF, And, Or, Var
-from utils import ismethod
+from utils import ismethod, unpack_variables
 from inspect import isclass
 
 
@@ -23,11 +23,10 @@ class _ConstraintBuilder:
         self._constraint = constraint
         self._vars = tuple(*args)
         self._func = func
-        self._cls = cls #TODO: see if we need to define this here
         self._k = k
 
     def __hash__(self):
-        return hash((self._constraint, self._vars, self._func, self._cls, self._k))
+        return hash((self._constraint, self._vars, self._func, self._k))
 
     def __eq__(self, other):
         if isinstance(other, _ConstraintBuilder):
@@ -45,40 +44,6 @@ class _ConstraintBuilder:
         inputs = self.get_inputs(propositions)
         return self._constraint(inputs)
 
-    def unpack_variables(T, propositions) -> list:
-        """ Return a list of all variable inputs for building a constraint
-
-        :T: tuple, can be nested
-        :propositions: encoding.propositions
-        """
-
-        for var, i in enumerate(T):
-
-            # function reference is annotated class
-            if isclass(var):
-                if var.__qualname__ in propositions:
-                    cls = var.__qualname__
-                    for instance_id in propositions[cls]:
-                        inputs.append(propositions[cls][instance_id]._var)
-                # TODO: except
-
-            # if object, add its nnf.Var attribute
-            elif hasattr(var, '_var'):
-                inputs.append(var._var)
-
-            # if nnf.Var
-            elif isinstance(var, Var):
-                inputs.append(var)
-
-            # TODO: detect var is iterator: either try iter(var) and handle exception
-            # or (only good for python 3+) isinstance(e, collections.abc.Iterable)
-            #elif iter(var):
-            #    inputs += unpack_variables(var)
-
-            else:
-                raise TypeError(var)
-
-        return inputs
 
     def get_inputs(self, propositions) -> list:
         """ Returns a list of inputs to be used for building the constraint.
@@ -111,10 +76,12 @@ class _ConstraintBuilder:
                     inputs.append(obj._var)
                 return inputs
 
-            elif ismethod(self._func) and self._cls:
+            elif ismethod(self._func):
+
+                cls = self._func.__wrapped__.__qualname__
                 
-                for instance_id in propositions[self._cls]:
-                    obj = propositions[self._cls][instance_id]
+                for instance_id in propositions[cls]:
+                    obj = propositions[cls][instance_id]
                     # TODO: https://github.com/QuMuLab/bauhaus/issues/21
                     inputs.append({obj: [self._func(obj)]})
                 return inputs

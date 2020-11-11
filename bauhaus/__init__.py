@@ -104,7 +104,7 @@ class constraint:
             # before proposition decorator kicks in
             # this is when methods are defined but classes aren't, so we can
             # decorate instance methods and classes
-            constraint = cbuilder(constraint_type, args, func=func, cls=func.__wrapped__, k=k)
+            constraint = cbuilder(constraint_type, args, func=func, k=k)
             encoding.constraints.add(constraint)
 
             @wraps(func)
