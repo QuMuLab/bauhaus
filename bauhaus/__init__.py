@@ -65,7 +65,7 @@ def proposition(encoding: Encoding, *arg):
         def wrapped(*args, **kwargs):
             ret = func(*args, **kwargs)
             ret._var = Var(ret)
-            class_name = ret.__class__.__name__
+            class_name = ret.__class__.__qualname__
             encoding.propositions[class_name][id(ret)] = ret
             return ret
         return wrapped
@@ -89,7 +89,7 @@ class constraint:
 
     """
     @classmethod
-    def _decorate(cls, encoding, constraint_type, args=None, k=None):
+    def _decorate(cls, encoding: Encoding, constraint_type, args=None, k=None):
         """ Create _ConstraintBuilder objects from constraint.method function calls """
 
         # function call
@@ -115,24 +115,26 @@ class constraint:
         return wrapper
 
 
-    def at_least_one(encoding, *args):
+    def at_least_one(encoding: Encoding, *args):
         return constraint._decorate(encoding, cbuilder.at_least_one, args)
 
-    def at_most_one(encoding, *args):
+    def at_most_one(encoding: Encoding, *args):
         return constraint._decorate(encoding, cbuilder.at_most_one, args)
 
-    def exactly_one(encoding, *args):
+    def exactly_one(encoding: Encoding, *args):
         return constraint._decorate(encoding, cbuilder.exactly_one, args)
 
-    def at_most_k(encoding, *args, k=1):
+    def at_most_k(encoding: Encoding, *args, k=1):
          return constraint._decorate(encoding, cbuilder.at_most_k, args, k=k)
 
-    def implies_all(encoding, *args):
+    def implies_all(encoding: Encoding, *args):
          return constraint._decorate(encoding, cbuilder.implies_all, args)
 
 ####################################
 
 e = Encoding()
+
+a = Var('a')
 
 class StrHash(object):
     def __hash__(self):
@@ -150,7 +152,7 @@ class Mark(StrHash):
 @proposition(e)
 class Row(StrHash):
 
-    @proposition(e)    # Says that r_i implies the conjunction of variables corresponding to the marks returned
+    @constraint.implies_all(e)    # Says that r_i implies the conjunction of variables corresponding to the marks returned
     def row_is_marked(self):
         return self.marks
 
@@ -175,10 +177,11 @@ class Col(StrHash):
         return f'c_{self.j}'
 
 def main():
-    constraint.at_least_one(e, Row, Col, (Row, Col))
+    a = Var('a') 
     marks = [Mark(i,j) for i in range(1,4) for j in range(1,4)]
     rows = [Row(i, marks) for i in range(1,4)]
     cols = [Col(j, marks) for j in range(1,4)]
+    constraint.at_least_one(e, Row, rows[0])
     theory = e.compile()
 
 main()

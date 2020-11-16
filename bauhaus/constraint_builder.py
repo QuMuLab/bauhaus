@@ -1,14 +1,15 @@
 from nnf import NNF, And, Or, Var
-from utils import ismethod, unpack_variables
+from itertools import chain
+from utils import ismethod, unpack_variables, flatten
 from inspect import isclass
 
 
 class _ConstraintBuilder:
     """
     Stores information necessary to build encoding constraint
-    from class constraint calls. 
-
-    Builds constraint for a given Encoding object.
+    from constraint.method calls. Instances are stored in the
+    list attribute 'constraints' in Encoding objects that are
+    provided to the constraint.method
 
     Supports following SAT constraints:
     - at least one
@@ -19,9 +20,9 @@ class _ConstraintBuilder:
 
     """
 
-    def __init__(self, constraint, *args, func=None, cls=None, k=None):
+    def __init__(self, constraint, args, func=None, cls=None, k=None):
         self._constraint = constraint
-        self._vars = tuple(*args)
+        self._vars = tuple(flatten(args))
         self._func = func
         self._k = k
 
@@ -40,6 +41,9 @@ class _ConstraintBuilder:
         """ 
         Validates and unpacks variables from an _ConstraintBuilder object
         and its associated Encoding. Returns the SAT constraint.
+
+        :param propositions: defaultdict(weakref.WeakValueDictionary)
+        :param self: ConstraintBuilder
         """
         inputs = self.get_inputs(propositions)
         return self._constraint(inputs)
@@ -56,7 +60,7 @@ class _ConstraintBuilder:
 
         :param propositions: defaultdict(weakref.WeakValueDictionary)
         :param self: ConstraintBuilder
-
+        :type ConstraintBuilder._vars: tuple
         """
 
         inputs = []
@@ -77,21 +81,26 @@ class _ConstraintBuilder:
                 return inputs
 
             elif ismethod(self._func):
-
-                cls = self._func.__wrapped__.__qualname__
                 
-                for instance_id in propositions[cls]:
-                    obj = propositions[cls][instance_id]
+                # hacky but no proper way to do it during object creation as the method
+                # is added before classes are defined or after since inspect cannot get us the class
+                self._cls = self._func.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0]
+
+                for instance_id in propositions[self._cls]:
+                    obj = propositions[self._cls][instance_id]
                     # TODO: https://github.com/QuMuLab/bauhaus/issues/21
-                    inputs.append({obj: [self._func(obj)]})
+                    inputs.append({obj: [*self._func(obj)]})
                 return inputs
 
             else:
                 # TODO: specify exception
                 raise Exception(f"{self._func} should be decorated.")
 
-        # Inputs from method call
-        return unpack_variables(self._vars, propositions)
+        else:
+            # Inputs from method call
+            inputs = list(unpack_variables(self._vars, propositions))
+            
+        return inputs
 
 
     """ Constraint methods 
@@ -100,28 +109,28 @@ class _ConstraintBuilder:
 
     """
 
-    def at_least_one(input) -> NNF:
+    def at_least_one(inputs: list) -> NNF:
         """ Disjunction across all variables """
-        return Or(input)
+        return Or(inputs)
 
-    def at_most_one(input) -> NNF:
+    def at_most_one(inputs: list) -> NNF:
         """ And(Or(~a, ~b)) for all a,b in input 
         use functools.product(input)
         """
         pass
 
-    def exactly_one(input) -> NNF:
+    def exactly_one(inputs: list) -> NNF:
         """ 
         Exactly one variable can be true of the input 
         And(at_most_one, at_least_one) 
         """
         pass
 
-    def at_most_k(input, k=1) -> NNF:
+    def at_most_k(inputs: list, k=1) -> NNF:
         """ At most k variables can be true """
         pass
 
-    def implies_all(input) -> NNF:
+    def implies_all(inputs: list) -> NNF:
         """ And(Or(~left, right)) """
         pass
 
