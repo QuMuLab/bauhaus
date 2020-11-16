@@ -1,8 +1,6 @@
 __version__ = "0.0.1"
 
 import weakref
-import inspect
-import sys
 from nnf import Var, And, Or, NNF
 from functools import wraps
 from collections import defaultdict
@@ -67,7 +65,7 @@ def proposition(encoding: Encoding, *arg):
         def wrapped(*args, **kwargs):
             ret = func(*args, **kwargs)
             ret._var = Var(ret)
-            class_name = ret.__class__.__name__
+            class_name = ret.__class__.__qualname__
             encoding.propositions[class_name][id(ret)] = ret
             return ret
         return wrapped
@@ -91,41 +89,99 @@ class constraint:
 
     """
     @classmethod
-    def _decorate(cls, encoding, constraint_type, args=None, k=None):
-        """ Create _ConstraintBuilder objects from constraint function calls """
-        # method call
+    def _decorate(cls, encoding: Encoding, constraint_type, args=None, k=None):
+        """ Create _ConstraintBuilder objects from constraint.method function calls """
+
+        # function call
         if args:
             constraint = cbuilder(constraint_type, args, k=k)
             encoding.constraints.add(constraint)
+            return
 
         # decorator call
         def wrapper(func):
 
             # before proposition decorator kicks in
-            constraint = cbuilder(constraint_type, func=func, k=k)
+            # this is when methods are defined but classes aren't, so we can
+            # decorate instance methods and classes
+            constraint = cbuilder(constraint_type, args, func=func, k=k)
             encoding.constraints.add(constraint)
 
             @wraps(func)
             def wrapped(*args, **kwargs):
-                # following line equiv to proposition(func(*args, **kwargs))
-                ret = func(*args, **kwargs)
+                ret = func(*args, **kwargs) # equiv to proposition(fn(*args, **kwargs))
                 return ret
             return wrapped
         return wrapper
 
 
-    def at_least_one(encoding, *args):
+    def at_least_one(encoding: Encoding, *args):
         return constraint._decorate(encoding, cbuilder.at_least_one, args)
 
-    def at_most_one(encoding, *args):
+    def at_most_one(encoding: Encoding, *args):
         return constraint._decorate(encoding, cbuilder.at_most_one, args)
 
-    def exactly_one(encoding, *args):
+    def exactly_one(encoding: Encoding, *args):
         return constraint._decorate(encoding, cbuilder.exactly_one, args)
 
-    def at_most_k(encoding, *args, k=1):
+    def at_most_k(encoding: Encoding, *args, k=1):
          return constraint._decorate(encoding, cbuilder.at_most_k, args, k=k)
 
-    def implies_all(encoding, *args):
+    def implies_all(encoding: Encoding, *args):
          return constraint._decorate(encoding, cbuilder.implies_all, args)
 
+####################################
+
+e = Encoding()
+
+a = Var('a')
+
+class StrHash(object):
+    def __hash__(self):
+        return hash(str(self))
+
+@proposition(e)
+class Mark(StrHash):
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j
+    def __str__(self):
+        return f'x_{self.i}_{self.j}'
+
+@constraint.at_most_one(e)
+@proposition(e)
+class Row(StrHash):
+
+    @constraint.implies_all(e)    # Says that r_i implies the conjunction of variables corresponding to the marks returned
+    def row_is_marked(self):
+        return self.marks
+
+    def __init__(self, i, all_marks):
+        self.i = i
+        self.marks = [m for m in all_marks if m.i == self.i]
+    def __str__(self):
+        return f'r_{self.i}'
+    
+@constraint.at_most_one(e)
+@proposition(e)
+class Col(StrHash):
+    
+    @constraint.implies_all(e)    # Says that r_i implies the conjunction of variables corresponding to the marks returned
+    def col_is_marked(self):
+        return self.marks
+    
+    def __init__(self, j, all_marks):
+        self.j = j
+        self.marks = [m for m in all_marks if m.j == self.j]
+    def __str__(self):
+        return f'c_{self.j}'
+
+def main():
+    a = Var('a') 
+    marks = [Mark(i,j) for i in range(1,4) for j in range(1,4)]
+    rows = [Row(i, marks) for i in range(1,4)]
+    cols = [Col(j, marks) for j in range(1,4)]
+    constraint.at_least_one(e, Row, rows[0])
+    theory = e.compile()
+
+main()
