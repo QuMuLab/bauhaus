@@ -1,5 +1,5 @@
 from nnf import NNF, And, Or, Var
-from itertools import chain
+from itertools import chain, product, combinations
 from utils import ismethod, unpack_variables, flatten
 from inspect import isclass
 
@@ -61,6 +61,7 @@ class _ConstraintBuilder:
         :param propositions: defaultdict(weakref.WeakValueDictionary)
         :param self: ConstraintBuilder
         :type ConstraintBuilder._vars: tuple
+        :return: List of inputs, could be nested
         """
 
         inputs = []
@@ -104,33 +105,79 @@ class _ConstraintBuilder:
 
 
     """ Constraint methods 
-    
-    #TODO: a biggie, but can leave till later
+
+    Implementations of Naive SAT encodings.
 
     """
 
     def at_least_one(inputs: list) -> NNF:
-        """ Disjunction across all variables """
+        """ 
+        At least one of the inputs are true. 
+        This is equivalent to a disjunction across all variables
+        """
+        if not inputs:
+            raise ValueError
+
         return Or(inputs)
 
     def at_most_one(inputs: list) -> NNF:
-        """ And(Or(~a, ~b)) for all a,b in input 
-        use functools.product(input)
+        """ 
+        At most one of the inputs are true.
+
+        And(Or(~a, ~b)) for all a,b in input 
         """
-        pass
+        if not inputs or type(inputs) is not list:
+            raise ValueError("Inputs either empty or not correct type")
+
+        inputs = list(map(lambda var: ~var, inputs))
+        clauses = list(map(lambda c: Or(c), combinations(inputs, 2)))
+        return And(clauses)
+
+    def at_most_k(inputs: list, k) -> NNF:
+        """ At most k variables can be true """
+        if not k or type(inputs) is not list:
+            raise ValueError("Parameters are of incorrect type or value.")
+        elif not 1 <= k <= len(inputs):
+            raise ValueError("K is not within bounds")
+        
+        inputs = list(map(lambda var: ~var, inputs))
+        #TODO: note to check in readings if combinations is appropriate here
+        clauses = list(map(lambda c: Or(c), combinations(inputs, k)))
+        return And(clauses)
 
     def exactly_one(inputs: list) -> NNF:
-        """ 
-        Exactly one variable can be true of the input 
-        And(at_most_one, at_least_one) 
+            """ 
+            Exactly one variable can be true of the input 
+            And(at_most_one, at_least_one) 
+            """
+            #TODO: refactor this later
+            at_most_one = at_most_one(inputs)
+            at_least_one = at_least_one(inputs)
+            
+            if not(at_most_one or at_least_one):
+                raise ValueError
+            return And({at_most_one, at_least_one})
+            
+    def implies_all(inputs: list, left=None, right=None) -> NNF:
+        """ And(Or(~left, right)) 
+        TODO: Need to decide on implementation.
+        Current idea:
+        A user can call this either as a decorator or as a function call.
+        If it's a decorator, they're likely assuming that left side = instance,
+        right side = what is being returned. 
+        So if they decorate a class,
+        @constraints.implies_all(e) we need a right hand side.
+
+        If they decorate a bound method, we assume that
+        instance -> method return
+
+        If they call the function like so,
+        constraints.implies_all(left = a, right = b)
+        
+        I think we'll need to handle all of this in our construction
+        of the _ConstraintBuilder so that we handle possible error earlier.
+
+
         """
-        pass
-
-    def at_most_k(inputs: list, k=1) -> NNF:
-        """ At most k variables can be true """
-        pass
-
-    def implies_all(inputs: list) -> NNF:
-        """ And(Or(~left, right)) """
         pass
 
