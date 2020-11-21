@@ -43,8 +43,9 @@ def flatten(object):
 def unpack_variables(T: tuple, propositions) -> set:
     """ Return a list of all variable inputs for building a constraint
 
-    :T: tuple, can be nested
+    :param T: tuple, can be nested
     :param propositions: defaultdict(weakref.WeakValueDictionary)
+    :return: Set of inputs
     """
     inputs = set()
 
@@ -56,11 +57,13 @@ def unpack_variables(T: tuple, propositions) -> set:
                 cls = var.__qualname__
                 for instance_id in propositions[cls]:
                     inputs.add(propositions[cls][instance_id]._var)
+
             elif var.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0] in propositions:
                 cls = var.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0]
                 for instance_id in propositions[cls]:
                     obj = propositions[cls][instance_id]
-                    # TODO: is following expected behaviour if someone adds a bound method to a constraint?
+                    # TODO: is following expected behaviour
+                    # if someone adds a bound method to a constraint?
                     inputs.add(tuple(var(obj)))
                 return inputs
 
