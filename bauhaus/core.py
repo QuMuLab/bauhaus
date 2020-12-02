@@ -1,5 +1,4 @@
 import weakref
-import logging
 from nnf import Var, And, NNF
 from functools import wraps
 from collections import defaultdict
@@ -9,8 +8,8 @@ from utils import flatten
 
 
 __all__ = (
-    "Encoding", 
-    "proposition", 
+    "Encoding",
+    "proposition",
     "constraint"
     )
 
@@ -36,24 +35,23 @@ class Encoding:
                        to build the theory's constraints.
 
             constraints (set): A set of unique _ConstraintBuilder objects
-                      that hold relevant information to build an NNF constraint.
+                      that hold relevant information to build an NNF
+                      constraint.
                       They are added to the Encoding object whenever the
                       constraint decorator is used or when it is called
                       as a function.
         """
-        self.propositions = defaultdict(weakref.WeakValueDictionary) 
+        self.propositions = defaultdict(weakref.WeakValueDictionary)
         self.constraints = set()
-
 
     def __repr__(self) -> str:
         return f'Encoding: propositions:{self.propositions}, constraints:{self.constraints}'
-
 
     def compile(self) -> NNF:
         """ Convert constraints into an NNF theory """
         if not self.constraints or self.propositions:
             warnings.warn(f"Constraints or propositions in {self} are empty."
-                         "Compiling this is not advisable.")
+                          "Compiling this is not advisable.")
 
         theory = []
 
@@ -63,14 +61,13 @@ class Encoding:
                 theory.append(clause)
             else:
                 warnings.warn(f"{constraint} was not built and"
-                             "will not be added to the theory.")
+                              "will not be added to the theory.")
         return And(theory)
 
-    
     def to_CNF(theory: NNF, naive=False) -> NNF:
         """ Convert theory to CNF """
-        from nnf import to_CNF as cnf
-        return theory.cnf(naive=naive)
+        from nnf import to_CNF as to_cnf
+        return theory.to_cnf(naive=naive)
 
 
 def proposition(encoding: Encoding, *args):
@@ -93,7 +90,7 @@ def proposition(encoding: Encoding, *args):
             return Var(args)
         else:
             raise TypeError(args)
-        
+
     def wrapper(cls):
         @wraps(cls)
         def wrapped(*args, **kwargs):
@@ -120,7 +117,7 @@ class constraint:
             @constraint.method(e)
             @proposition
             class A:
-                
+
                 @constraint.method(e)
                 def do_something(self):
                     pass
@@ -164,8 +161,9 @@ class constraint:
             Wrapper: Returns the function it decorated
 
         """
-        #function call
         args = tuple(flatten(args)) if args else None
+
+        #function call
         if (args or (left and right)):
             constraint = cbuilder(constraint_type,
                                   args,
@@ -192,7 +190,6 @@ class constraint:
             return wrapped
         return wrapper
 
-
     def at_least_one(encoding: Encoding, *args):
         """At least one of the propositional variables are True. """
         return constraint._decorate(encoding, cbuilder.at_least_one, args=args)
@@ -212,12 +209,17 @@ class constraint:
         if k < 1:
             raise ValueError(k)
         if k == 1:
-            warnings.warn("Warning: This will result in at most one constraint,"
+            warnings.warn("Warning: This will result in"
+                          "an 'at most one' constraint,"
                           "but we'll proceed anyway.")
-        return constraint._decorate(encoding, cbuilder.at_most_k, args=args, k=k)
+        return constraint._decorate(encoding,
+                                    cbuilder.at_most_k,
+                                    args=args, k=k)
 
     def implies_all(encoding: Encoding, left=None, right=None):
         """Left proposition(s) implies right proposition(s) """
         left = tuple(flatten([left])) if left else None
         right = tuple(flatten([right])) if right else None
-        return constraint._decorate(encoding, cbuilder.implies_all, left=left, right=right)
+        return constraint._decorate(encoding,
+                                    cbuilder.implies_all,
+                                    left=left, right=right)

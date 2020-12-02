@@ -1,19 +1,16 @@
 import sys
 import inspect
-import functools
 from nnf import Var
 
-"""
-Utilities for bauhaus library.
+"""Utilities for bauhaus library."""
 
-"""
 
 def ismethod(func) -> bool:
     """Checks if a function is a method.
 
     *Taken from multipledispatch
 
-    Note that this has to work as the method is defined but before 
+    Note that this has to work as the method is defined but before
     the class is defined. At this stage methods look like functions.
 
     Reference:
@@ -32,7 +29,7 @@ def ismethod(func) -> bool:
 
 
 def flatten(object):
-    """ 
+    """
     Flattens an iterable.
 
     Returns object immediately if not a collections object.
@@ -45,9 +42,10 @@ def flatten(object):
         else:
             yield item
 
+
 def classname(func) -> str:
     """ Returns the class name of a given function.
-    
+
     Necessary since there's no proper way to get the
     classname during constraint creation or using inspect
     because the bound method is added before classes are defined.
@@ -67,7 +65,7 @@ def classname(func) -> str:
 
 def unpack_variables(T: tuple, propositions) -> list:
     """ Returns a set of all variable inputs for building a constraint
-    
+
     Arguments:
         T : tuple
         propositions : defaultdict(weakref.WeakValueDictionary)
