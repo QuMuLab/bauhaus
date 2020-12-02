@@ -3,8 +3,12 @@
 `bauhaus` is a Python package for spinning up propositional logic encodings from object-oriented Python code. 
 
 ## Usage
-Create Encoding objects that you intend to compile to an SAT. Encoding objects will store your model's propositional variables
-and constraints on the fly. Here's an example:
+Create Encoding objects that you intend to compile to an SAT. Encoding objects will store your model's propositional variables and constraints on the fly. 
+
+Using object-oriented principles, you can create propositional variables from decorating
+class definitions with `@proposition`. You can create constraints by decorating classes, methods, or invoking the constraint method. Valid parameters are decorated classes or methods, instances of those classes, an nnf.Var variable, or an iterable containing any of these parameters. 
+
+The functionalities of bauhaus are shown in the following example:
 
     from bauhaus import Encoding, proposition, constraint
 

@@ -3,6 +3,7 @@ import logging
 from nnf import Var, And, NNF
 from functools import wraps
 from collections import defaultdict
+import warnings
 from constraint_builder import _ConstraintBuilder as cbuilder
 from utils import flatten
 
@@ -50,19 +51,19 @@ class Encoding:
 
     def compile(self) -> NNF:
         """ Convert constraints into an NNF theory """
-        if not self.constraints:
-            pass
-        if not self.propositions:
-            pass
+        if not self.constraints or self.propositions:
+            warnings.warn(f"Constraints or propositions in {self} are empty."
+                         "Compiling this is not advisable.")
 
         theory = []
 
         for constraint in self.constraints:
             clause = constraint.build(self.propositions)
-            if not clause:
-                # raise Warning that constraint yielded []
-                pass
-            theory.append(clause)
+            if clause:
+                theory.append(clause)
+            else:
+                warnings.warn(f"{constraint} was not built and"
+                             "will not be added to the theory.")
         return And(theory)
 
     
@@ -106,7 +107,13 @@ def proposition(encoding: Encoding, *args):
 
 
 class constraint:
-    """How constraint class works.
+    """Creates constraints on the fly when used as a decorator
+    or as a function invocation.
+
+    The constraint class works by directing all function
+    calls from constraint methods to the classmethod _decorate,
+    which is the decorator that caches the user-given information
+    into a _ConstraintBuilder object.
 
     Examples:
         Decorator for class or instance method:
@@ -135,6 +142,22 @@ class constraint:
         function calls
 
         Arguments:
+            constraint (function):
+                Reference to the function for building an SAT encoding
+                constraint in _ConstraintBuilder
+            args (tuple):
+                User-given arguments from a function invocation.
+                Default = None.
+            func (function):
+                Decorated class or bound method. Default = None.
+            k (int):
+                Used for constraint "At most K".
+            left (tuple):
+                Used for constraint "implies all".
+                User-given arguments for the left side.
+            right (tuple):
+                Used for constraint "implies all".
+                User-given arguments for the right side.
 
         Returns:
             Function call: Returns None
@@ -189,13 +212,12 @@ class constraint:
         if k < 1:
             raise ValueError(k)
         if k == 1:
-            #warning: building constraint with weird k
-            pass
+            warnings.warn("Warning: This will result in at most one constraint,"
+                          "but we'll proceed anyway.")
         return constraint._decorate(encoding, cbuilder.at_most_k, args=args, k=k)
 
     def implies_all(encoding: Encoding, left=None, right=None):
-        """Left proposition implies right proposition """
-        # type check on left and right
+        """Left proposition(s) implies right proposition(s) """
         left = tuple(flatten([left])) if left else None
         right = tuple(flatten([right])) if right else None
         return constraint._decorate(encoding, cbuilder.implies_all, left=left, right=right)
