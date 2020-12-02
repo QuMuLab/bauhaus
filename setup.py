@@ -10,16 +10,14 @@ setuptools.setup(
     author_email="karishma.daga@queensu.ca, christian.muise@queensu.ca",
     description="Build propositional theories for SAT solvers on the fly",
     url="https://github.com/QuMuLab/bauhaus",
-    packages=setuptools.find_packages(),
-    package_data={
-        'bauhaus': ['py.typed'],  # Mark package as having inline types
-    },
+    packages=setuptools.find_packages(where='bauhaus'),
     python_requires='>=3.4',
     install_requires=[
         'typing;python_version<"3.5"',
         'nnf;'
+        'pysat;'
     ],
-    license="ISC",
+    license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
@@ -37,7 +35,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3 :: Only",
         "License :: OSI Approved :: ISC License (ISCL)",
     ],
-    keywords="logic nnf sat",
+    keywords="logic nnf sat constraints encodings",
     project_urls={
         'Source': "https://github.com/QuMuLab/bauhaus",
     },

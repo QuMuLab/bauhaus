@@ -9,10 +9,9 @@ Utilities for bauhaus library.
 """
 
 def ismethod(func) -> bool:
-    """ 
-    *Taken from multipledispatch
+    """Checks if a function is a method.
 
-    Is func a method?
+    *Taken from multipledispatch
 
     Note that this has to work as the method is defined but before 
     the class is defined. At this stage methods look like functions.
@@ -33,39 +32,68 @@ def ismethod(func) -> bool:
 
 
 def flatten(object):
+    """ 
+    Flattens an iterable.
+
+    """
+    # refactor case where object is not iterable/collection
+    if not isinstance(object, (list, tuple, set)):
+        return object
     for item in object:
         if isinstance(item, (list, tuple, set)):
             yield from flatten(item)
         else:
             yield item
 
+def classname(func) -> str:
+    """ Returns the class name of a given function.
+    
+    Necessary since there's no proper way to get the
+    classname during constraint creation or using inspect
+    because the bound method is added before classes are defined.
+
+    Arguments:
+        func: Bounded method of a class.
+
+    Returns:
+        name (str): Name of the class a bounded function belongs to.
+
+    """
+    if hasattr(func, '__qualname__'):
+        return func.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0]
+    else:
+        return None
+
 
 def unpack_variables(T: tuple, propositions) -> set:
-    """ Return a list of all variable inputs for building a constraint
+    """ Returns a set of all variable inputs for building a constraint
+    
+    Arguments:
+        T (tuple):
+        propositions:
 
-    :param T: tuple, can be nested
-    :param propositions: defaultdict(weakref.WeakValueDictionary)
-    :return: Set of inputs
+    Returns:
+        Set of inputs, which ensures that only unqiue variables are
+        returned.
+
     """
     inputs = set()
 
     for var in T:
 
-        # function reference is annotated class or bound method
         if hasattr(var, '__qualname__'):
             if var.__qualname__ in propositions:
                 cls = var.__qualname__
                 for instance_id in propositions[cls]:
                     inputs.add(propositions[cls][instance_id]._var)
 
-            elif var.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0] in propositions:
-                cls = var.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0]
+            elif classname(var) in propositions:
+                cls = classname(var)
                 for instance_id in propositions[cls]:
                     obj = propositions[cls][instance_id]
-                    # TODO: is following expected behaviour
-                    # if someone adds a bound method to a constraint?
-                    inputs.add(tuple(var(obj)))
-                return inputs
+                    ret = set(flatten(var(obj)))
+                    ret.add(obj)
+                    inputs.update(ret)
 
         # if object, add its nnf.Var attribute
         elif hasattr(var, '_var'):
