@@ -63,11 +63,8 @@ class _ConstraintBuilder:
         """
         inputs = self.get_inputs(propositions)
         if self._constraint is _ConstraintBuilder.implies_all:
-            left_vars, right_vars = [], []
-            if self._left:
-                left_vars = list(unpack_variables(self._left, propositions))
-            if self._right:
-                right_vars = list(unpack_variables(self._right, propositions))
+            left_vars = unpack_variables(self._left, propositions) if self._left else []
+            right_vars = unpack_variables(self._right, propositions) if self._right else []
             return self._constraint(inputs, left_vars, right_vars)
         elif not inputs:
             raise ValueError(inputs)
@@ -121,7 +118,7 @@ class _ConstraintBuilder:
 
         else:
             # Inputs from method call
-            inputs = list(unpack_variables(self._vars, propositions))
+            inputs = unpack_variables(self._vars, propositions)
             
         return inputs
 
