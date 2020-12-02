@@ -65,7 +65,7 @@ def classname(func) -> str:
         return None
 
 
-def unpack_variables(T: tuple, propositions) -> set:
+def unpack_variables(T: tuple, propositions) -> list:
     """ Returns a set of all variable inputs for building a constraint
     
     Arguments:
@@ -109,4 +109,4 @@ def unpack_variables(T: tuple, propositions) -> set:
         else:
             raise TypeError(var)
 
-    return inputs
+    return list(inputs)
