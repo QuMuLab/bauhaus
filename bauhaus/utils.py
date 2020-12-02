@@ -35,8 +35,8 @@ def flatten(object):
     """ 
     Flattens an iterable.
 
+    Returns object immediately if not a collections object.
     """
-    # refactor case where object is not iterable/collection
     if not isinstance(object, (list, tuple, set)):
         return object
     for item in object:
@@ -69,12 +69,11 @@ def unpack_variables(T: tuple, propositions) -> list:
     """ Returns a set of all variable inputs for building a constraint
     
     Arguments:
-        T (tuple):
-        propositions:
+        T : tuple
+        propositions : defaultdict(weakref.WeakValueDictionary)
 
     Returns:
-        Set of inputs, which ensures that only unqiue variables are
-        returned.
+        List of inputs with only unqiue variables returned.
 
     """
     inputs = set()

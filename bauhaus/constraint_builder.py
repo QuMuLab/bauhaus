@@ -6,10 +6,11 @@ from inspect import isclass
 
 class _ConstraintBuilder:
     """
-    Stores information necessary to build encoding constraint
-    from constraint.method calls. Instances are stored in the
-    list attribute 'constraints' in Encoding objects that are
-    provided to the constraint.method
+    A _ConstraintBuilder object caches information for building
+    an encoding's constraint. They're created when a user decorates
+    a class or method or invokes the constraint class in core.
+    Instances are stored in the attribute 'constraints' in Encoding
+    objects.
 
     Supports following SAT constraints:
     - at least one
@@ -19,12 +20,21 @@ class _ConstraintBuilder:
     - exactly one
 
     Attributes:
-        constraint (function)
-        args (tuple)
-        func (function)
-        k (int)
-        left (tuple)
-        right (tuple)
+        constraint : function
+            Reference to the function for building an SAT encoding
+            constraint in _ConstraintBuilder
+        args : tuple
+            User-given arguments from a function invocation.
+        func : function
+            Decorated class or bound method. Default = None.
+        k : int
+            Integer for constraint "At most K". Default = None.
+        left : tuple
+            Used for constraint "implies all". Default = None.
+            User-given arguments for the left side.
+        right : tuple
+            Used for constraint "implies all". Default = None.
+            User-given arguments for the right side.
 
     """
 
@@ -54,11 +64,30 @@ class _ConstraintBuilder:
     def build(self, propositions) -> 'NNF':
         """Builds an SAT constraint from a ConstraintBuilder instance.
 
+        Note:
+        There is unique handling for the implies all constraint
+        where a user could have the following cases,
+        1) implies_all used as a class or bound method:
+            For this case, we can have inputs (list of dictionaries)
+            and left or right attributes, which must be validated
+            by utils/unpack_variables. We set left and right as 
+            empty lists to make it simple for merging the propositions
+            in _ConstraintBuilder.implies_all
+
+        2) implies_all used as a function invocation:
+            If called as a function, the user must provide both 
+            a left and right side of the implication. This is
+            ensured in core/constraint._decorate. No arguments
+            are allowed to be passed based on the function
+            definition of core/constraint.implies_all, so inputs
+            will be empty.
+
         Arguments:
-            propositions: defaultdict(weakref.WeakValueDictionary)
+            propositions : defaultdict(weakref.WeakValueDictionary)
+            Stores instances in the form [classname] -> [instance_id: object]
         
         Returns:
-            nnf.NNF: 
+            nnf.NNF: A built NNF constraint.
 
         """
         inputs = self.get_inputs(propositions)
@@ -81,11 +110,11 @@ class _ConstraintBuilder:
         a function call. We gather its arguments (self._vars) and return.
 
         Arguments:
-            propositions: defaultdict(weakref.WeakValueDictionary)
-            self: ConstraintBuilder
+            propositions : defaultdict(weakref.WeakValueDictionary)
+            self : ConstraintBuilder
 
         Returns:
-            List of nnf.Var inputs, could be nested
+            List of nnf.Var inputs
 
         """
         inputs = []
@@ -100,7 +129,6 @@ class _ConstraintBuilder:
                         obj = propositions[cls][instance_id]
                         inputs.append(obj._var)
                     return inputs
-                # raise exception
 
                 elif ismethod(self._func):
                     cls = classname(self._func)
@@ -117,7 +145,7 @@ class _ConstraintBuilder:
                 # exception
 
         else:
-            # Inputs from method call
+            # Inputs from function invocation
             inputs = unpack_variables(self._vars, propositions)
             
         return inputs
@@ -137,7 +165,7 @@ class _ConstraintBuilder:
         This is equivalent to a disjunction across all variables
 
         Arguments:
-            inputs:
+            inputs : list[nnf.Var]
 
         Returns:
             nnf.NNF: Or(inputs)
@@ -151,7 +179,7 @@ class _ConstraintBuilder:
         """At most one of the inputs are true.
 
         Arguments:
-            inputs:
+            inputs : list[nnf.Var]
 
         Returns:
             nnf.NNF: And(Or(~a, ~b)) for all a,b in input 
@@ -167,8 +195,8 @@ class _ConstraintBuilder:
         """ At most k variables can be true
         
         Arguments:
-            inputs:
-            k:
+            inputs : list[nnf.Var]
+            k : int
 
         Returns:
             nnf.NNF: 
@@ -203,8 +231,9 @@ class _ConstraintBuilder:
         """All left variables imply all right variables.
         
         Arguments:
-            left:
-            right:
+            inputs: list[dict]
+            left : list[nnf.Var]
+            right: list[nnf.Var]
 
         Returns:
             nnf.NNF: And(Or(~left_i, right_j))
