@@ -43,15 +43,15 @@ To create a constraint for a method, the return object must be from a decorated 
       def func(self):
          return self.x
       
-      # create object instances
-      objects = [Object(i) for i in 'abc'] # Object_a,..., Object_c
-      constraint.at_least_one(e, Object, [objects[3], objects[2]])
-      theory = e.compile(CNF=True)
-      # spaced for clarity,
-      >> theory = And({And({Or({~Var(Object.c), c}),
-                            Or({~Var(Object.a), a}),
-                            Or({~Var(Object.b), b})}),
-                      And({Or({~Var(Object.c), ~Var(Object.a)}),
-                           Or({~Var(Object.c), ~Var(Object.b)}),
-                           Or({~Var(Object.a), ~Var(Object.b)})}),
-                      Or({Var(Object.c), Var(Object.b), Var(Object.a)})})
+   # create object instances
+   objects = [Object(i) for i in 'abc'] # Object_a,..., Object_c
+   constraint.at_least_one(e, Object, [objects[3], objects[2]])
+   theory = e.compile(CNF=True)
+   # spaced for clarity,
+   >> theory = And({And({Or({~Var(Object.c), c}),
+                           Or({~Var(Object.a), a}),
+                           Or({~Var(Object.b), b})}),
+                     And({Or({~Var(Object.c), ~Var(Object.a)}),
+                        Or({~Var(Object.c), ~Var(Object.b)}),
+                        Or({~Var(Object.a), ~Var(Object.b)})}),
+                     Or({Var(Object.c), Var(Object.b), Var(Object.a)})})
