@@ -10,6 +10,20 @@ Welcome to ``bauhaus``!
    module_index
    architecture
 
+Features
+--------
+* Create propositional variables from Python classes
+* Create naive SAT encoding constraints from propositional variables
+   - At most one
+   - At least one
+   - Exactly one
+   - At most K
+   - Implies all
+* Compile constraints into a CNF theory
+* With ``python-nnf``, submit a theory to a SAT solver
+* Inspect an encoding’s process from transforming an instance object to a constraint in the final theory
+
+
 How is it used?
 ---------------
 
@@ -20,7 +34,7 @@ Create an Encoding object to store propositions and SAT constraints: ::
    e = Encoding()
 
 Create propositions by decorating classes with ``@proposition(encoding)`` and an Encoding object.
-Each instance of decorated class is stored as a propositional variable in the Encoding::
+Each instance of a decorated class is stored as a propositional variable in the Encoding::
 
    @proposition(e)
    class Object:
@@ -60,9 +74,9 @@ Compile the theory to a CNF (conjunctive normal form) or to an NNF by setting ``
    theory = e.compile(CNF=True)
    # spaced for clarity,
    >> theory = And({And({Or({~Var(Object.c), c}),
-                           Or({~Var(Object.a), a}),
-                           Or({~Var(Object.b), b})}),
-                     And({Or({~Var(Object.c), ~Var(Object.a)}),
-                        Or({~Var(Object.c), ~Var(Object.b)}),
-                        Or({~Var(Object.a), ~Var(Object.b)})}),
-                     Or({Var(Object.c), Var(Object.b), Var(Object.a)})})
+                         Or({~Var(Object.a), a}),
+                         Or({~Var(Object.b), b})}),
+                    And({Or({~Var(Object.c), ~Var(Object.a)}),
+                         Or({~Var(Object.c), ~Var(Object.b)}),
+                         Or({~Var(Object.a), ~Var(Object.b)})}),
+                    Or({Var(Object.c), Var(Object.b), Var(Object.a)})})

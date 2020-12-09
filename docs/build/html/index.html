@@ -46,6 +46,26 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Technical Architecture</a></li>
 </ul>
 </div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Create propositional variables from Python classes</p></li>
+<li><dl class="simple">
+<dt>Create naive SAT encoding constraints from propositional variables</dt><dd><ul>
+<li><p>At most one</p></li>
+<li><p>At least one</p></li>
+<li><p>Exactly one</p></li>
+<li><p>At most K</p></li>
+<li><p>Implies all</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Compile constraints into a CNF theory</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">python-nnf</span></code>, submit a theory to a SAT solver</p></li>
+<li><p>Inspect an encoding’s process from transforming an instance object to a constraint in the final theory</p></li>
+</ul>
+</div>
 <div class="section" id="how-is-it-used">
 <h2>How is it used?<a class="headerlink" href="#how-is-it-used" title="Permalink to this headline">¶</a></h2>
 <p>Create an Encoding object to store propositions and SAT constraints:</p>
@@ -55,7 +75,7 @@
 </pre></div>
 </div>
 <p>Create propositions by decorating classes with <code class="docutils literal notranslate"><span class="pre">&#64;proposition(encoding)</span></code> and an Encoding object.
-Each instance of decorated class is stored as a propositional variable in the Encoding:</p>
+Each instance of a decorated class is stored as a propositional variable in the Encoding:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@proposition</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Object</span><span class="p">:</span>
    <span class="k">pass</span>
@@ -94,12 +114,12 @@ To create a constraint for a method, the return object must be from a decorated 
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">theory</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">CNF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># spaced for clarity,</span>
 <span class="o">&gt;&gt;</span> <span class="n">theory</span> <span class="o">=</span> <span class="n">And</span><span class="p">({</span><span class="n">And</span><span class="p">({</span><span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="n">c</span><span class="p">}),</span>
-                        <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span><span class="p">}),</span>
-                        <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">),</span> <span class="n">b</span><span class="p">})}),</span>
-                  <span class="n">And</span><span class="p">({</span><span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">)}),</span>
-                     <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">)}),</span>
-                     <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">)})}),</span>
-                  <span class="n">Or</span><span class="p">({</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">),</span> <span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">)})})</span>
+                      <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span><span class="p">}),</span>
+                      <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">),</span> <span class="n">b</span><span class="p">})}),</span>
+                 <span class="n">And</span><span class="p">({</span><span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">)}),</span>
+                      <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">)}),</span>
+                      <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">)})}),</span>
+                 <span class="n">Or</span><span class="p">({</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">),</span> <span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">)})})</span>
 </pre></div>
 </div>
 </div>
