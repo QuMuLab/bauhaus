@@ -26,7 +26,7 @@ Each instance of decorated class is stored as a propositional variable in the En
    class Object:
       pass
 
-Create SAT constraints by decorating classes, methods, or invoking ``@constraint`` as a function.
+Create constraints by decorating classes and methods using the decorator ``@constraint``.
 To create a constraint for a method, the return object must be from a decorated class or a propositional variable created with ``python-nnf``::
 
    @constraint.at_most_one(e) # At most one of the Object instances are true
@@ -42,10 +42,21 @@ To create a constraint for a method, the return object must be from a decorated 
       @constraint.implies_all(e): # Each instance implies self.x
       def func(self):
          return self.x
-      
+
+You can also create a constraint involving an arbitrary number of arguments of any of the following types:
+
+* class that has the ``proposition`` decorator
+* an object of that class
+* a proposition variable created by the library
+* an iterable of any of the listed
+::
+   
    # create object instances
    objects = [Object(i) for i in 'abc'] # Object_a,..., Object_c
    constraint.at_least_one(e, Object, [objects[3], objects[2]])
+
+Compile the theory to a CNF (conjunctive normal form) or to an NNF by setting ``CNF=False``::
+   
    theory = e.compile(CNF=True)
    # spaced for clarity,
    >> theory = And({And({Or({~Var(Object.c), c}),
