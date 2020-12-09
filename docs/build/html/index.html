@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to bauhaus’s documentation! &#8212; bauhaus 1.0.0 documentation</title>
+    <title>Welcome to bauhaus! &#8212; bauhaus 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -15,6 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installing" href="installing.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -31,18 +32,66 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-bauhaus-s-documentation">
-<h1>Welcome to bauhaus’s documentation!<a class="headerlink" href="#welcome-to-bauhaus-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-bauhaus">
+<h1>Welcome to <code class="docutils literal notranslate"><span class="pre">bauhaus</span></code>!<a class="headerlink" href="#welcome-to-bauhaus" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">bauhaus</span></code> is a Python library for building logical theories on the fly from object-oriented code. Theories can be passed to SAT solvers using the companion library <code class="docutils literal notranslate"><span class="pre">python-nnf</span></code>.</p>
 <div class="toctree-wrapper compound">
-</div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_index.html">Module reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_index.html#module-contents">Module contents</a></li>
 </ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Technical Architecture</a></li>
+</ul>
+</div>
+<div class="section" id="how-is-it-used">
+<h2>How is it used?<a class="headerlink" href="#how-is-it-used" title="Permalink to this headline">¶</a></h2>
+<p>Create an Encoding object to store propositions and SAT constraints:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bauhaus</span> <span class="kn">import</span> <span class="n">Encoding</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="n">Encoding</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Create propositions by decorating classes with <code class="docutils literal notranslate"><span class="pre">&#64;proposition(encoding)</span></code> and an Encoding object.
+Each instance of decorated class is stored as a propositional variable in the Encoding:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@proposition</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Object</span><span class="p">:</span>
+   <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Create SAT constraints by decorating classes, methods, or invoking <code class="docutils literal notranslate"><span class="pre">&#64;constraint</span></code> as a function.
+To create a constraint for a method, the return object must be from a decorated class or a propositional variable created with <code class="docutils literal notranslate"><span class="pre">python-nnf</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@constraint</span><span class="o">.</span><span class="n">at_most_one</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="c1"># At most one of the Object instances are true</span>
+<span class="nd">@proposition</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Object</span><span class="p">:</span>
+
+   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+      <span class="kn">from</span> <span class="nn">nnf</span> <span class="kn">import</span> <span class="n">Var</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Object.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span>
+
+   <span class="nd">@constraint</span><span class="o">.</span><span class="n">implies_all</span><span class="p">(</span><span class="n">e</span><span class="p">):</span> <span class="c1"># Each instance implies self.x</span>
+   <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+
+   <span class="c1"># create object instances</span>
+   <span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Object</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="s1">&#39;abc&#39;</span><span class="p">]</span> <span class="c1"># Object_a,..., Object_c</span>
+   <span class="n">constraint</span><span class="o">.</span><span class="n">at_least_one</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Object</span><span class="p">,</span> <span class="p">[</span><span class="n">objects</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">objects</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+   <span class="n">theory</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">CNF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+   <span class="c1"># spaced for clarity,</span>
+   <span class="o">&gt;&gt;</span> <span class="n">theory</span> <span class="o">=</span> <span class="n">And</span><span class="p">({</span><span class="n">And</span><span class="p">({</span><span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="n">c</span><span class="p">}),</span>
+                         <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span><span class="p">}),</span>
+                         <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">),</span> <span class="n">b</span><span class="p">})}),</span>
+                   <span class="n">And</span><span class="p">({</span><span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">)}),</span>
+                        <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">)}),</span>
+                        <span class="n">Or</span><span class="p">({</span><span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">),</span> <span class="o">~</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">)})}),</span>
+                   <span class="n">Or</span><span class="p">({</span><span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">c</span><span class="p">),</span> <span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">b</span><span class="p">),</span> <span class="n">Var</span><span class="p">(</span><span class="n">Object</span><span class="o">.</span><span class="n">a</span><span class="p">)})})</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -62,11 +111,18 @@
 
 
 <h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_index.html">Module reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Technical Architecture</a></li>
+</ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="installing.html" title="next chapter">Installing</a></li>
   </ul></li>
 </ul>
 </div>
