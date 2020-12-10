@@ -59,7 +59,7 @@ To create a constraint for a method, the return object must be from a decorated 
 
 You can also create a constraint involving an arbitrary number of arguments of any of the following types:
 
-* class that has the ``proposition`` decorator
+* class that has the ``@proposition`` decorator
 * an object of that class
 * a proposition variable created by the library
 * an iterable of any of the listed
