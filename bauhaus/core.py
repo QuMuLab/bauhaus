@@ -1,4 +1,5 @@
 import weakref
+import nnf
 from nnf import Var, And, NNF
 from functools import wraps
 from collections import defaultdict
@@ -9,8 +10,8 @@ from utils import flatten
 
 __all__ = (
     "Encoding",
-    "proposition",
-    "constraint"
+    "propositions",
+    "constraints"
     )
 
 
@@ -43,54 +44,54 @@ class Encoding:
         """
         self.propositions = defaultdict(weakref.WeakValueDictionary)
         self.constraints = set()
+        self.debug_constraints = dict()
 
     def __repr__(self) -> str:
-        return f'Encoding: propositions:{self.propositions}, constraints:{self.constraints}'
+        return f'Encoding: propositions:{self.propositions} \
+                constraints:{self.constraints}'
 
-    def compile(self) -> NNF:
+    def compile(self, naive_cnf=True) -> NNF:
         """ Convert constraints into an NNF theory """
-        if not self.constraints or self.propositions:
-            warnings.warn(f"Constraints or propositions in {self} are empty."
-                          "Compiling this is not advisable.")
-
         theory = []
 
         for constraint in self.constraints:
             clause = constraint.build(self.propositions)
             if clause:
                 theory.append(clause)
+                self.debug_constraints[constraint] = clause
             else:
-                warnings.warn(f"{constraint} was not built and"
+                warnings.warn(f"The {constraint} was not built and"
                               "will not be added to the theory.")
         return And(theory)
 
-    def to_CNF(theory: NNF, naive=False) -> NNF:
-        """ Convert theory to CNF """
-        from nnf import to_CNF as to_cnf
-        return theory.to_cnf(naive=naive)
+    def pretty_debug(self):
+        for constraint, clause in self.debug_constraints.items():
+            print(f'{constraint} \n {clause} \n')
 
 
-def proposition(encoding: Encoding, *args):
+def proposition(encoding: Encoding):
     ''' Create a propositional variable from the decorated
     class or function and add to encoding.proposition
-    Return original object instance or nnf.Var(obj)
+
+    Return original object instance.
 
     Examples:
 
+        Each instance of class A is added to propositions
+        in the given Encoding object.
+
+        e = Encoding()
+        @proposition(e)
+        class A:
+            pass
+
     Arguments:
-        encoding:
-        *args:
+        encoding : Encoding object.
 
     Returns:
-        Returns the function it decorated
+        The decorated function.
 
     '''
-    if args:
-        if isinstance(args, object):
-            return Var(args)
-        else:
-            raise TypeError(args)
-
     def wrapper(cls):
         @wraps(cls)
         def wrapped(*args, **kwargs):
@@ -108,12 +109,16 @@ class constraint:
     or as a function invocation.
 
     The constraint class works by directing all function
-    calls from constraint methods to the classmethod _decorate,
+    calls from constraint methods to the classmethod constraint_by_function.
+    A _ConstraintBuilder object is created to store the user-given information.
+
+    All decorator calls are directed to classmethod _decorate,
     which is the decorator that caches the user-given information
     into a _ConstraintBuilder object.
 
     Examples:
         Decorator for class or instance method:
+
             @constraint.method(e)
             @proposition
             class A:
@@ -127,56 +132,81 @@ class constraint:
 
     """
     @classmethod
+    def constraint_by_function(cls, 
+                               encoding: Encoding,
+                               constraint_type,
+                               args=None,
+                               k=None,
+                               left=None,
+                               right=None):
+        
+        """
+        Create _ConstraintBuilder objects from constraint.add_method
+        function calls
+        Arguments:
+            encoding : Encoding object
+            constraint_type : function
+                Reference to the function for building an SAT encoding
+                constraint in _ConstraintBuilder
+            args : tuple
+                Tuple of user-given arguments.
+            k (int):
+                Used for constraint "At most K".
+            left (tuple):
+                Used for constraint "implies all".
+                User-given arguments for the left implication.
+            right (tuple):
+                Used for constraint "implies all".
+                User-given arguments for the right implication.
+        Returns:
+                Returns None
+        """
+
+        if constraint_type is cbuilder.implies_all:
+            constraint = cbuilder(constraint_type, left=left, right=right)
+            encoding.constraints.add(constraint)
+            return
+        elif args:
+            args = tuple(flatten(args))
+            constraint = cbuilder(constraint_type, args=args, k=k)
+            encoding.constraints.add(constraint)
+            return
+        else:
+            raise ValueError("Some or more of your provided arguments for"
+                            f" the {constraint_type.__name__} constraint were"
+                             " empty or invalid. Your provided arguments were: \n"
+                            f" args: {args}, "
+                            f" left: {left}, right: {right}")
+
+    @classmethod
     def _decorate(cls,
                   encoding: Encoding,
                   constraint_type,
-                  args=None,
                   k=None,
                   left=None,
                   right=None):
         """
         Create _ConstraintBuilder objects from constraint.method
         function calls
-
         Arguments:
             constraint (function):
                 Reference to the function for building an SAT encoding
                 constraint in _ConstraintBuilder
-            args (tuple):
-                User-given arguments from a function invocation.
-                Default = None.
             func (function):
                 Decorated class or bound method. Default = None.
             k (int):
                 Used for constraint "At most K".
             left (tuple):
                 Used for constraint "implies all".
-                User-given arguments for the left side.
+                User-given arguments for the left implication.
             right (tuple):
                 Used for constraint "implies all".
-                User-given arguments for the right side.
-
+                User-given arguments for the right implication.
         Returns:
-            Function call: Returns None
             Wrapper: Returns the function it decorated
-
         """
-        args = tuple(flatten(args)) if args else None
-
-        #function call
-        if (args or (left and right)):
-            constraint = cbuilder(constraint_type,
-                                  args,
-                                  k=k,
-                                  left=left,
-                                  right=right)
-            encoding.constraints.add(constraint)
-            return
-
-        # decorator call
         def wrapper(func):
             constraint = cbuilder(constraint_type,
-                                  args,
                                   func=func,
                                   k=k,
                                   left=left,
@@ -190,28 +220,28 @@ class constraint:
             return wrapped
         return wrapper
 
-    def at_least_one(encoding: Encoding, *args):
+    def at_least_one(encoding: Encoding):
         """At least one of the propositional variables are True. """
-        return constraint._decorate(encoding, cbuilder.at_least_one, args=args)
+        return constraint._decorate(encoding, cbuilder.at_least_one)
 
-    def at_most_one(encoding: Encoding, *args):
+    def at_most_one(encoding: Encoding):
         """At most one of the propositional variables are True. """
-        return constraint._decorate(encoding, cbuilder.at_most_one, args=args)
+        return constraint._decorate(encoding, cbuilder.at_most_one)
 
-    def exactly_one(encoding: Encoding, *args):
+    def exactly_one(encoding: Encoding):
         """ Exactly one of the propositional variables are True. """
-        return constraint._decorate(encoding, cbuilder.exactly_one, args=args)
+        return constraint._decorate(encoding, cbuilder.exactly_one)
 
-    def at_most_k(encoding: Encoding, *args, k: int):
+    def at_most_k(encoding: Encoding, k: int):
         """At most K of the propositional variables are True. """
         if not isinstance(k, int):
-            raise TypeError(k)
+            raise TypeError(f"The provided k={k} is not an integer.")
         if k < 1:
-            raise ValueError(k)
+            raise ValueError(f"The provided k={k} is less than 1.")
         if k == 1:
-            warnings.warn("Warning: This will result in"
-                          "an 'at most one' constraint,"
-                          "but we'll proceed anyway.")
+            warnings.warn(f"Warning: The provided k={k} will"
+                           " result in an 'at most one' constraint,"
+                           " but we'll proceed anyway.")
         return constraint._decorate(encoding,
                                     cbuilder.at_most_k,
                                     args=args, k=k)
@@ -223,3 +253,52 @@ class constraint:
         return constraint._decorate(encoding,
                                     cbuilder.implies_all,
                                     left=left, right=right)
+    
+    # Creating constraints from function invokations
+    
+    def add_at_least_one(encoding: Encoding, *args):
+        """At least one of the propositional variables are True. """
+        return constraint.constraint_by_function(encoding,
+                                                 cbuilder.at_least_one,
+                                                 args=args)
+
+    def add_at_most_one(encoding: Encoding, *args):
+        """At most one of the propositional variables are True. """
+        return constraint.constraint_by_function(encoding,
+                                                 cbuilder.at_most_one,
+                                                 args=args)
+
+    def add_exactly_one(encoding: Encoding, *args):
+        """ Exactly one of the propositional variables are True. """
+        return constraint.constraint_by_function(encoding,
+                                                 cbuilder.exactly_one,
+                                                 args=args)
+
+    def add_at_most_k(encoding: Encoding, k: int, *args):
+        """At most K of the propositional variables are True. """
+        if not isinstance(k, int):
+            raise TypeError(f"The provided k={k} is not an integer.")
+        if k < 1:
+            raise ValueError(f"The provided k={k} is less than 1.")
+        if k == 1:
+            warnings.warn(f"Warning: The provided k={k} will"
+                           " result in an 'at most one' constraint,"
+                           " but we'll proceed anyway.")
+        return constraint.constraint_by_function(encoding,
+                                                 cbuilder.at_most_k,
+                                                 args=args, k=k)
+
+    def add_implies_all(encoding: Encoding, left=None, right=None):
+        """Left proposition(s) implies right proposition(s) """
+        left = tuple(flatten([left])) if left else None
+        right = tuple(flatten([right])) if right else None
+        if not (left and right):
+            raise ValueError(f"You are trying to create an implies all"
+                                  " constraint without providing either the left"
+                                  " or right sides of the implication. \n"
+                                 f" Your left: {left} and right: {right}")
+        return constraint.constraint_by_function(encoding,
+                                                 cbuilder.implies_all,
+                                                 left=left, right=right)
+
+

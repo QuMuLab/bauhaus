@@ -29,8 +29,7 @@ def ismethod(func) -> bool:
 
 
 def flatten(object):
-    """
-    Flattens an iterable.
+    """Flattens an iterable.
 
     Returns object immediately if not a collections object.
     """
@@ -44,7 +43,7 @@ def flatten(object):
 
 
 def classname(func) -> str:
-    """ Returns the class name of a given function.
+    """Returns the class name of a given function.
 
     Necessary since there's no proper way to get the
     classname during constraint creation or using inspect
@@ -63,7 +62,7 @@ def classname(func) -> str:
         return None
 
 
-def unpack_variables(T: tuple, propositions) -> list:
+def unpack_variables(T, propositions) -> list:
     """ Returns a set of all variable inputs for building a constraint
 
     Arguments:
@@ -88,8 +87,10 @@ def unpack_variables(T: tuple, propositions) -> list:
                 cls = classname(var)
                 for instance_id in propositions[cls]:
                     obj = propositions[cls][instance_id]
-                    ret = set(flatten(var(obj)))
-                    ret.add(obj)
+                    ret = set(flatten([self._func(obj)]))
+                    # check return values are valid inputs
+                    res = unpack(ret, propositions)
+                    res.append(obj._var)
                     inputs.update(ret)
 
         # if object, add its nnf.Var attribute
@@ -100,7 +101,7 @@ def unpack_variables(T: tuple, propositions) -> list:
         elif isinstance(var, Var):
             inputs.add(var)
 
-        elif isinstance(var, tuple):
+        elif isinstance(var, (list, tuple, set)):
             inputs.update(unpack_variables(var, propositions))
 
         else:
