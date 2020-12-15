@@ -88,7 +88,7 @@ class Encoding:
                             "will not be added to the theory.")
         return And(theory)
 
-    def pretty_debug(self):
+    def introspect(self):
         """Observing the origin of a theory from each
         propositional object to the final constraint.
         The mapping is structured like so,
@@ -371,3 +371,28 @@ class constraint:
         return constraint.constraint_by_function(encoding,
                                                  cbuilder.implies_all,
                                                  left=left, right=right)
+
+e = Encoding()
+
+@constraint.implies_all(e, right=['hello'])
+@constraint.at_most_k(e, 2)
+@proposition(e)
+class A(object):
+
+    def __init__(self, val):
+        self.val = val
+
+    def __repr__(self):
+        return f"A.{self.val}"
+
+    # Each instance of A implies the result of the method
+    @constraint.implies_all(e)
+    def foo(self):
+        return self.val
+
+# At most one of the inputs is true. 
+constraint.add_at_most_one(e, A, A.foo, Var('B'))
+obj = [A(val) for val in range(1,4)]
+theory = e.compile()
+print(theory)
+e.introspect()
