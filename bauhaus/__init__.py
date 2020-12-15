@@ -1,4 +1,4 @@
-from .core import (Encoding, proposition, constraint)
+from core import Encoding, proposition, constraint
 
 __all__ = ["Encoding", "proposition", "constraint"]
 

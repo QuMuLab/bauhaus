@@ -10,8 +10,11 @@ NAME = 'bauhaus'
 DESCRIPTION = 'Build logical theories for SAT solvers on the fly'
 
 DEPENDENCIES = [
-    'nnf>=',
-    'pysat>='
+    'nnf',
+]
+
+EXTRAS = [
+    'pysat',
 ]
 
 CLASSIFIERS = [
@@ -37,14 +40,16 @@ setup(
     version=VERSION,
     description=DESCRIPTION,
     classifiers=CLASSIFIERS,
-    author='Karishma Daga',
-    author_email="karishma.daga@queensu.ca",
+    author='Karishma Daga, Christian Muise',
+    author_email='karishma.daga@queensu.ca, christian.muise@queensu.ca',
     license=LICENSE,
     install_requires=DEPENDENCIES,
+    extras_require=EXTRAS,
     packages=find_packages(exclude=['tests', 'tests.*']),
-    keywords="logic nnf sat constraints encodings",
+    keywords='logic nnf sat constraints encodings',
     project_urls={
-        'Source': "https://github.com/QuMuLab/bauhaus",
+        'Documentation': 'https://bauhaus.readthedocs.io/'
+        'Source': 'https://github.com/QuMuLab/bauhaus',
     },
     include_package_data=True
 )
