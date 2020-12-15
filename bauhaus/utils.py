@@ -63,7 +63,7 @@ def classname(func) -> str:
 
 
 def unpack_variables(T, propositions) -> list:
-    """ Returns a set of all variable inputs for building a constraint
+    """ Returns a list of all variable inputs for building a constraint
 
     Arguments:
         T : tuple
