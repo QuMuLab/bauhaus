@@ -188,9 +188,6 @@ class _ConstraintBuilder:
             Returns:
                     Dictionary of key: left, value: right
         """
-        if not self._func:
-            raise TypeError()
-
         inputs = dict()
 
         if hasattr(self._func, '__qualname__'):
@@ -211,6 +208,32 @@ class _ConstraintBuilder:
                     inputs[obj._var] = res
 
         return inputs
+    
+    def add_to_instance_constraints(self, instance, constraint):
+        """Maps instances to their constraints for introspection
+        purposes.
+
+        Adds key->instance value->constraint to the
+        instance_constraint defaultdict attribute
+        in a _ConstraintBuilder object.
+
+        We use extend instead of append because we could be adding
+        a list of clauses as opposed to a single one and extend
+        will result in a single list instead of a nested list.
+
+        Arguments:
+            instance : tuple or str
+            An instance object from an annotated class.
+            constraint : list[nnf.Var]
+            Per-instance constraint.
+        
+        Returns:
+            None
+        """
+        try:
+            self.instance_constraints[instance].extend(constraint)
+        except Exception as e:
+            raise(e)
 
     """ Constraint methods
 
@@ -254,7 +277,7 @@ class _ConstraintBuilder:
             excludes_var = [~x for x in inputs if x != var]
             clause = list(map(lambda c: Or(c), product([~var], excludes_var)))
             clauses.extend(clause)
-            self.instance_constraints[str(var)] = clause
+            self.add_to_instance_constraints(str(var), clause)
         return And(clauses)
 
     def at_most_k(self, inputs: list, k: int) -> NNF:
@@ -291,7 +314,7 @@ class _ConstraintBuilder:
             for x in excludes_combo:
                 clause = Or(combo + [x])
                 clauses.add(clause)
-                self.instance_constraints[tuple(combo)].append(clause)
+                self.add_to_instance_constraints(tuple(combo), clause)
         return And(clauses)
 
     def exactly_one(self, inputs: list) -> NNF:
@@ -341,5 +364,5 @@ class _ConstraintBuilder:
             res = list(map(lambda clause: Or(clause),
                             product(negated_left, right_vars)))
             clauses.extend(res)
-            self.instance_constraints[tuple(left_vars)].extend(res)
+            self.add_to_instance_constraints(tuple(left_vars), res)
         return And(clauses)

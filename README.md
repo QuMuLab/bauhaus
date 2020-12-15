@@ -36,34 +36,18 @@ You can create constraints by decorating classes, methods, or invoking the const
     # At most one of the inputs is true. 
     constraint.add_at_most_one(e, A, A.method, Var('B'))
 
-Compile your theory into conjunctive or negation normal form,
+Compile your theory into conjunctive or negation normal form (note: the theory is truncated),
 
     objects = [A(val) for val in range(1,4)]
     theory = e.compile()
-    >> And({And({Or({Var(3), ~Var(A.3)}), Or({Var(1), ~Var(A.1)}), ... Or({~Var(A.2), hello})}), And({Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})})})
+    >> And({And({Or({Var(3), ~Var(A.3)}), Or({Var(1), ~Var(A.1)}),
+            ...
+            And({Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})})})
 
-And view the origin of each constraint, from the propositional object to the final constraint. (Note: the '...' is to shorten the output)
+And view the origin of each constraint, from the propositional object to the final constraint. (Note: the introspection is truncated)
 
     e.introspect()
     >> 
-    constraint.implies_all:  function = A.foo   left implication = None   right implication = None: 
-
-    (Var(A.1),) =>
-    Or({Var(1), ~Var(A.1)})
-
-    ...
-
-    Final implies_all: And({Or({Var(3), ~Var(A.3)}), Or({Var(1), ~Var(A.1)}), Or({~Var(A.2), Var(2)})}) 
-
-    constraint.implies_all:  function = A   left implication = None   right implication = ('hello',): 
-
-    (Var(A.1),) =>
-    Or({~Var(A.1), hello})
-
-    ...
-
-    Final implies_all: And({Or({hello, ~Var(A.3)}), Or({~Var(A.1), hello}), Or({~Var(A.2), hello})}) 
-
     constraint.at_most_k:  function = A  k = 2: 
 
     (~Var(A.3), ~Var(A.1)) =>
@@ -79,7 +63,7 @@ And view the origin of each constraint, from the propositional object to the fin
 
 
     Final at_most_k: And({Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})}) 
-
+    ...
     ...
 
 
