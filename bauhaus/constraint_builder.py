@@ -102,16 +102,16 @@ class _ConstraintBuilder:
             For this case, we can have inputs (list of dictionaries)
             and left or right attributes, which must be validated
             by utils/unpack_variables. We set left and right as
-            empty lists to make it simple for merging the propositions
-            in _ConstraintBuilder.implies_all
+            empty lists if they're None to merging the propositional
+            variables simple in _ConstraintBuilder.implies_all
 
         2) implies_all used as a function invocation:
             If called as a function, the user must provide both
             a left and right side of the implication. This is
-            ensured in bauhaus/core.constraint._decorate. No positional 
-            arguments are allowed to be passed based on the function
-            definition of core/constraint.implies_all, so inputs
-            will be empty for this case.
+            ensured in bauhaus/core.constraint.constraint_by_function.
+            No positional arguments are allowed to be passed based
+            on the function definition of core/constraint.implies_all,
+            so inputs will be empty for this case.
 
         Arguments:
             propositions : defaultdict(weakref.WeakValueDictionary)

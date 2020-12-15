@@ -11,7 +11,7 @@ def test_getting_inputs():
     # assert correct inputs collected
     # given constraint builder object and
     # propositions 
-    assert get_inputs([]) == []
+    pass
 
 # SAT constraints
 
