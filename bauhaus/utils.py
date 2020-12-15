@@ -87,11 +87,13 @@ def unpack_variables(T, propositions) -> list:
                 cls = classname(var)
                 for instance_id in propositions[cls]:
                     obj = propositions[cls][instance_id]
-                    ret = set(flatten([self._func(obj)]))
+                    # apply method to object to get return values
+                    ret = set(flatten([var(obj)]))
                     # check return values are valid inputs
-                    res = unpack(ret, propositions)
+                    res = unpack_variables(ret, propositions)
+                    # add nnf.Var attribute of object
                     res.append(obj._var)
-                    inputs.update(ret)
+                    inputs.update(res)
 
         # if object, add its nnf.Var attribute
         elif hasattr(var, '_var'):
@@ -105,6 +107,12 @@ def unpack_variables(T, propositions) -> list:
             inputs.update(unpack_variables(var, propositions))
 
         else:
-            raise TypeError(var)
-
+            try:
+                # convert to nnf.Var
+                inputs.add(Var(var))
+            except Exception as e:
+                raise ValueError(f"Provided input {var} is not of an annotated class or method," 
+                                 " instance of such as class or method, or of type nnf.Var."
+                                 " Attempted conversion of {var} to nnf.Var also failed and"
+                                f" yielded the following error message: {e}")
     return list(inputs)

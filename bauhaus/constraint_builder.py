@@ -2,13 +2,15 @@ from nnf import NNF, And, Or
 from itertools import product, combinations
 from utils import ismethod, classname, flatten
 from utils import unpack_variables as unpack
+import warnings
+from collections import defaultdict
 
 
 class _ConstraintBuilder:
     """
     A _ConstraintBuilder object caches information for building
     an encoding's constraint. They're instantiated when a user decorates
-    a class, method, or invokes the constraint class in bauhaus/core.py
+    a class, method, or invokes the constraint class in bauhaus/core.py.
     Instances are stored in the attribute 'constraints' in Encoding
     objects.
 
@@ -35,25 +37,34 @@ class _ConstraintBuilder:
         right : tuple
             Used for constraint "implies all". Default = None.
             User-given arguments for the right side.
+        instance_constraints : defaultdict(list)
+            Stores per-instance constraints to be viewed by the
+            user for debugging purposes.
 
     """
 
-    def __init__(self, constraint, args=None, func=None,
-                 obj=None, k=None, left=None, right=None):
+    def __init__(self,
+                 constraint,
+                 args=None,
+                 func=None,
+                 k=None,
+                 left=None,
+                 right=None):
         self._constraint = constraint
         self._vars = args
         self._func = func
-        self._obj = obj
         self._k = k
         self._left = left
         self._right = right
+        self.instance_constraints = defaultdict(list)
 
     def __hash__(self):
         return hash((self._constraint,
                      self._vars,
                      self._func,
                      self._k,
-                     self._left, self._right))
+                     self._left,
+                     self._right))
 
     def __eq__(self, other) -> bool:
         if isinstance(other, _ConstraintBuilder):
@@ -61,10 +72,25 @@ class _ConstraintBuilder:
         raise NotImplementedError
 
     def __repr__(self) -> str:
-        if self._vars:
-            return f'constraint.{self._constraint.__name__}:  variables:{self._vars}'
+        k = f"k = {self._k}"
+        variables = f" variables = {self._vars}"
+        constraint_type = f"constraint.{self._constraint.__name__}:"
+        left = f" left implication = {self._left}"
+        right = f" right implication = {self._right}"
+
         if self._func:
-            return f'constraint.{self._constraint.__name__}:  function: {self._func.__qualname__}  instance: {self._obj}'
+            function = f"function = {self._func.__qualname__}"
+            if self._k:
+                return (f"{constraint_type}  {function}  {k}")
+            if self._constraint is _ConstraintBuilder.implies_all:
+                return (f"{constraint_type}  {function}  {left}  {right}")
+            return (f"{constraint_type}  {function}")
+        else:
+            if self._k:
+                return (f"{constraint_type}  {k}  {variables}")
+            if self._constraint is _ConstraintBuilder.implies_all:
+                return (f"{constraint_type}  {left}  {right}")
+            return (f"{constraint_type}  {variables}")
 
     def build(self, propositions) -> 'NNF':
         """Builds an SAT constraint from a ConstraintBuilder instance.
@@ -96,29 +122,42 @@ class _ConstraintBuilder:
 
         """
         if self._constraint is _ConstraintBuilder.implies_all:
-            if self._func: # dictionary of inputs
-                inputs = self.get_implication_inputs(propositions)
-            else: # inputs should be empty if not created from a decorator
-                inputs = []
             left_vars = unpack(self._left, propositions) if self._left else []
             right_vars = unpack(self._right, propositions) if self._right else []
-            return self._constraint(inputs, left_vars, right_vars)
+            if self._func:
+                # retrieve dictionary of inputs
+                inputs = self.get_implication_inputs(propositions) 
+                if not any(inputs.values()) and not right_vars:
+                    raise ValueError(f"The '{self}' cannot be built"
+                                     " as it is decorating a class and"
+                                     " the right implication variables are not"
+                                     " provided. If it is decorating a method,"
+                                     " ensure that the method's return is" 
+                                     " valid for bauhaus or for the nnf library."
+                                     " Check your decorator signature and set"
+                                     " the 'right' keyword argument to such a value.")
+            else:
+                # inputs should be empty if not created from a decorator
+                inputs = []
+            return self._constraint(self, inputs, left_vars, right_vars)
         
         inputs = self.get_inputs(propositions)
         if not inputs:
             raise ValueError(inputs)
         if self._constraint is _ConstraintBuilder.at_most_k:
-            return self._constraint(inputs, k=self._k)
-        return self._constraint(inputs)
+            return self._constraint(self, inputs, k=self._k)
+        return self._constraint(self, inputs)
 
     def get_inputs(self, propositions) -> list:
         """Returns a list of inputs to be used for building the constraint.
 
         If the ConstraintBuilder was created for a decorated class or method,
-        then we check if the decorated class (self._func) is in the
+        we check if the decorated class name (self._func) is a key in the
         Encoding.propositions and return its instances.
-        If the ConstraintBuilder does not have '_func', then it was invoked as
-        a function call. We gather its arguments (self._vars) and return.
+        
+        If the ConstraintBuilder does not have the '_func' attribute,
+        then it was invoked as a function call.
+        We gather and validate its arguments (self._vars).
 
         Arguments:
             propositions : defaultdict(weakref.WeakValueDictionary)
@@ -126,7 +165,6 @@ class _ConstraintBuilder:
 
         Returns:
             List of nnf.Var inputs
-
         """
         inputs = []
 
@@ -136,10 +174,10 @@ class _ConstraintBuilder:
         else:
             ret = unpack([self._func], propositions)
             if not ret:
-                raise ValueError
+                raise ValueError(f"The {self} resulted in an empty {ret}")
             return ret
 
-    def get_implication_inputs(self, propositions):
+    def get_implication_inputs(self, propositions) -> dict:
         """ Returns a dictionary of values for an implication
             created with a decorator over a class or method.
             
@@ -182,7 +220,7 @@ class _ConstraintBuilder:
 
     """
 
-    def at_least_one(inputs: list) -> NNF:
+    def at_least_one(self, inputs: list) -> NNF:
         """At least one of the inputs are true.
 
         This is equivalent to a disjunction across all variables
@@ -194,11 +232,11 @@ class _ConstraintBuilder:
             nnf.NNF: Or(inputs)
         """
         if not inputs:
-            raise ValueError
+            raise ValueError(f"Inputs are empty for {self}")
 
         return Or(inputs)
 
-    def at_most_one(inputs: list) -> NNF:
+    def at_most_one(self, inputs: list) -> NNF:
         """At most one of the inputs are true.
 
         Arguments:
@@ -207,14 +245,19 @@ class _ConstraintBuilder:
         Returns:
             nnf.NNF: And(Or(~a, ~b)) for all a,b in input
         """
-        if not inputs or type(inputs) is not list:
-            raise ValueError("Inputs either empty or not correct type")
+        if not inputs:
+            raise ValueError(f"Inputs are empty for {self}")
 
-        inputs = list(map(lambda var: ~var, inputs))
-        clauses = list(map(lambda c: Or(c), combinations(inputs, 2)))
+        clauses = []
+        for var in inputs:
+            # negate variables that aren't the current var
+            excludes_var = [~x for x in inputs if x != var]
+            clause = list(map(lambda c: Or(c), product([~var], excludes_var)))
+            clauses.extend(clause)
+            self.instance_constraints[str(var)] = clause
         return And(clauses)
 
-    def at_most_k(inputs: list, k: int) -> NNF:
+    def at_most_k(self, inputs: list, k: int) -> NNF:
         """ At most k variables can be true.
 
         Arguments:
@@ -225,17 +268,33 @@ class _ConstraintBuilder:
             nnf.NNF:
         """
         if not 1 <= k <= len(inputs):
-            raise ValueError("K is not within bounds")
+            raise ValueError(f"The provided k={k} is greater"
+                             " than the number of propositional"
+                            f" variables (i.e. {len(inputs)} variables)"
+                            f" for {self}.")
         elif k == 1:
             return _ConstraintBuilder.at_most_one(inputs)
         if k >= len(inputs):
-            # TODO: set k to len(inputs)-1, give user warning
+            warnings.warn(f"The provided k={k} for building the at most K"
+                           " constraint is greater than or equal to"
+                          f" the number of variables, which is {len(inputs)}."
+                          f" We're setting k = {len(inputs) - 1} as a result.")
             k = len(inputs) - 1
+
+        clauses = set() # avoid adding duplicate clauses
         inputs = list(map(lambda var: ~var, inputs))
-        clauses = list(map(lambda c: Or(c), combinations(inputs, k+1)))
+        # combinations from choosing k from n inputs for 1 <= k <n
+        chosen = list(combinations(inputs, k))
+        for combo in chosen:
+            combo = list(combo)
+            excludes_combo = [x for x in inputs if x not in combo]
+            for x in excludes_combo:
+                clause = Or(combo + [x])
+                clauses.add(clause)
+                self.instance_constraints[tuple(combo)].append(clause)
         return And(clauses)
 
-    def exactly_one(inputs: list) -> NNF:
+    def exactly_one(self, inputs: list) -> NNF:
         """
         Exactly one variable can be true of the input
 
@@ -245,14 +304,14 @@ class _ConstraintBuilder:
         Returns:
             nnf.NNF: And(at_most_one, at_least_one)
         """
-        at_most_one = _ConstraintBuilder.at_most_one(inputs)
-        at_least_one = _ConstraintBuilder.at_least_one(inputs)
+        at_most_one = _ConstraintBuilder.at_most_one(self, inputs)
+        at_least_one = _ConstraintBuilder.at_least_one(self, inputs)
 
         if not(at_most_one and at_least_one):
             raise ValueError
         return And({at_most_one, at_least_one})
 
-    def implies_all(inputs: dict, left: list, right: list) -> NNF:
+    def implies_all(self, inputs: dict, left: list, right: list) -> NNF:
         """All left variables imply all right variables.
 
         Arguments:
@@ -265,11 +324,6 @@ class _ConstraintBuilder:
 
         """
         clauses = []
-
-        # if not inputs: then only left and right
-
-        # if inputs, it must be a dictionary.
-        # combine inputs.keys() + left => inputs.values() + right
         
         if not inputs:
             if left and right:
@@ -283,9 +337,9 @@ class _ConstraintBuilder:
         for key, value in inputs.items():
             left_vars = left + [key]
             right_vars = right + value
-            left_vars = list(map(lambda var: ~var, left_vars))
+            negated_left = list(map(lambda var: ~var, left_vars))
             res = list(map(lambda clause: Or(clause),
-                            product(left_vars, right_vars)))
+                            product(negated_left, right_vars)))
             clauses.extend(res)
-
+            self.instance_constraints[tuple(left_vars)].extend(res)
         return And(clauses)
