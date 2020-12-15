@@ -325,28 +325,32 @@ class constraint:
                                     cbuilder.implies_all,
                                     left=left, right=right)
     
-    # Creating constraints from function invokations
+    """
+    Creating constraints from function invokations
+    Constraint creation for these are directed to
+    constraint.constraint_by_function.
+    """
     
     def add_at_least_one(encoding: Encoding, *args):
-        """At least one of the propositional variables are True. """
+        """At least one of the propositional variables are True."""
         return constraint.constraint_by_function(encoding,
                                                  cbuilder.at_least_one,
                                                  args=args)
 
     def add_at_most_one(encoding: Encoding, *args):
-        """At most one of the propositional variables are True. """
+        """At most one of the propositional variables are True."""
         return constraint.constraint_by_function(encoding,
                                                  cbuilder.at_most_one,
                                                  args=args)
 
     def add_exactly_one(encoding: Encoding, *args):
-        """ Exactly one of the propositional variables are True. """
+        """ Exactly one of the propositional variables are True."""
         return constraint.constraint_by_function(encoding,
                                                  cbuilder.exactly_one,
                                                  args=args)
 
     def add_at_most_k(encoding: Encoding, k: int, *args):
-        """At most K of the propositional variables are True. """
+        """At most K of the propositional variables are True."""
         if not isinstance(k, int):
             raise TypeError(f"The provided k={k} is not an integer.")
         if k < 1:
@@ -360,11 +364,11 @@ class constraint:
                                                  args=args, k=k)
 
     def add_implies_all(encoding: Encoding, left, right):
-        """Left proposition(s) implies right proposition(s) """
+        """Left proposition(s) implies right proposition(s)"""
         if not (left and right):
             raise ValueError(f"You are trying to create an implies all"
-                              " constraint without providing either the left"
-                              " or right sides of the implication. \n"
+                              " constraint without providing either the"
+                              " left or right sides of the implication.\n"
                              f" Your left: {left} and right: {right}")
         left = tuple(flatten([left]))
         right = tuple(flatten([right]))

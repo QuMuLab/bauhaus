@@ -84,8 +84,8 @@ And view the origin of each constraint, from the propositional object to the fin
 
 
 ## Requirements
+- `python >= 3.4`
 - `python-nnf`
-- `python >= 3.0`
 - `pysat`
 
 ## Citing This Work
