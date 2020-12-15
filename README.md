@@ -17,10 +17,8 @@ class definitions with `@proposition`.
 
 You can create constraints by decorating classes, methods, or invoking the constraint methods.
 
-    # Each instance of A implies the right side
-    @constraint.implies_all(e, right=['hello'])
-    # At most two of the A instances are true
-    @constraint.at_most_k(e, 2)
+    @constraint.implies_all(e, right=['hello']) # Each instance of A implies the right side
+    @constraint.at_most_k(e, 2) # At most two of the A instances are true
     @proposition(e)
     class A(object):
 
