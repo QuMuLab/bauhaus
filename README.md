@@ -16,10 +16,10 @@
 
 ## Installation
 
-Install ``bauhaus`` by running::
-
+Install ``bauhaus`` by running
+```
    pip install bauhaus
-
+```
 
 ## How is it used?
 
