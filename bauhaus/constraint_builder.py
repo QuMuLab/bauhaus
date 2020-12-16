@@ -168,18 +168,20 @@ class _ConstraintBuilder:
 
         Arguments
         ---------
-            propositions : defaultdict(weakref.WeakValueDictionary)
-            self : ConstraintBuilder
+        propositions : defaultdict(weakref.WeakValueDictionary)
+        self : ConstraintBuilder
 
         Returns
         -------
-            List of nnf.Var inputs
+        List of nnf.Var inputs
+
         """
         inputs = []
 
-        # Annotated class or its instance method
+        # Constraint from function
         if not self._func:
             return unpack(self._vars, propositions)
+        # Constraint from decorator
         else:
             ret = unpack([self._func], propositions)
             if not ret:
@@ -195,9 +197,11 @@ class _ConstraintBuilder:
         self : _ConstraintBuilder object
         propositions : defaultdict(WeakValueDictionary)
         
-        Returns:
+        Returns
+        -------
         inputs : dict
             key: left, value: right
+
         """
         inputs = dict()
 
@@ -239,8 +243,10 @@ class _ConstraintBuilder:
         constraint : list[nnf.Var]
             Per-instance constraint.
         
-        Returns:
-            None
+        Returns
+        -------
+        None
+
         """
         try:
             self.instance_constraints[instance].extend(constraint)
@@ -268,6 +274,7 @@ class _ConstraintBuilder:
         -------
         nnf.NNF: Or(inputs)
             Disjunction across all variables.
+
         """
         if not inputs:
             raise ValueError(f"Inputs are empty for {self}")
@@ -285,6 +292,7 @@ class _ConstraintBuilder:
         -------
         theory : nnf.NNF
             And(Or(~a, ~b)) for all a,b in input
+
         """
         if not inputs:
             raise ValueError(f"Inputs are empty for {self}")
@@ -303,12 +311,13 @@ class _ConstraintBuilder:
 
         Arguments
         ---------
-            inputs : list[nnf.Var]
-            k : int
+        inputs : list[nnf.Var]
+        k : int
 
         Returns
         -------
-            nnf.NNF
+        nnf.NNF
+
         """
         if not 1 <= k <= len(inputs):
             raise ValueError(f"The provided k={k} is greater"
@@ -343,11 +352,12 @@ class _ConstraintBuilder:
 
         Arguments
         ---------
-            inputs : list[nnf.Var]
+        inputs : list[nnf.Var]
 
         Returns
         -------
-            nnf.NNF: And(at_most_one, at_least_one)
+        nnf.NNF: And(at_most_one, at_least_one)
+
         """
         at_most_one = _ConstraintBuilder.at_most_one(self, inputs)
         at_least_one = _ConstraintBuilder.at_least_one(self, inputs)
@@ -361,13 +371,13 @@ class _ConstraintBuilder:
 
         Arguments
         ---------
-            inputs: dict
-            left : list[nnf.Var]
-            right: list[nnf.Var]
+        inputs: dict
+        left : list[nnf.Var]
+        right: list[nnf.Var]
 
         Returns
         -------
-            nnf.NNF: And(Or(~left_i, right_j))
+        nnf.NNF: And(Or(~left_i, right_j))
 
         """
         clauses = []
