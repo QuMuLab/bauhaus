@@ -26,7 +26,7 @@ The Bauhaus library can be broken down into three parts:
 - Creating propositions and constraints
 - Building the theory
 
-Encoding objects store a theory's propositions and constraints, and once you're satisfied (haha),
+Encoding objects store a theory's propositions and constraints, and once you're SATisfied (haha),
 you can compile the Encoding object into a conjunctive or negation normal theory.
 
 It's possible to build multiple theories at the same time by passing different
