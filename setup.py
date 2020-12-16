@@ -3,7 +3,7 @@ import io
 from setuptools import setup
 from setuptools import find_packages
 
-VERSION = '1.0.0dev'
+VERSION = '1.0.0'
 
 NAME = 'bauhaus'
 
@@ -35,10 +35,17 @@ CLASSIFIERS = [
 with io.open('LICENSE', 'r', encoding='utf-8') as f:
     LICENSE = f.read()
 
+with open("README.md") as f:
+    LONG_DESCRIPTION = f.read()
+
+LONG_DESCRIPTION_CONTENT_TYPE = "text/markdown"
+
 setup(
     name=NAME,
     version=VERSION,
     description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type=LONG_DESCRIPTION_CONTENT_TYPE,
     classifiers=CLASSIFIERS,
     author='Karishma Daga, Christian Muise',
     author_email='karishma.daga@queensu.ca, christian.muise@queensu.ca',
