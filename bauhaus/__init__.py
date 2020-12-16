@@ -1,3 +1,5 @@
+"bauhaus is a library for building logical theories on the fly with Python."
+
 from .core import Encoding, proposition, constraint
 
 __all__ = [
