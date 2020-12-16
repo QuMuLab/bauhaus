@@ -48,7 +48,6 @@ def main():
     cols = [Col(j, marks) for j in range(1,4)]
     theory = e.compile()
     print(theory)
-    print()
-    debug = e.pretty_debug()
+    debug = e.introspect()
 
 main()

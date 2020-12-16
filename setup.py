@@ -3,7 +3,7 @@ import io
 from setuptools import setup
 from setuptools import find_packages
 
-VERSION = '1.0.0'
+VERSION = '1.0.0dev'
 
 NAME = 'bauhaus'
 

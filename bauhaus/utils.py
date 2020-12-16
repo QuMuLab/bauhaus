@@ -13,7 +13,8 @@ def ismethod(func) -> bool:
     Note that this has to work as the method is defined but before
     the class is defined. At this stage methods look like functions.
 
-    Reference:
+    Reference
+    ---------
     https://github.com/mrocklin/multipledispatch/blob/master/multipledispatch/core.py#L74
 
     """
@@ -49,11 +50,14 @@ def classname(func) -> str:
     classname during constraint creation or using inspect
     because the bound method is added before classes are defined.
 
-    Arguments:
-        func: Bounded method of a class.
+    Arguments
+    ---------
+    func: Bounded method of a class.
 
-    Returns:
-        name (str): Name of the class a bounded function belongs to.
+    Returns
+    -------
+    name : str
+        Name of the class a bounded function belongs to.
 
     """
     if hasattr(func, '__qualname__'):
@@ -65,11 +69,14 @@ def classname(func) -> str:
 def unpack_variables(T, propositions) -> list:
     """ Returns a list of all variable inputs for building a constraint
 
-    Arguments:
-        T : tuple
-        propositions : defaultdict(weakref.WeakValueDictionary)
+    Arguments
+    ---------
+    T : tuple
+    propositions : defaultdict(weakref.WeakValueDictionary)
 
-    Returns:
+    Returns
+    -------
+    inputs : list
         List of inputs with only unqiue variables returned.
 
     """

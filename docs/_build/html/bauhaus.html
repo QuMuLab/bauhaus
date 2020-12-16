@@ -1,0 +1,588 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Architecture Design" href="architecture.html" /><link rel="prev" title="Welcome to bauhaus!" href="index.html" />
+
+    <meta name="generator" content="sphinx-3.3.1, furo 2020.12.09.beta21"/>
+        <title>Module Reference - bauhaus 1.0.0dev documentation</title>
+      <link rel="stylesheet" href="_static/styles/furo.css?digest=a3f371badb8538d75df213ccffb17a4f6e8f3ac5">
+    <link rel="stylesheet" href="_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
+    
+
+
+<style>
+  :root {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link id="pygments_dark_css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css" href="_static/pygments_dark.css" />
+    <link rel="stylesheet" href="_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script defer src="_static/jquery.js"></script>
+    <script defer src="_static/underscore.js"></script>
+    <script defer src="_static/doctools.js"></script>
+    <script defer src="_static/language_data.js"></script>
+    <script defer src="_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">bauhaus 1.0.0dev documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">bauhaus 1.0.0dev documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html">
+  <input class="sidebar-search" placeholder="Search" name="q">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture Design</a></li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <div class="section" id="module-bauhaus">
+<span id="module-reference"></span><h1>Module Reference<a class="headerlink" href="#module-bauhaus" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="bauhaus.Encoding">
+<em class="property">class </em><code class="sig-prename descclassname">bauhaus.</code><code class="sig-name descname">Encoding</code><a class="reference internal" href="_modules/bauhaus/core.html#Encoding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.Encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>An Encoding object stores the propositions and constraints
+you create on the fly with <code class="docutils literal notranslate"><span class="pre">@proposition</span></code> and <code class="docutils literal notranslate"><span class="pre">@constraint</span></code>
+decorators and functions.</p>
+<p>When you’re ready, you can compile your constraints into
+a logical theory in conjunctive or negation normal form
+to submit to a SAT solver.</p>
+<p>If you’re interested in debugging your theory or learning
+about its origin story from each propositional object to
+the final theory, call the <code class="docutils literal notranslate"><span class="pre">introspect()</span></code> function on your
+encoding.</p>
+<dl class="py method">
+<dt id="bauhaus.Encoding.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#Encoding.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.Encoding.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an Encoding object. This will store propositions
+and constraints that you can compile into a theory.</p>
+<dl class="py attribute">
+<dt id="bauhaus.Encoding.propositions">
+<code class="sig-name descname">propositions</code><a class="headerlink" href="#bauhaus.Encoding.propositions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores decorated classes/functions pointing to
+their associated instances.These are later used
+to build the theory’s constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>defaultdict(weakref.WeakValueDictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt id="bauhaus.Encoding.constraints">
+<code class="sig-name descname">constraints</code><a class="headerlink" href="#bauhaus.Encoding.constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of unique _ConstraintBuilder objects
+that hold relevant information to build an NNF
+constraint.
+They are added to the Encoding object whenever the
+constraint decorator is used or when it is called
+as a function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt id="bauhaus.Encoding.debug_constraints">
+<code class="sig-name descname">debug_constraints</code><a class="headerlink" href="#bauhaus.Encoding.debug_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps ConstraintBuilder objects to their compiled
+constraints for debugging purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.Encoding.clear_debug">
+<code class="sig-name descname">clear_debug</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#Encoding.clear_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.Encoding.clear_debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear debug_constraints attribute in Encoding</p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.Encoding.compile">
+<code class="sig-name descname">compile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">CNF</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span> → nnf.NNF<a class="reference internal" href="_modules/bauhaus/core.html#Encoding.compile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.Encoding.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert constraints into a theory in
+conjunctive normal form, or if specified,
+the simpler negation-normal form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>CNF</strong> (<em>bool</em>) – Default is True. Converts a theory to CNF.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>theory</strong> – Conjunctive or Negation normal form of constraints.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NNF</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.Encoding.introspect">
+<code class="sig-name descname">introspect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#Encoding.introspect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.Encoding.introspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Observing the origin of a theory from each
+propositional object to the final constraint.</p>
+<p>The mapping is structured like so,</p>
+<p>Encoding.debug_constraints : dictionary</p>
+<blockquote>
+<div><p>key -&gt; ConstraintBuilder object</p>
+<p>value -&gt; Clause built in Encoding.compile()</p>
+</div></blockquote>
+<p>Each ConstraintBuilder object has the attribute
+instance_constraints : defaultdict with,</p>
+<blockquote>
+<div><p>key -&gt; Object (from annotated class or method)</p>
+<p>value -&gt; List of constraint clauses created per object</p>
+</div></blockquote>
+<p>This allows you to view the constraints created
+for annotated classes or methods and the per-instance
+object constraints, along with the final (succinct)
+constraint.</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt id="bauhaus.constraint">
+<em class="property">class </em><code class="sig-prename descclassname">bauhaus.</code><code class="sig-name descname">constraint</code><a class="reference internal" href="_modules/bauhaus/core.html#constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates constraints on the fly when
+used as a decorator or as a function invocation.</p>
+<p>The constraint class directs all function
+invokations of constraint methods to the
+classmethod <code class="docutils literal notranslate"><span class="pre">_constraint_by_function</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.method</span></code> calls are directed
+to classmethod <code class="docutils literal notranslate"><span class="pre">_decorate</span></code>.</p>
+<p>In both cases, a <code class="docutils literal notranslate"><span class="pre">_ConstraintBuilder</span></code> object
+is created to store the given information.</p>
+<dl class="simple">
+<dt>Supports the following SAT constraints:</dt><dd><ul class="simple">
+<li><p>At least one</p></li>
+<li><p>At most one</p></li>
+<li><p>Exactly one</p></li>
+<li><p>At most K</p></li>
+<li><p>Implies all</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Decorator for class or method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@constraint</span><span class="o">.</span><span class="n">at_most_one</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="nd">@proposition</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+
+    <span class="nd">@constraint</span><span class="o">.</span><span class="n">implies_all</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">do_something</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Constraint creation by function call</dt><dd><p><code class="docutils literal notranslate"><span class="pre">constraint.add_at_least_one(e,</span> <span class="pre">*args)</span></code></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="bauhaus.constraint._constraint_by_function">
+<em class="property">classmethod </em><code class="sig-name descname">_constraint_by_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encoding</span><span class="p">:</span> <span class="n">bauhaus.core.Encoding</span></em>, <em class="sig-param"><span class="n">constraint_type</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">left</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">right</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint._constraint_by_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint._constraint_by_function" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Private Method</cite>:
+Create <code class="docutils literal notranslate"><span class="pre">_ConstraintBuilder</span></code> objects from
+constraint.add_method function calls</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding</strong> (<em>Encoding object</em>) – </p></li>
+<li><p><strong>constraint_type</strong> (<em>function</em>) – Reference to the function for building an SAT encoding
+constraint in <code class="docutils literal notranslate"><span class="pre">_ConstraintBuilder</span></code></p></li>
+<li><p><strong>args</strong> (<em>tuple</em>) – Tuple of user-given arguments.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Used for constraint “At most K”.</p></li>
+<li><p><strong>left</strong> (<em>tuple</em>) – Used for constraint “implies all”.
+User-given arguments for the left implication.</p></li>
+<li><p><strong>right</strong> (<em>tuple</em>) – Used for constraint “implies all”.
+User-given arguments for the right implication.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint._decorate">
+<em class="property">classmethod </em><code class="sig-name descname">_decorate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encoding</span><span class="p">:</span> <span class="n">bauhaus.core.Encoding</span></em>, <em class="sig-param"><span class="n">constraint_type</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">left</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">right</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint._decorate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint._decorate" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Private Method</cite>:
+Create _ConstraintBuilder objects from constraint.method
+function calls</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>constraint</strong> (<em>function</em>) – Reference to the function for building an SAT encoding
+constraint in _ConstraintBuilder</p></li>
+<li><p><strong>func</strong> (<em>function</em>) – Decorated class or bound method. Default = None.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Used for constraint “At most K”.</p></li>
+<li><p><strong>left</strong> (<em>tuple</em>) – Used for constraint “implies all”.
+User-given arguments for the left implication.</p></li>
+<li><p><strong>right</strong> (<em>tuple</em>) – Used for constraint “implies all”.
+User-given arguments for the right implication.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Wrapper</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Returns the function it decorated</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.add_at_least_one">
+<code class="sig-name descname">add_at_least_one</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.add_at_least_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.add_at_least_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>At least one of the propositional variables are True</p>
+<p>Constraint is added directly with this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.add_at_least_one(encoding,</span> <span class="pre">[Obj,</span> <span class="pre">Class,</span> <span class="pre">Class.method])</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.add_at_most_k">
+<code class="sig-name descname">add_at_most_k</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.add_at_most_k"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.add_at_most_k" title="Permalink to this definition">¶</a></dt>
+<dd><p>At most K of the propositional variables are True</p>
+<p>Constraint is added directly with this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – The number of variables that are true at one time.
+Must be less than the number of total variables for
+the constraint.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.add_at_most_k(encoding,</span> <span class="pre">k,</span> <span class="pre">[Obj,</span> <span class="pre">Class,</span> <span class="pre">Class.method])</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.add_at_most_one">
+<code class="sig-name descname">add_at_most_one</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.add_at_most_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.add_at_most_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>At most one of the propositional variables are True</p>
+<p>Constraint is added directly with this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.add_at_most_one(encoding,</span> <span class="pre">[Obj,</span> <span class="pre">Class,</span> <span class="pre">Class.method])</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.add_exactly_one">
+<code class="sig-name descname">add_exactly_one</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.add_exactly_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.add_exactly_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly one of the propositional variables are True</p>
+<p>Constraint is added directly with this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.add_exactly_one(encoding,</span> <span class="pre">[Obj,</span> <span class="pre">Class,</span> <span class="pre">Class.method])</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.add_implies_all">
+<code class="sig-name descname">add_implies_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">left</span></em>, <em class="sig-param"><span class="n">right</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.add_implies_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.add_implies_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Left proposition(s) implies right proposition(s)</p>
+<p>Constraint is added directly by calling this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p></li>
+<li><p><strong>left</strong> (<em>list</em>) – Propositional variables for the left side of an
+implication.</p></li>
+<li><p><strong>right</strong> (<em>list</em>) – Propositional variables for the right side of an
+implication.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">constraint.add_implies_all(encoding,</span> <span class="pre">left=[Obj,</span> <span class="pre">'hello'],</span> <span class="pre">right=['goodbye'])</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.at_least_one">
+<code class="sig-name descname">at_least_one</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.at_least_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.at_least_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>At least one of the propositional variables are True.</p>
+<p>Constraint is added with the @constraint decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.at_least_one(encoding)</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.at_most_k">
+<code class="sig-name descname">at_most_k</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.at_most_k"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.at_most_k" title="Permalink to this definition">¶</a></dt>
+<dd><p>At most K of the propositional variables are True</p>
+<p>Constraint is added with the @constraint decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – The number of variables that are true at one time.
+Must be less than the number of total variables for
+the constraint.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.at_most_k(encoding,</span> <span class="pre">k)</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.at_most_one">
+<code class="sig-name descname">at_most_one</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.at_most_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.at_most_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>At most one of the propositional variables are True.</p>
+<p>Constraint is added with the @constraint decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.at_most_one(encoding)</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.exactly_one">
+<code class="sig-name descname">exactly_one</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.exactly_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.exactly_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly one of the propositional variables are True.</p>
+<p>Constraint is added with the @constraint decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">@constraint.exactly_one(encoding)</span></code></p>
+</dd></dl>
+<dl class="py method">
+<dt id="bauhaus.constraint.implies_all">
+<code class="sig-name descname">implies_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">left</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">right</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#constraint.implies_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.constraint.implies_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Left proposition(s) implies right proposition(s)</p>
+<p>Constraint is added with the @constraint decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding.</p></li>
+<li><p><strong>left</strong> (<em>list</em>) – Propositional variables for the left side of an
+implication.</p></li>
+<li><p><strong>right</strong> (<em>list</em>) – Propositional variables for the right side of an
+implication.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>Above a class, each instance will be on the left
+side of an implication. You need to define a right
+side of the implication if you are decorating a class.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@constraint</span><span class="o">.</span><span class="n">implies_all</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="p">[</span><span class="n">Obj</span><span class="p">])</span>
+<span class="nd">@proposition</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Object</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Above a method in a class, each instance will be on
+the left side of an implication. The return value(s)
+will be the right side of the implication. You can
+provide additional variables for either the left or
+right side.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@proposition</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="nd">@constraint</span><span class="o">.</span><span class="n">implies_all</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+</dd></dl>
+</dd></dl>
+<dl class="py function">
+<dt id="bauhaus.proposition">
+<code class="sig-prename descclassname">bauhaus.</code><code class="sig-name descname">proposition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encoding</span><span class="p">:</span> <span class="n">bauhaus.core.Encoding</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bauhaus/core.html#proposition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bauhaus.proposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a propositional variable from the decorated
+class or function.</p>
+<p>Adds propositional variable to Encoding.</p>
+<p>Return original object instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<a class="reference internal" href="#bauhaus.Encoding" title="bauhaus.Encoding"><em>Encoding</em></a>) – Given encoding object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>The decorated function</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Each instance of class A is added to propositions
+in the given Encoding object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">Encoding</span><span class="p">()</span>
+<span class="nd">@proposition</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+<span class="o">&gt;&gt;</span> <span class="n">e</span><span class="o">.</span><span class="n">propositions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'A'</span><span class="p">:</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="nb">object</span><span class="p">}}</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="architecture.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Architecture Design</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2020, Karishma Daga, Christian Muise
+            |
+            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+              and
+              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+              <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            |
+            <a class="muted-link" href="_sources/bauhaus.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </main>
+</div>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 from nnf import NNF, And, Or
 from itertools import product, combinations
-from utils import ismethod, classname, flatten
-from utils import unpack_variables as unpack
+from .utils import ismethod, classname, flatten
+from .utils import unpack_variables as unpack
 import warnings
 from collections import defaultdict
 
@@ -21,7 +21,18 @@ class _ConstraintBuilder:
     - implies all
     - exactly one
 
-    Attributes:
+    """
+
+    def __init__(self,
+                 constraint,
+                 args=None,
+                 func=None,
+                 k=None,
+                 left=None,
+                 right=None):
+        """
+        Attributes
+        ----------
         constraint : function
             Reference to the function for building an SAT encoding
             constraint in _ConstraintBuilder
@@ -41,15 +52,7 @@ class _ConstraintBuilder:
             Stores per-instance constraints to be viewed by the
             user for debugging purposes.
 
-    """
-
-    def __init__(self,
-                 constraint,
-                 args=None,
-                 func=None,
-                 k=None,
-                 left=None,
-                 right=None):
+        """
         self._constraint = constraint
         self._vars = args
         self._func = func
@@ -95,7 +98,8 @@ class _ConstraintBuilder:
     def build(self, propositions) -> 'NNF':
         """Builds an SAT constraint from a ConstraintBuilder instance.
 
-        Note:
+        Note
+        ----
         There is unique handling for the implies all constraint
         where a user could have the following cases,
         1) implies_all used as a class or bound method:
@@ -113,12 +117,15 @@ class _ConstraintBuilder:
             on the function definition of core/constraint.implies_all,
             so inputs will be empty for this case.
 
-        Arguments:
-            propositions : defaultdict(weakref.WeakValueDictionary)
+        Arguments
+        ---------
+        propositions : defaultdict(weakref.WeakValueDictionary)
             Stores instances in the form [classname] -> [instance_id: object]
 
-        Returns:
-            nnf.NNF: A built NNF constraint.
+        Returns
+        -------
+        constraint : nnf.NNF
+            A built NNF constraint
 
         """
         if self._constraint is _ConstraintBuilder.implies_all:
@@ -159,11 +166,13 @@ class _ConstraintBuilder:
         then it was invoked as a function call.
         We gather and validate its arguments (self._vars).
 
-        Arguments:
+        Arguments
+        ---------
             propositions : defaultdict(weakref.WeakValueDictionary)
             self : ConstraintBuilder
 
-        Returns:
+        Returns
+        -------
             List of nnf.Var inputs
         """
         inputs = []
@@ -179,14 +188,16 @@ class _ConstraintBuilder:
 
     def get_implication_inputs(self, propositions) -> dict:
         """ Returns a dictionary of values for an implication
-            created with a decorator over a class or method.
+        created with a decorator over a class or method.
             
-            Arguments:
-                    self : _ConstraintBuilder object
-                    propositions : defaultdict(WeakValueDictionary)
-            
-            Returns:
-                    Dictionary of key: left, value: right
+        Arguments
+        ---------
+        self : _ConstraintBuilder object
+        propositions : defaultdict(WeakValueDictionary)
+        
+        Returns:
+        inputs : dict
+            key: left, value: right
         """
         inputs = dict()
 
@@ -221,10 +232,11 @@ class _ConstraintBuilder:
         a list of clauses as opposed to a single one and extend
         will result in a single list instead of a nested list.
 
-        Arguments:
-            instance : tuple or str
+        Arguments
+        ---------
+        instance : tuple or str
             An instance object from an annotated class.
-            constraint : list[nnf.Var]
+        constraint : list[nnf.Var]
             Per-instance constraint.
         
         Returns:
@@ -248,11 +260,14 @@ class _ConstraintBuilder:
 
         This is equivalent to a disjunction across all variables
 
-        Arguments:
-            inputs : list[nnf.Var]
+        Arguments
+        ---------
+        inputs : list[nnf.Var]
 
-        Returns:
-            nnf.NNF: Or(inputs)
+        Returns
+        -------
+        nnf.NNF: Or(inputs)
+            Disjunction across all variables.
         """
         if not inputs:
             raise ValueError(f"Inputs are empty for {self}")
@@ -262,11 +277,14 @@ class _ConstraintBuilder:
     def at_most_one(self, inputs: list) -> NNF:
         """At most one of the inputs are true.
 
-        Arguments:
-            inputs : list[nnf.Var]
+        Arguments
+        ---------
+        inputs : list[nnf.Var]
 
-        Returns:
-            nnf.NNF: And(Or(~a, ~b)) for all a,b in input
+        Returns
+        -------
+        theory : nnf.NNF
+            And(Or(~a, ~b)) for all a,b in input
         """
         if not inputs:
             raise ValueError(f"Inputs are empty for {self}")
@@ -283,12 +301,14 @@ class _ConstraintBuilder:
     def at_most_k(self, inputs: list, k: int) -> NNF:
         """ At most k variables can be true.
 
-        Arguments:
+        Arguments
+        ---------
             inputs : list[nnf.Var]
             k : int
 
-        Returns:
-            nnf.NNF:
+        Returns
+        -------
+            nnf.NNF
         """
         if not 1 <= k <= len(inputs):
             raise ValueError(f"The provided k={k} is greater"
@@ -321,10 +341,12 @@ class _ConstraintBuilder:
         """
         Exactly one variable can be true of the input
 
-        Arguments:
+        Arguments
+        ---------
             inputs : list[nnf.Var]
 
-        Returns:
+        Returns
+        -------
             nnf.NNF: And(at_most_one, at_least_one)
         """
         at_most_one = _ConstraintBuilder.at_most_one(self, inputs)
@@ -337,17 +359,20 @@ class _ConstraintBuilder:
     def implies_all(self, inputs: dict, left: list, right: list) -> NNF:
         """All left variables imply all right variables.
 
-        Arguments:
+        Arguments
+        ---------
             inputs: dict
             left : list[nnf.Var]
             right: list[nnf.Var]
 
-        Returns:
+        Returns
+        -------
             nnf.NNF: And(Or(~left_i, right_j))
 
         """
         clauses = []
         
+        # constraint created by function
         if not inputs:
             if left and right:
                 left_vars = list(map(lambda var: ~var, left))
@@ -357,6 +382,7 @@ class _ConstraintBuilder:
         
         assert isinstance(inputs, dict)
 
+        # constraint from decorator
         for key, value in inputs.items():
             left_vars = left + [key]
             right_vars = right + value
