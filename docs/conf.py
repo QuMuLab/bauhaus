@@ -21,7 +21,7 @@ copyright = '2020, Karishma Daga, Christian Muise'
 author = 'Karishma Daga, Christian Muise'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0dev'
+release = '1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
