@@ -97,16 +97,16 @@ Encoding objects will store your model’s propositional variables and constrain
 <span class="nd">@proposition</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
 
-<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;A.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;A.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<span class="c1"># Each instance of A implies the result of the method</span>
-<span class="nd">@constraint</span><span class="o">.</span><span class="n">implies_all</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span>
+    <span class="c1"># Each instance of A implies the result of the method</span>
+    <span class="nd">@constraint</span><span class="o">.</span><span class="n">implies_all</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span>
 
 <span class="c1"># At most one of the inputs is true.</span>
 <span class="n">constraint</span><span class="o">.</span><span class="n">add_at_most_one</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">Var</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">))</span>

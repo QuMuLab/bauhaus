@@ -56,16 +56,16 @@ Create constraints by decorating classes, methods, or invoking the constraint me
     @proposition(e)
     class A(object):
 
-    def __init__(self, val):
-        self.val = val
+        def __init__(self, val):
+            self.val = val
 
-    def __repr__(self):
-        return f"A.{self.val}"
+        def __repr__(self):
+            return f"A.{self.val}"
 
-    # Each instance of A implies the result of the method
-    @constraint.implies_all(e)
-    def method(self):
-        return self.val
+        # Each instance of A implies the result of the method
+        @constraint.implies_all(e)
+        def method(self):
+            return self.val
     
     # At most one of the inputs is true. 
     constraint.add_at_most_one(e, A, A.method, Var('B'))
