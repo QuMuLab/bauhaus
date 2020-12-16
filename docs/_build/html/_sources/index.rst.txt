@@ -7,6 +7,7 @@ Welcome to bauhaus!
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
    bauhaus
    architecture
 
@@ -32,78 +33,17 @@ Install ``bauhaus`` by running::
    pip install bauhaus
 
 
-How is it used?
----------------
+Usage
+-----
+:doc:`getting_started` is the place to go to hit the ground running on using bauhaus.
 
-Create Encoding objects that you intend to compile to an SAT.
-Encoding objects will store your model's propositional variables and constraints on the fly. ::
-
-    from bauhaus import Encoding, proposition, constraint
-
-    e = Encoding()
-
-Create propositional variables by decorating class definitions with ``@proposition``. ::
-
-    @proposition(e) # Each instance of A is stored as a proposition
-    class A(object): pass
-
-Create constraints by decorating classes, methods, or invoking the constraint methods. ::
-
-    # Each instance of A implies the right side
-    @constraint.implies_all(e, right=['hello'])
-    # At most two of the A instances are true
-    @constraint.at_most_k(e, 2)
-    @proposition(e)
-    class A(object):
-
-        def __init__(self, val):
-            self.val = val
-
-        def __repr__(self):
-            return f"A.{self.val}"
-
-        # Each instance of A implies the result of the method
-        @constraint.implies_all(e)
-        def method(self):
-            return self.val
-    
-    # At most one of the inputs is true. 
-    constraint.add_at_most_one(e, A, A.method, Var('B'))
-
-Compile your theory into conjunctive or negation normal form (note: the theory is truncated), ::
-
-    objects = [A(val) for val in range(1,4)]
-    theory = e.compile()
-    >> And({And({Or({Var(3), ~Var(A.3)}), Or({Var(1), ~Var(A.1)}),
-            ...
-            And({Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})})})
-
-And view the origin of each constraint, from the propositional object to the final constraint.
-(Note: the introspection is truncated) ::
-
-    e.introspect()
-    >> 
-    constraint.at_most_k:  function = A  k = 2: 
-
-    (~Var(A.3), ~Var(A.1)) =>
-    Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})
-
-
-    (~Var(A.3), ~Var(A.2)) =>
-    Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})
-
-
-    (~Var(A.1), ~Var(A.2)) =>
-    Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})
-
-
-    Final at_most_k: And({Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})}) 
-    ...
-    ...
-
+The :doc:`bauhaus` documentation provides documentation for the library.
 
 Contribute
 ----------
+Head over to our `Code of Conduct <https://github.com/QuMuLab/bauhaus/blob/master/CODE_OF_CONDUCT.md>`_ and get a feel for the
+library by reading our :doc:`architecture` and :doc:`bauhaus`.
+
 - Issue Tracker: https://github.com/QuMuLab/bauhaus/issues
 - Source Code: https://github.com/QuMuLab/bauhaus
 - Join us! http://mulab.ai/
@@ -115,4 +55,4 @@ Reach out to us at karishma.daga@queensu.ca or by creating a GitHub issue.
 
 License
 -------
-The project is licensed under the MIT license for the Queen's Mu Lab
+The project is licensed under the MIT license for the Queen's Mu Lab.
