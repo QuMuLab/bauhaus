@@ -1,136 +1,37 @@
-<!doctype html>
-<html class="no-js">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <meta name="generator" content="sphinx-3.3.1, furo 2020.12.09.beta21"/>
-        <title>bauhaus.core - bauhaus 1.0.0dev documentation</title>
-      <link rel="stylesheet" href="../../_static/styles/furo.css?digest=a3f371badb8538d75df213ccffb17a4f6e8f3ac5">
-    <link rel="stylesheet" href="../../_static/pygments.css">
-    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="../../_static/pygments_dark.css">
-    
+<!DOCTYPE html>
 
-
-<style>
-  :root {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-    }
-  }
-
-  /* For allowing end-user-specific overrides */
-  .override-light {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  
-  }
-  .override-dark {
-    --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-  }
-</style><link id="pygments_dark_css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css" href="../../_static/pygments_dark.css" />
-    <link rel="stylesheet" href="../../_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bauhaus.core &#8212; bauhaus 1.0.0dev documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script defer src="../../_static/jquery.js"></script>
-    <script defer src="../../_static/underscore.js"></script>
-    <script defer src="../../_static/doctools.js"></script>
-    <script defer src="../../_static/language_data.js"></script>
-    <script defer src="../../_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
-  <body dir="">
-    
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z"/>
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-      class="feather feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-      class="feather feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation"></label>
-<label class="overlay toc-overlay" for="__toc"></label>
-
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../../index.html"><div class="brand">bauhaus 1.0.0dev documentation</div></a>
-    </div>
-    <div class="header-right">
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
   
-  <span class="sidebar-brand-text">bauhaus 1.0.0dev documentation</span>
-  
-</a><form class="sidebar-search-container" method="get" action="../../search.html">
-  <input class="sidebar-search" placeholder="Search" name="q">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../bauhaus.html">Module Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../architecture.html">Architecture Design</a></li>
-</ul>
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-</div>
-</div>
-      </div>
-      
-    </div>
-  </aside>
-  <main class="main">
-    <div class="content">
-      <article role="main">
-        <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-        </label>
-        <h1>Source code for bauhaus.core</h1><div class="highlight"><pre>
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bauhaus.core</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">weakref</span>
 <span class="c1"># add try import</span>
 <span class="kn">import</span> <span class="nn">nnf</span>
@@ -143,24 +44,24 @@
 
 
 <div class="viewcode-block" id="Encoding"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.Encoding">[docs]</a><span class="k">class</span> <span class="nc">Encoding</span><span class="p">:</span>
-    <span class="sd">"""</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An Encoding object stores the propositions and constraints</span>
 <span class="sd">    you create on the fly with ``@proposition`` and ``@constraint``</span>
 <span class="sd">    decorators and functions. </span>
 
-<span class="sd">    When you're ready, you can compile your constraints into</span>
+<span class="sd">    When you&#39;re ready, you can compile your constraints into</span>
 <span class="sd">    a logical theory in conjunctive or negation normal form</span>
 <span class="sd">    to submit to a SAT solver.</span>
 
-<span class="sd">    If you're interested in debugging your theory or learning</span>
+<span class="sd">    If you&#39;re interested in debugging your theory or learning</span>
 <span class="sd">    about its origin story from each propositional object to</span>
 <span class="sd">    the final theory, call the ``introspect()`` function on your</span>
 <span class="sd">    encoding.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Encoding.__init__"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.Encoding.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates an Encoding object. This will store propositions</span>
 <span class="sd">        and constraints that you can compile into a theory.</span>
 
@@ -169,7 +70,7 @@
 <span class="sd">        propositions : defaultdict(weakref.WeakValueDictionary)</span>
 <span class="sd">            Stores decorated classes/functions pointing to</span>
 <span class="sd">            their associated instances.These are later used</span>
-<span class="sd">            to build the theory's constraints.</span>
+<span class="sd">            to build the theory&#39;s constraints.</span>
 
 <span class="sd">        constraints : set</span>
 <span class="sd">            A set of unique _ConstraintBuilder objects</span>
@@ -182,22 +83,22 @@
 <span class="sd">            Maps ConstraintBuilder objects to their compiled</span>
 <span class="sd">            constraints for debugging purposes.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">propositions</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">weakref</span><span class="o">.</span><span class="n">WeakValueDictionary</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug_constraints</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"Encoding: </span><span class="se">\n</span><span class="s2">"</span>
-                <span class="sa">f</span><span class="s2">"  propositions::</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">propositions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span>
-                <span class="sa">f</span><span class="s2">"  constraints::</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Encoding: </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  propositions::</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">propositions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  constraints::</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     
 <div class="viewcode-block" id="Encoding.clear_debug"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.Encoding.clear_debug">[docs]</a>    <span class="k">def</span> <span class="nf">clear_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Clear debug_constraints attribute in Encoding"""</span>
+        <span class="sd">&quot;&quot;&quot;Clear debug_constraints attribute in Encoding&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug_constraints</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Encoding.compile"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.Encoding.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CNF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'NNF'</span><span class="p">:</span>
-        <span class="sd">""" Convert constraints into a theory in</span>
+<div class="viewcode-block" id="Encoding.compile"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.Encoding.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CNF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;NNF&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Convert constraints into a theory in</span>
 <span class="sd">        conjunctive normal form, or if specified,</span>
 <span class="sd">        the simpler negation-normal form.</span>
 <span class="sd">        </span>
@@ -211,18 +112,18 @@
 <span class="sd">        theory : NNF</span>
 <span class="sd">            Conjunctive or Negation normal form of constraints.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Constraints in </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> are empty."</span>
-                             <span class="s2">" This can happen if no objects from"</span>
-                             <span class="s2">" decorated classes are instantiated,"</span>
-                             <span class="s2">" if no classes/methods are decorated"</span>
-                             <span class="s2">" with @constraint or no function"</span>
-                             <span class="s2">" calls of the form constraint.add_method"</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constraints in </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> are empty.&quot;</span>
+                             <span class="s2">&quot; This can happen if no objects from&quot;</span>
+                             <span class="s2">&quot; decorated classes are instantiated,&quot;</span>
+                             <span class="s2">&quot; if no classes/methods are decorated&quot;</span>
+                             <span class="s2">&quot; with @constraint or no function&quot;</span>
+                             <span class="s2">&quot; calls of the form constraint.add_method&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">propositions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Constraints in </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> are empty."</span>
-                             <span class="s2">" This can happen if no objects from"</span>
-                             <span class="s2">" decorated classes are instantiated."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constraints in </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> are empty.&quot;</span>
+                             <span class="s2">&quot; This can happen if no objects from&quot;</span>
+                             <span class="s2">&quot; decorated classes are instantiated.&quot;</span><span class="p">)</span>
 
         <span class="n">theory</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_debug</span><span class="p">()</span>
@@ -238,12 +139,12 @@
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="k">raise</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The </span><span class="si">{</span><span class="n">constraint</span><span class="si">}</span><span class="s2"> was not built and"</span>
-                            <span class="s2">"will not be added to the theory."</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">constraint</span><span class="si">}</span><span class="s2"> was not built and&quot;</span>
+                            <span class="s2">&quot;will not be added to the theory.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">And</span><span class="p">(</span><span class="n">theory</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Encoding.introspect"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.Encoding.introspect">[docs]</a>    <span class="k">def</span> <span class="nf">introspect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Observing the origin of a theory from each</span>
+        <span class="sd">&quot;&quot;&quot;Observing the origin of a theory from each</span>
 <span class="sd">        propositional object to the final constraint.</span>
 
 <span class="sd">        Details</span>
@@ -268,26 +169,26 @@
 <span class="sd">        object constraints, along with the final (succinct)</span>
 <span class="sd">        constraint.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_constraints</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Your theory has not been compiled yet,"</span>
-                          <span class="s2">"so we cannot provide a representation of it."</span> 
-                          <span class="s2">"Try running compile() on your encoding."</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Your theory has not been compiled yet,&quot;</span>
+                          <span class="s2">&quot;so we cannot provide a representation of it.&quot;</span> 
+                          <span class="s2">&quot;Try running compile() on your encoding.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_constraints</span>
 
         <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">clause</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">constraint</span><span class="si">}</span><span class="s2">: </span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">constraint</span><span class="si">}</span><span class="s2">: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">constraint</span><span class="o">.</span><span class="n">instance_constraints</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">instance</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">constraint</span><span class="o">.</span><span class="n">instance_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2"> =&gt;"</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2"> =&gt;&quot;</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Final </span><span class="si">{</span><span class="n">constraint</span><span class="o">.</span><span class="n">_constraint</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">clause</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div></div>
+                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final </span><span class="si">{</span><span class="n">constraint</span><span class="o">.</span><span class="n">_constraint</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">clause</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="proposition"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.proposition">[docs]</a><span class="k">def</span> <span class="nf">proposition</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">):</span>
-    <span class="sd">"""Create a propositional variable from the decorated</span>
+    <span class="sd">&quot;&quot;&quot;Create a propositional variable from the decorated</span>
 <span class="sd">    class or function.</span>
 <span class="sd">    </span>
 <span class="sd">    Adds propositional variable to Encoding.</span>
@@ -313,9 +214,9 @@
 <span class="sd">        @proposition(e)</span>
 <span class="sd">        class A(object):</span>
 <span class="sd">            pass</span>
-<span class="sd">        &gt;&gt; e.propositions = {'A': {id: object}}</span>
+<span class="sd">        &gt;&gt; e.propositions = {&#39;A&#39;: {id: object}}</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -329,7 +230,7 @@
 
 
 <div class="viewcode-block" id="constraint"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint">[docs]</a><span class="k">class</span> <span class="nc">constraint</span><span class="p">:</span>
-    <span class="sd">"""Creates constraints on the fly when</span>
+    <span class="sd">&quot;&quot;&quot;Creates constraints on the fly when</span>
 <span class="sd">    used as a decorator or as a function invocation.</span>
 
 <span class="sd">    The constraint class directs all function</span>
@@ -364,7 +265,7 @@
 <span class="sd">    Constraint creation by function call</span>
 <span class="sd">        ``constraint.add_at_least_one(e, *args)``</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="constraint._constraint_by_function"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint._constraint_by_function">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_constraint_by_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> 
                                <span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span>
@@ -374,7 +275,7 @@
                                <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         
-        <span class="sd">"""</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        `Private Method`:</span>
 <span class="sd">        Create ``_ConstraintBuilder`` objects from</span>
 <span class="sd">        constraint.add_method function calls</span>
@@ -388,19 +289,19 @@
 <span class="sd">        args : tuple</span>
 <span class="sd">            Tuple of user-given arguments.</span>
 <span class="sd">        k : int</span>
-<span class="sd">            Used for constraint "At most K".</span>
+<span class="sd">            Used for constraint &quot;At most K&quot;.</span>
 <span class="sd">        left : tuple</span>
-<span class="sd">            Used for constraint "implies all".</span>
+<span class="sd">            Used for constraint &quot;implies all&quot;.</span>
 <span class="sd">            User-given arguments for the left implication.</span>
 <span class="sd">        right : tuple</span>
-<span class="sd">            Used for constraint "implies all".</span>
+<span class="sd">            Used for constraint &quot;implies all&quot;.</span>
 <span class="sd">            User-given arguments for the right implication.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">constraint_type</span> <span class="ow">is</span> <span class="n">cbuilder</span><span class="o">.</span><span class="n">implies_all</span><span class="p">:</span>
             <span class="n">constraint</span> <span class="o">=</span> <span class="n">cbuilder</span><span class="p">(</span><span class="n">constraint_type</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">right</span><span class="p">)</span>
             <span class="n">encoding</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
@@ -411,12 +312,12 @@
             <span class="n">encoding</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Some or more of your provided"</span>
-                             <span class="sa">f</span><span class="s2">" arguments for the </span><span class="si">{</span><span class="n">constraint_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
-                             <span class="s2">" constraint were empty or invalid. Your"</span> 
-                             <span class="s2">" provided arguments were: </span><span class="se">\n</span><span class="s2">"</span>
-                            <span class="sa">f</span><span class="s2">" args: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">, "</span>
-                            <span class="sa">f</span><span class="s2">" left: </span><span class="si">{</span><span class="n">left</span><span class="si">}</span><span class="s2">, right: </span><span class="si">{</span><span class="n">right</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Some or more of your provided&quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot; arguments for the </span><span class="si">{</span><span class="n">constraint_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+                             <span class="s2">&quot; constraint were empty or invalid. Your&quot;</span> 
+                             <span class="s2">&quot; provided arguments were: </span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot; args: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot; left: </span><span class="si">{</span><span class="n">left</span><span class="si">}</span><span class="s2">, right: </span><span class="si">{</span><span class="n">right</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint._decorate"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint._decorate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_decorate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
@@ -425,7 +326,7 @@
                   <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                   <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                   <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">"""</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        `Private Method`:</span>
 <span class="sd">        Create _ConstraintBuilder objects from constraint.method</span>
 <span class="sd">        function calls</span>
@@ -438,19 +339,19 @@
 <span class="sd">        func : function</span>
 <span class="sd">            Decorated class or bound method. Default = None.</span>
 <span class="sd">        k : int</span>
-<span class="sd">            Used for constraint "At most K".</span>
+<span class="sd">            Used for constraint &quot;At most K&quot;.</span>
 <span class="sd">        left : tuple</span>
-<span class="sd">            Used for constraint "implies all".</span>
+<span class="sd">            Used for constraint &quot;implies all&quot;.</span>
 <span class="sd">            User-given arguments for the left implication.</span>
 <span class="sd">        right : tuple</span>
-<span class="sd">            Used for constraint "implies all".</span>
+<span class="sd">            Used for constraint &quot;implies all&quot;.</span>
 <span class="sd">            User-given arguments for the right implication.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Wrapper: Returns the function it decorated</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">constraint</span> <span class="o">=</span> <span class="n">cbuilder</span><span class="p">(</span><span class="n">constraint_type</span><span class="p">,</span>
                                   <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
@@ -467,7 +368,7 @@
         <span class="k">return</span> <span class="n">wrapper</span></div>
 
 <div class="viewcode-block" id="constraint.at_least_one"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.at_least_one">[docs]</a>    <span class="k">def</span> <span class="nf">at_least_one</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">):</span>
-        <span class="sd">"""At least one of the propositional variables are True.</span>
+        <span class="sd">&quot;&quot;&quot;At least one of the propositional variables are True.</span>
 <span class="sd">        </span>
 <span class="sd">        Constraint is added with the @constraint decorator.</span>
 
@@ -480,11 +381,11 @@
 <span class="sd">        -------</span>
 <span class="sd">        ``@constraint.at_least_one(encoding)``</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_decorate</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="n">cbuilder</span><span class="o">.</span><span class="n">at_least_one</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.at_most_one"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.at_most_one">[docs]</a>    <span class="k">def</span> <span class="nf">at_most_one</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">):</span>
-        <span class="sd">"""At most one of the propositional variables are True.</span>
+        <span class="sd">&quot;&quot;&quot;At most one of the propositional variables are True.</span>
 <span class="sd">        </span>
 <span class="sd">        Constraint is added with the @constraint decorator.</span>
 
@@ -498,11 +399,11 @@
 
 <span class="sd">        ``@constraint.at_most_one(encoding)``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_decorate</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="n">cbuilder</span><span class="o">.</span><span class="n">at_most_one</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.exactly_one"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.exactly_one">[docs]</a>    <span class="k">def</span> <span class="nf">exactly_one</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">):</span>
-        <span class="sd">""" Exactly one of the propositional variables are True.</span>
+        <span class="sd">&quot;&quot;&quot; Exactly one of the propositional variables are True.</span>
 
 <span class="sd">        Constraint is added with the @constraint decorator.</span>
 
@@ -516,11 +417,11 @@
 
 <span class="sd">        ``@constraint.exactly_one(encoding)``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_decorate</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="n">cbuilder</span><span class="o">.</span><span class="n">exactly_one</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.at_most_k"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.at_most_k">[docs]</a>    <span class="k">def</span> <span class="nf">at_most_k</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">"""At most K of the propositional variables are True</span>
+        <span class="sd">&quot;&quot;&quot;At most K of the propositional variables are True</span>
 
 <span class="sd">        Constraint is added with the @constraint decorator.</span>
 
@@ -538,21 +439,21 @@
 
 <span class="sd">        ``@constraint.at_most_k(encoding, k)``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is not an integer."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is not an integer.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is less than 1."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is less than 1.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> will"</span>
-                           <span class="s2">" result in an 'at most one' constraint,"</span>
-                           <span class="s2">" but we'll proceed anyway."</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> will&quot;</span>
+                           <span class="s2">&quot; result in an &#39;at most one&#39; constraint,&quot;</span>
+                           <span class="s2">&quot; but we&#39;ll proceed anyway.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_decorate</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span>
                                     <span class="n">cbuilder</span><span class="o">.</span><span class="n">at_most_k</span><span class="p">,</span>
                                     <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.implies_all"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.implies_all">[docs]</a>    <span class="k">def</span> <span class="nf">implies_all</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">"""Left proposition(s) implies right proposition(s)</span>
+        <span class="sd">&quot;&quot;&quot;Left proposition(s) implies right proposition(s)</span>
 
 <span class="sd">        Constraint is added with the @constraint decorator.</span>
 
@@ -594,7 +495,7 @@
 <span class="sd">                def foo(self):</span>
 <span class="sd">                    return self.data</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">left</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flatten</span><span class="p">([</span><span class="n">left</span><span class="p">]))</span> <span class="k">if</span> <span class="n">left</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">right</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flatten</span><span class="p">([</span><span class="n">right</span><span class="p">]))</span> <span class="k">if</span> <span class="n">right</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_decorate</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span>
@@ -606,7 +507,7 @@
     <span class="c1"># constraint._constraint_by_function.</span>
 
 <div class="viewcode-block" id="constraint.add_at_least_one"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.add_at_least_one">[docs]</a>    <span class="k">def</span> <span class="nf">add_at_least_one</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">"""At least one of the propositional variables are True</span>
+        <span class="sd">&quot;&quot;&quot;At least one of the propositional variables are True</span>
 
 <span class="sd">        Constraint is added directly with this function.</span>
 
@@ -619,13 +520,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        ``@constraint.add_at_least_one(encoding, [Obj, Class, Class.method])``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_constraint_by_function</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span>
                                                  <span class="n">cbuilder</span><span class="o">.</span><span class="n">at_least_one</span><span class="p">,</span>
                                                  <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.add_at_most_one"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.add_at_most_one">[docs]</a>    <span class="k">def</span> <span class="nf">add_at_most_one</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">"""At most one of the propositional variables are True</span>
+        <span class="sd">&quot;&quot;&quot;At most one of the propositional variables are True</span>
 
 <span class="sd">        Constraint is added directly with this function.</span>
 
@@ -638,13 +539,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        ``@constraint.add_at_most_one(encoding, [Obj, Class, Class.method])``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_constraint_by_function</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span>
                                                  <span class="n">cbuilder</span><span class="o">.</span><span class="n">at_most_one</span><span class="p">,</span>
                                                  <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.add_exactly_one"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.add_exactly_one">[docs]</a>    <span class="k">def</span> <span class="nf">add_exactly_one</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">""" Exactly one of the propositional variables are True</span>
+        <span class="sd">&quot;&quot;&quot; Exactly one of the propositional variables are True</span>
 
 <span class="sd">        Constraint is added directly with this function.</span>
 
@@ -657,13 +558,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        ``@constraint.add_exactly_one(encoding, [Obj, Class, Class.method])``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_constraint_by_function</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span>
                                                  <span class="n">cbuilder</span><span class="o">.</span><span class="n">exactly_one</span><span class="p">,</span>
                                                  <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.add_at_most_k"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.add_at_most_k">[docs]</a>    <span class="k">def</span> <span class="nf">add_at_most_k</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">"""At most K of the propositional variables are True</span>
+        <span class="sd">&quot;&quot;&quot;At most K of the propositional variables are True</span>
 
 <span class="sd">        Constraint is added directly with this function.</span>
 
@@ -680,21 +581,21 @@
 <span class="sd">        -------</span>
 <span class="sd">        ``@constraint.add_at_most_k(encoding, k, [Obj, Class, Class.method])``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is not an integer."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is not an integer.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is less than 1."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is less than 1.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> will"</span>
-                           <span class="s2">" result in an 'at most one' constraint,"</span>
-                           <span class="s2">" but we'll proceed anyway."</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: The provided k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> will&quot;</span>
+                           <span class="s2">&quot; result in an &#39;at most one&#39; constraint,&quot;</span>
+                           <span class="s2">&quot; but we&#39;ll proceed anyway.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_constraint_by_function</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span>
                                                  <span class="n">cbuilder</span><span class="o">.</span><span class="n">at_most_k</span><span class="p">,</span>
                                                  <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="constraint.add_implies_all"><a class="viewcode-back" href="../../bauhaus.html#bauhaus.constraint.add_implies_all">[docs]</a>    <span class="k">def</span> <span class="nf">add_implies_all</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n">Encoding</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
-        <span class="sd">"""Left proposition(s) implies right proposition(s)</span>
+        <span class="sd">&quot;&quot;&quot;Left proposition(s) implies right proposition(s)</span>
 
 <span class="sd">        Constraint is added directly by calling this function.</span>
 
@@ -711,45 +612,85 @@
 
 <span class="sd">        Example</span>
 <span class="sd">        -------</span>
-<span class="sd">        ``constraint.add_implies_all(encoding, left=[Obj, 'hello'], right=['goodbye'])``</span>
+<span class="sd">        ``constraint.add_implies_all(encoding, left=[Obj, &#39;hello&#39;], right=[&#39;goodbye&#39;])``</span>
 <span class="sd">        </span>
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">left</span> <span class="ow">and</span> <span class="n">right</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"You are trying to create an implies all"</span>
-                              <span class="s2">" constraint without providing either the"</span>
-                              <span class="s2">" left or right sides of the implication.</span><span class="se">\n</span><span class="s2">"</span>
-                             <span class="sa">f</span><span class="s2">" Your left: </span><span class="si">{</span><span class="n">left</span><span class="si">}</span><span class="s2"> and right: </span><span class="si">{</span><span class="n">right</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You are trying to create an implies all&quot;</span>
+                              <span class="s2">&quot; constraint without providing either the&quot;</span>
+                              <span class="s2">&quot; left or right sides of the implication.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot; Your left: </span><span class="si">{</span><span class="n">left</span><span class="si">}</span><span class="s2"> and right: </span><span class="si">{</span><span class="n">right</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">left</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flatten</span><span class="p">([</span><span class="n">left</span><span class="p">]))</span>
         <span class="n">right</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flatten</span><span class="p">([</span><span class="n">right</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">_constraint_by_function</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span>
                                                  <span class="n">cbuilder</span><span class="o">.</span><span class="n">implies_all</span><span class="p">,</span>
                                                  <span class="n">left</span><span class="o">=</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">right</span><span class="p">)</span></div></div>
 </pre></div>
-      </article>
-      <footer>
-        
-        <div class="related-pages">
-          
-          
-        </div>
 
-        <div class="related-information">
-              Copyright &#169; 2020, Karishma Daga, Christian Muise
-            |
-            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
-              and
-              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-              <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+          </div>
+          
         </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer no-toc">
-      
-      
-      
-    </aside>
-  </main>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">bauhaus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../bauhaus.html">Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../architecture.html">Architecture Design</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
 </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Karishma Daga, Christian Muise.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
   </body>
 </html>
