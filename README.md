@@ -93,7 +93,7 @@ And view the origin of each constraint, from the propositional object to the fin
     ...
 ```
 
-# Contribute
+## Contribute
 Head over to our [code of conduct](CODE_OF_CONDUCT.md) and get a feel for the
 library by reading our [architecture design](https://bauhaus.readthedocs.io/en/latest/architecture.html) and
 and [documentation](https://bauhaus.readthedocs.io/en/latest/index.html).
@@ -101,12 +101,12 @@ and [documentation](https://bauhaus.readthedocs.io/en/latest/index.html).
 - Source Code: https://github.com/QuMuLab/bauhaus
 - Join us! http://mulab.ai/
 
-# Support
+## Support
 If you are having issues, please let us know.
 Reach out to us at karishma.daga@queensu.ca or by creating a GitHub issue.
 
-# License
+## License
 The project is licensed under the MIT license for the Queen's Mu Lab
 
-## Citing This Work
+### Citing This Work
 `bauhaus` was created by Karishma Daga under mentorship of Christian Muise at Queen's University, Kingston.
