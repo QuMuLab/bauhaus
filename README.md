@@ -95,7 +95,7 @@ And view the origin of each constraint, from the propositional object to the fin
 
 ## Contribute
 Head over to our [code of conduct](CODE_OF_CONDUCT.md) and get a feel for the
-library by reading our [architecture design](https://bauhaus.readthedocs.io/en/latest/architecture.html) and
+library by reading our [architecture design](https://bauhaus.readthedocs.io/en/latest/architecture.html)
 and [documentation](https://bauhaus.readthedocs.io/en/latest/index.html).
 - Issue Tracker: https://github.com/QuMuLab/bauhaus/issues
 - Source Code: https://github.com/QuMuLab/bauhaus

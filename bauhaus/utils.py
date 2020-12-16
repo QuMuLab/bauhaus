@@ -13,6 +13,11 @@ def ismethod(func) -> bool:
     Note that this has to work as the method is defined but before
     the class is defined. At this stage methods look like functions.
 
+    Returns
+    -------
+    ismethod : bool
+        True if it is a method belonging to a class and False if not.
+
     Reference
     ---------
     https://github.com/mrocklin/multipledispatch/blob/master/multipledispatch/core.py#L74
@@ -52,7 +57,8 @@ def classname(func) -> str:
 
     Arguments
     ---------
-    func: Bounded method of a class.
+    func : function
+        Bounded method of a class.
 
     Returns
     -------
