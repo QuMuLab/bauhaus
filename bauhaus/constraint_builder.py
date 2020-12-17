@@ -176,7 +176,6 @@ class _ConstraintBuilder:
         List of nnf.Var inputs
 
         """
-        inputs = []
 
         # Constraint from function
         if not self._func:
