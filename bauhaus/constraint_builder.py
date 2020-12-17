@@ -29,7 +29,8 @@ class _ConstraintBuilder:
                  func=None,
                  k=None,
                  left=None,
-                 right=None):
+                 right=None,
+                 groupby=None):
         """
         Attributes
         ----------
@@ -48,6 +49,8 @@ class _ConstraintBuilder:
         right : tuple
             Used for constraint "implies all". Default = None.
             User-given arguments for the right side.
+        groupby : str
+            Used to partition instances of a class for the application of the constraint
         instance_constraints : defaultdict(list)
             Stores per-instance constraints to be viewed by the
             user for debugging purposes.
@@ -59,6 +62,7 @@ class _ConstraintBuilder:
         self._k = k
         self._left = left
         self._right = right
+        self._groupby = groupby
         self.instance_constraints = defaultdict(list)
 
     def __hash__(self):
@@ -67,7 +71,8 @@ class _ConstraintBuilder:
                      self._func,
                      self._k,
                      self._left,
-                     self._right))
+                     self._right,
+                     self._groupby))
 
     def __eq__(self, other) -> bool:
         if isinstance(other, _ConstraintBuilder):
@@ -81,6 +86,11 @@ class _ConstraintBuilder:
         left = f" left implication = {self._left}"
         right = f" right implication = {self._right}"
 
+        if self._groupby:
+            groupby = f" group by = {self._groupby}"
+        else:
+            groupby = ""
+
         if self._func:
             function = f"function = {self._func.__qualname__}"
             if self._k:
@@ -90,10 +100,10 @@ class _ConstraintBuilder:
             return (f"{constraint_type}  {function}")
         else:
             if self._k:
-                return (f"{constraint_type}  {k}  {variables}")
+                return (f"{constraint_type}  {groupby}  {k}  {variables}")
             if self._constraint is _ConstraintBuilder.implies_all:
-                return (f"{constraint_type}  {left}  {right}")
-            return (f"{constraint_type}  {variables}")
+                return (f"{constraint_type}  {groupby}  {left}  {right}")
+            return (f"{constraint_type}  {groupby}  {variables}")
 
     def build(self, propositions) -> 'NNF':
         """Builds an SAT constraint from a ConstraintBuilder instance.
@@ -128,32 +138,55 @@ class _ConstraintBuilder:
             A built NNF constraint
 
         """
+        if self._groupby:
+            assert len(propositions) == 1, "Should only be using groupby on a single class"
+
+        def partition(inputs):
+            if not self._groupby:
+                return [inputs]
+            partitions = {}
+            for var in inputs:
+                val = getattr(var.name, self._groupby)
+                if val not in partitions:
+                    partitions[val] = []
+                partitions[val].append(var)
+            return partitions.values()
+
         if self._constraint is _ConstraintBuilder.implies_all:
             left_vars = unpack(self._left, propositions) if self._left else []
             right_vars = unpack(self._right, propositions) if self._right else []
             if self._func:
                 # retrieve dictionary of inputs
-                inputs = self.get_implication_inputs(propositions) 
+                inputs = self.get_implication_inputs(propositions)
                 if not any(inputs.values()) and not right_vars:
                     raise ValueError(f"The '{self}' cannot be built"
                                      " as it is decorating a class and"
                                      " the right implication variables are not"
                                      " provided. If it is decorating a method,"
-                                     " ensure that the method's return is" 
+                                     " ensure that the method's return is"
                                      " valid for bauhaus or for the nnf library."
                                      " Check your decorator signature and set"
                                      " the 'right' keyword argument to such a value.")
             else:
                 # inputs should be empty if not created from a decorator
                 inputs = []
-            return self._constraint(self, inputs, left_vars, right_vars)
-        
+
+            constraints = []
+            for input_set in partition(inputs):
+                constraints.append(self._constraint(self, input_set, left_vars, right_vars))
+            return And(constraints)
+
         inputs = self.get_inputs(propositions)
         if not inputs:
             raise ValueError(inputs)
-        if self._constraint is _ConstraintBuilder.at_most_k:
-            return self._constraint(self, inputs, k=self._k)
-        return self._constraint(self, inputs)
+
+        constraints = []
+        for input_set in partition(inputs):
+            if self._constraint is _ConstraintBuilder.at_most_k:
+                constraints.append(self._constraint(self, input_set, k=self._k))
+            else:
+                constraints.append(self._constraint(self, input_set))
+        return And(constraints)
 
     def get_inputs(self, propositions) -> list:
         """Returns a list of inputs to be used for building the constraint.
@@ -161,7 +194,7 @@ class _ConstraintBuilder:
         If the ConstraintBuilder was created for a decorated class or method,
         we check if the decorated class name (self._func) is a key in the
         Encoding.propositions and return its instances.
-        
+
         If the ConstraintBuilder does not have the '_func' attribute,
         then it was invoked as a function call.
         We gather and validate its arguments (self._vars).
@@ -190,12 +223,12 @@ class _ConstraintBuilder:
     def get_implication_inputs(self, propositions) -> dict:
         """ Returns a dictionary of values for an implication
         created with a decorator over a class or method.
-            
+
         Arguments
         ---------
         self : _ConstraintBuilder object
         propositions : defaultdict(WeakValueDictionary)
-        
+
         Returns
         -------
         inputs : dict
@@ -222,7 +255,7 @@ class _ConstraintBuilder:
                     inputs[obj._var] = res
 
         return inputs
-    
+
     def add_to_instance_constraints(self, instance, constraint):
         """Maps instances to their constraints for introspection
         purposes.
@@ -241,7 +274,7 @@ class _ConstraintBuilder:
             An instance object from an annotated class.
         constraint : list[nnf.Var]
             Per-instance constraint.
-        
+
         Returns
         -------
         None
@@ -380,7 +413,7 @@ class _ConstraintBuilder:
 
         """
         clauses = []
-        
+
         # constraint created by function
         if not inputs:
             if left and right:
@@ -388,7 +421,7 @@ class _ConstraintBuilder:
                 clauses = list(map(lambda clause: Or(clause),
                                product(left_vars, right)))
                 return And(clauses)
-        
+
         assert isinstance(inputs, dict)
 
         # constraint from decorator

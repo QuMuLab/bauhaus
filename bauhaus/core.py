@@ -13,7 +13,7 @@ class Encoding:
     """
     An Encoding object stores the propositions and constraints
     you create on the fly with ``@proposition`` and ``@constraint``
-    decorators and functions. 
+    decorators and functions.
 
     When you're ready, you can compile your constraints into
     a logical theory in conjunctive or negation normal form
@@ -58,7 +58,7 @@ class Encoding:
         return (f"Encoding: \n"
                 f"  propositions::{self.propositions.keys()} \n"
                 f"  constraints::{self.constraints}")
-    
+
     def clear_debug(self):
         """Clear debug_constraints attribute in Encoding"""
         self.debug_constraints = dict()
@@ -67,12 +67,12 @@ class Encoding:
         """ Convert constraints into a theory in
         conjunctive normal form, or if specified,
         the simpler negation-normal form.
-        
+
         Arguments
         ---------
         CNF : bool
             Default is True. Converts a theory to CNF.
-        
+
         Returns
         -------
         theory : NNF
@@ -122,14 +122,14 @@ class Encoding:
             key -> ConstraintBuilder object
 
             value -> Clause built in Encoding.compile()
-        
+
         Each ConstraintBuilder object has the attribute
         instance_constraints : defaultdict with,
 
             key -> Object (from annotated class or method)
 
             value -> List of constraint clauses created per object
-        
+
         This allows you to view the constraints created
         for annotated classes or methods and the per-instance
         object constraints, along with the final (succinct)
@@ -138,7 +138,7 @@ class Encoding:
         """
         if not self.debug_constraints:
             warnings.warn("Your theory has not been compiled yet,"
-                          "so we cannot provide a representation of it." 
+                          "so we cannot provide a representation of it."
                           "Try running compile() on your encoding.")
             return self.debug_constraints
 
@@ -156,7 +156,7 @@ class Encoding:
 def proposition(encoding: Encoding):
     """Create a propositional variable from the decorated
     class or function.
-    
+
     Adds propositional variable to Encoding.
 
     Return original object instance.
@@ -165,7 +165,7 @@ def proposition(encoding: Encoding):
     ---------
     encoding : Encoding
         Given encoding object.
-    
+
     Returns
     -------
     The decorated function : function
@@ -201,8 +201,8 @@ class constraint:
 
     The constraint class directs all function
     invokations of constraint methods to the
-    classmethod ``_constraint_by_function``. 
-    
+    classmethod ``_constraint_by_function``.
+
     ``@constraint.method`` calls are directed
     to classmethod ``_decorate``.
 
@@ -233,14 +233,14 @@ class constraint:
 
     """
     @classmethod
-    def _constraint_by_function(cls, 
+    def _constraint_by_function(cls,
                                encoding: Encoding,
                                constraint_type,
                                args=None,
                                k=None,
                                left=None,
                                right=None):
-        
+
         """
         `Private Method`:
         Create ``_ConstraintBuilder`` objects from
@@ -266,7 +266,7 @@ class constraint:
         Returns
         -------
         None
-        
+
         """
         if constraint_type is cbuilder.implies_all:
             constraint = cbuilder(constraint_type, left=left, right=right)
@@ -280,7 +280,7 @@ class constraint:
         else:
             raise ValueError("Some or more of your provided"
                              f" arguments for the {constraint_type.__name__}"
-                             " constraint were empty or invalid. Your" 
+                             " constraint were empty or invalid. Your"
                              " provided arguments were: \n"
                             f" args: {args}, "
                             f" left: {left}, right: {right}")
@@ -291,7 +291,8 @@ class constraint:
                   constraint_type,
                   k=None,
                   left=None,
-                  right=None):
+                  right=None,
+                  groupby=None):
         """
         `Private Method`:
         Create _ConstraintBuilder objects from constraint.method
@@ -312,6 +313,8 @@ class constraint:
         right : tuple
             Used for constraint "implies all".
             User-given arguments for the right implication.
+        groupby : str
+            Used to group instances of a class for the constraints.
 
         Returns
         -------
@@ -323,7 +326,8 @@ class constraint:
                                   func=func,
                                   k=k,
                                   left=left,
-                                  right=right)
+                                  right=right,
+                                  groupby=groupby)
             encoding.constraints.add(constraint)
 
             @wraps(func)
@@ -333,9 +337,9 @@ class constraint:
             return wrapped
         return wrapper
 
-    def at_least_one(encoding: Encoding):
+    def at_least_one(encoding: Encoding, **kwargs):
         """At least one of the propositional variables are True.
-        
+
         Constraint is added with the @constraint decorator.
 
         Arguments
@@ -348,11 +352,11 @@ class constraint:
         ``@constraint.at_least_one(encoding)``
 
         """
-        return constraint._decorate(encoding, cbuilder.at_least_one)
+        return constraint._decorate(encoding, cbuilder.at_least_one, **kwargs)
 
-    def at_most_one(encoding: Encoding):
+    def at_most_one(encoding: Encoding, **kwargs):
         """At most one of the propositional variables are True.
-        
+
         Constraint is added with the @constraint decorator.
 
         Arguments
@@ -364,11 +368,11 @@ class constraint:
         -------
 
         ``@constraint.at_most_one(encoding)``
-        
-        """
-        return constraint._decorate(encoding, cbuilder.at_most_one)
 
-    def exactly_one(encoding: Encoding):
+        """
+        return constraint._decorate(encoding, cbuilder.at_most_one, **kwargs)
+
+    def exactly_one(encoding: Encoding, **kwargs):
         """ Exactly one of the propositional variables are True.
 
         Constraint is added with the @constraint decorator.
@@ -382,11 +386,11 @@ class constraint:
         -------
 
         ``@constraint.exactly_one(encoding)``
-        
-        """
-        return constraint._decorate(encoding, cbuilder.exactly_one)
 
-    def at_most_k(encoding: Encoding, k: int):
+        """
+        return constraint._decorate(encoding, cbuilder.exactly_one, **kwargs)
+
+    def at_most_k(encoding: Encoding, k: int, **kwargs):
         """At most K of the propositional variables are True
 
         Constraint is added with the @constraint decorator.
@@ -404,7 +408,7 @@ class constraint:
         -------
 
         ``@constraint.at_most_k(encoding, k)``
-        
+
         """
         if not isinstance(k, int):
             raise TypeError(f"The provided k={k} is not an integer.")
@@ -416,9 +420,9 @@ class constraint:
                            " but we'll proceed anyway.")
         return constraint._decorate(encoding,
                                     cbuilder.at_most_k,
-                                    k=k)
+                                    k=k, **kwargs)
 
-    def implies_all(encoding: Encoding, left=None, right=None):
+    def implies_all(encoding: Encoding, left=None, right=None, **kwargs):
         """Left proposition(s) implies right proposition(s)
 
         Constraint is added with the @constraint decorator.
@@ -439,12 +443,12 @@ class constraint:
         Above a class, each instance will be on the left
         side of an implication. You need to define a right
         side of the implication if you are decorating a class.::
-        
+
             @constraint.implies_all(encoding, right=[Obj])
             @proposition(e)
             class A(Object):
                 pass
-        
+
         Above a method in a class, each instance will be on
         the left side of an implication. The return value(s)
         will be the right side of the implication. You can
@@ -460,14 +464,14 @@ class constraint:
                 @constraint.implies_all(encoding)
                 def foo(self):
                     return self.data
-        
+
         """
         left = tuple(flatten([left])) if left else None
         right = tuple(flatten([right])) if right else None
         return constraint._decorate(encoding,
                                     cbuilder.implies_all,
-                                    left=left, right=right)
-    
+                                    left=left, right=right, **kwargs)
+
     # Creating constraints from function invokations
     # Constraint creation for these are directed to
     # constraint._constraint_by_function.
@@ -485,7 +489,7 @@ class constraint:
         Example
         -------
         ``@constraint.add_at_least_one(encoding, [Obj, Class, Class.method])``
-        
+
         """
         return constraint._constraint_by_function(encoding,
                                                  cbuilder.at_least_one,
@@ -504,7 +508,7 @@ class constraint:
         Example
         -------
         ``@constraint.add_at_most_one(encoding, [Obj, Class, Class.method])``
-        
+
         """
         return constraint._constraint_by_function(encoding,
                                                  cbuilder.at_most_one,
@@ -523,7 +527,7 @@ class constraint:
         Example
         -------
         ``@constraint.add_exactly_one(encoding, [Obj, Class, Class.method])``
-        
+
         """
         return constraint._constraint_by_function(encoding,
                                                  cbuilder.exactly_one,
@@ -546,7 +550,7 @@ class constraint:
         Example
         -------
         ``@constraint.add_at_most_k(encoding, k, [Obj, Class, Class.method])``
-        
+
         """
         if not isinstance(k, int):
             raise TypeError(f"The provided k={k} is not an integer.")
@@ -579,7 +583,7 @@ class constraint:
         Example
         -------
         ``constraint.add_implies_all(encoding, left=[Obj, 'hello'], right=['goodbye'])``
-        
+
         """
         if not (left and right):
             raise ValueError(f"You are trying to create an implies all"
