@@ -313,7 +313,7 @@ class constraint:
         right : tuple
             Used for constraint "implies all".
             User-given arguments for the right implication.
-        groupby : str
+        groupby : str or func
             Used to group instances of a class for the constraints.
 
         Returns

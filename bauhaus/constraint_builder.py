@@ -49,7 +49,7 @@ class _ConstraintBuilder:
         right : tuple
             Used for constraint "implies all". Default = None.
             User-given arguments for the right side.
-        groupby : str
+        groupby : str or func
             Used to partition instances of a class for the application of the constraint
         instance_constraints : defaultdict(list)
             Stores per-instance constraints to be viewed by the
@@ -144,13 +144,16 @@ class _ConstraintBuilder:
         def partition(inputs):
             if not self._groupby:
                 return [inputs]
-            partitions = {}
-            for var in inputs:
-                val = getattr(var.name, self._groupby)
-                if val not in partitions:
-                    partitions[val] = []
-                partitions[val].append(var)
-            return partitions.values()
+            elif isinstance(self._groupby, str):
+                partitions = {}
+                for var in inputs:
+                    val = getattr(var.name, self._groupby)
+                    if val not in partitions:
+                        partitions[val] = []
+                    partitions[val].append(var)
+                return partitions.values()
+            else:
+                return self._groupby(inputs)
 
         if self._constraint is _ConstraintBuilder.implies_all:
             left_vars = unpack(self._left, propositions) if self._left else []
