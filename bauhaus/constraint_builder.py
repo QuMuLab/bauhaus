@@ -186,7 +186,7 @@ class _ConstraintBuilder:
         constraints = []
         for input_set in partition(inputs):
             if self._constraint is _ConstraintBuilder.at_most_k:
-                constraints.append(self._constraint(self, input_set, k=self._k))
+                constraints.append(self._constraint(self, input_set, self._k))
             else:
                 constraints.append(self._constraint(self, input_set))
         return And(constraints)
