@@ -6,7 +6,7 @@ from functools import wraps
 from collections import defaultdict
 import warnings
 from .constraint_builder import _ConstraintBuilder as cbuilder
-from .utils import flatten
+from .utils import flatten, ismethod
 
 
 class Encoding:
@@ -322,6 +322,9 @@ class constraint:
 
         """
         def wrapper(func):
+            assert not(groupby and ismethod(func)), \
+                "Should only be using groupby on a class and not a method"
+
             constraint = cbuilder(constraint_type,
                                   func=func,
                                   k=k,

@@ -138,9 +138,6 @@ class _ConstraintBuilder:
             A built NNF constraint
 
         """
-        if self._groupby:
-            assert len(propositions) == 1, "Should only be using groupby on a single class"
-
         def partition(inputs):
             if not self._groupby:
                 return [inputs]
