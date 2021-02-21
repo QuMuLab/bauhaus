@@ -5,8 +5,8 @@ from nnf import Var, And, NNF
 from functools import wraps
 from collections import defaultdict
 import warnings
-from .constraint_builder import _ConstraintBuilder as cbuilder
-from .utils import flatten, ismethod
+from constraint_builder import _ConstraintBuilder as cbuilder
+from utils import flatten, ismethod, classname
 
 
 class Encoding:
@@ -59,7 +59,7 @@ class Encoding:
                 f"  propositions::{self.propositions.keys()} \n"
                 f"  constraints::{self.constraints}")
 
-    def clear_debug(self):
+    def clear_debug_constraints(self):
         """Clear debug_constraints attribute in Encoding"""
         self.debug_constraints = dict()
 
@@ -92,7 +92,7 @@ class Encoding:
                              " decorated classes are instantiated.")
 
         theory = []
-        self.clear_debug()
+        self.clear_debug_constraints()
 
         for constraint in self.constraints:
             clause = constraint.build(self.propositions)
@@ -232,6 +232,43 @@ class constraint:
         ``constraint.add_at_least_one(e, *args)``
 
     """
+    def _is_valid_grouby(decorated_class, parameter):
+        """ Validates if a groupby can be performed prior to
+        storing constraint information.
+
+        We cannot check if the given parameter is an attribute at the
+        stage when classes look like functions, so this check
+        is completed when compiling an Encoding object in
+        bauhaus/constraint_builder.py
+
+        Arguments
+        ---------
+        decorated_class : function
+            Decorated class.
+        parameter : function or string
+            Can be either a function or attribute to
+            partition class objects.
+
+        Returns
+        -------
+        True if a valid groupby, and raises an Exception if not.
+
+        """
+        classname = classname(decorated_class)
+        if ismethod(decorated_class):
+            raise Exception("You can only use groupby on a class and not a method"
+                           f", as you have tried on {decorated_class.__qualname__}."
+                           f" Try using groupby on the {classname}"
+                           " class instead.")
+        if not (isinstance(parameter, str) or callable(parameter)):
+            value_type = type(parameter).__name__
+            raise ValueError(f"The provided groupby value, {parameter},"
+                            f" is of type {value_type}. To use groupby,"
+                            f" a function or object attribute (string) must be provided"
+                            f" to partition the {classname} objects.")
+        return True
+
+
     @classmethod
     def _constraint_by_function(cls,
                                encoding: Encoding,
@@ -322,8 +359,9 @@ class constraint:
 
         """
         def wrapper(func):
-            assert not(groupby and ismethod(func)), \
-                "Should only be using groupby on a class and not a method"
+
+            if groupby:
+                assert cls._is_valid_grouby(func, groupby)
 
             constraint = cbuilder(constraint_type,
                                   func=func,

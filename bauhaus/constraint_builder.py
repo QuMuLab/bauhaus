@@ -1,7 +1,7 @@
 from nnf import NNF, And, Or
 from itertools import product, combinations
-from .utils import ismethod, classname, flatten
-from .utils import unpack_variables as unpack
+from utils import ismethod, classname, flatten
+from utils import unpack_variables as unpack
 import warnings
 from collections import defaultdict
 
@@ -86,13 +86,17 @@ class _ConstraintBuilder:
         left = f" left implication = {self._left}"
         right = f" right implication = {self._right}"
 
-        if self._groupby:
-            groupby = f" group by = {self._groupby}"
-        else:
+        if not self._groupby:
             groupby = ""
+        else:
+            if callable(self._groupby):
+                groupby = f"\tgrouped by = {self._groupby.__qualname__}"
+            else:
+                groupby = f"\tgrouped by = {self._groupby}"
 
         if self._func:
-            function = f"function = {self._func.__qualname__}"
+            function = f"function = {self._func.__qualname__}" + groupby
+
             if self._k:
                 return (f"{constraint_type}  {function}  {k}")
             if self._constraint is _ConstraintBuilder.implies_all:
@@ -105,21 +109,42 @@ class _ConstraintBuilder:
                 return (f"{constraint_type}  {groupby}  {left}  {right}")
             return (f"{constraint_type}  {groupby}  {variables}")
 
+    def partition(self, inputs):
+        """ Helper function to partition propositional variables by an
+            attribute or function.
+        """
+        if not self._groupby:
+            return [inputs]
+        elif isinstance(self._groupby, str):
+            partitions = {}
+            for var in inputs:
+                val = getattr(var.name, self._groupby)
+                if val not in partitions:
+                    partitions[val] = []
+                partitions[val].append(var)
+            return partitions.values()
+        else:
+            return self._groupby(inputs)
+
     def build(self, propositions) -> 'NNF':
-        """Builds an SAT constraint from a ConstraintBuilder instance.
+        """Builds a SAT constraint from a ConstraintBuilder instance.
+
+        To handle a user using the groupby feature, the partition helper
+        function is used to partition a constraint's inputs. 
+        We then apply the SAT constraint over each partitioned set of inputs.
 
         Note
         ----
         There is unique handling for the implies all constraint
         where a user could have the following cases,
-        1) implies_all used as a class or bound method:
+        1) implies_all used on a class or bound method:
             For this case, we can have inputs (list of dictionaries)
             and left or right attributes, which must be validated
             by utils/unpack_variables. We set left and right as
             empty lists if they're None to merging the propositional
             variables simple in _ConstraintBuilder.implies_all
 
-        2) implies_all used as a function invocation:
+        2) implies_all used for direct constraint addition:
             If called as a function, the user must provide both
             a left and right side of the implication. This is
             ensured in bauhaus/core.constraint.constraint_by_function.
@@ -138,24 +163,12 @@ class _ConstraintBuilder:
             A built NNF constraint
 
         """
-        def partition(inputs):
-            if not self._groupby:
-                return [inputs]
-            elif isinstance(self._groupby, str):
-                partitions = {}
-                for var in inputs:
-                    val = getattr(var.name, self._groupby)
-                    if val not in partitions:
-                        partitions[val] = []
-                    partitions[val].append(var)
-                return partitions.values()
-            else:
-                return self._groupby(inputs)
-
         if self._constraint is _ConstraintBuilder.implies_all:
             left_vars = unpack(self._left, propositions) if self._left else []
             right_vars = unpack(self._right, propositions) if self._right else []
-            if self._func:
+            if not self._func:
+                inputs = []
+            else:
                 # retrieve dictionary of inputs
                 inputs = self.get_implication_inputs(propositions)
                 if not any(inputs.values()) and not right_vars:
@@ -167,13 +180,13 @@ class _ConstraintBuilder:
                                      " valid for bauhaus or for the nnf library."
                                      " Check your decorator signature and set"
                                      " the 'right' keyword argument to such a value.")
-            else:
-                # inputs should be empty if not created from a decorator
-                inputs = []
 
             constraints = []
-            for input_set in partition(inputs):
-                constraints.append(self._constraint(self, input_set, left_vars, right_vars))
+            for input_set in self.partition(inputs):
+                constraints.append(self._constraint(self,
+                                                    input_set,
+                                                    left_vars,
+                                                    right_vars))
             return And(constraints)
 
         inputs = self.get_inputs(propositions)
@@ -181,9 +194,11 @@ class _ConstraintBuilder:
             raise ValueError(inputs)
 
         constraints = []
-        for input_set in partition(inputs):
+        for input_set in self.partition(inputs):
             if self._constraint is _ConstraintBuilder.at_most_k:
-                constraints.append(self._constraint(self, input_set, self._k))
+                constraints.append(self._constraint(self,
+                                                    input_set,
+                                                    k=self._k))
             else:
                 constraints.append(self._constraint(self, input_set))
         return And(constraints)
@@ -206,7 +221,7 @@ class _ConstraintBuilder:
 
         Returns
         -------
-        List of nnf.Var inputs
+        List of inputs of type 'Var' from nnf library
 
         """
 
