@@ -59,6 +59,14 @@ class Encoding:
                 f"  propositions::{self.propositions.keys()} \n"
                 f"  constraints::{self.constraints}")
     
+    def purge_propositions(self):
+        """ Purges the propositional variables of an Encoding object """
+        self.propositions = defaultdict(weakref.WeakValueDictionary)
+    
+    def clear_constraints(self):
+        """ Clears the constraints of an Encoding object """
+        self.constraints = set()
+    
     def clear_debug(self):
         """Clear debug_constraints attribute in Encoding"""
         self.debug_constraints = dict()
