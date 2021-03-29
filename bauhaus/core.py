@@ -5,8 +5,8 @@ from nnf import Var, And, NNF
 from functools import wraps
 from collections import defaultdict
 import warnings
-from constraint_builder import _ConstraintBuilder as cbuilder
-from utils import flatten, ismethod, classname
+from .constraint_builder import _ConstraintBuilder as cbuilder
+from .utils import flatten, ismethod, classname
 
 
 class Encoding:
