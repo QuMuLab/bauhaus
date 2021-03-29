@@ -1,7 +1,7 @@
 from nnf import NNF, And, Or
 from itertools import product, combinations
-from utils import ismethod, classname, flatten
-from utils import unpack_variables as unpack
+from .utils import ismethod, classname, flatten
+from .utils import unpack_variables as unpack
 import warnings
 from collections import defaultdict
 
