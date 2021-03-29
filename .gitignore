@@ -1,0 +1,8 @@
+
+bauhaus.egg-info/
+
+dist/
+
+build/
+
+bauhaus/__pycache__/

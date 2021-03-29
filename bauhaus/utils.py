@@ -5,6 +5,26 @@ from nnf import Var
 """Utilities for bauhaus library."""
 
 
+def compute_pairs(func) -> list:
+    """Wraps a function that compares pairs of objects to return those matching.
+
+    Useful for identifying the pairs of Var objects that match a condition.
+
+    Returns
+    -------
+    compute_pairs : func
+        Function that accepts a list of Var objects.
+    """
+    def find_pairs(vars):
+        pairs = []
+        for v1 in vars:
+            for v2 in vars:
+                if func(v1.name, v2.name):
+                    pairs.append([v1,v2])
+        return pairs
+    return find_pairs
+
+
 def ismethod(func) -> bool:
     """Checks if a function is a method.
 
@@ -124,7 +144,7 @@ def unpack_variables(T, propositions) -> list:
                 # convert to nnf.Var
                 inputs.add(Var(var))
             except Exception as e:
-                raise ValueError(f"Provided input {var} is not of an annotated class or method," 
+                raise ValueError(f"Provided input {var} is not of an annotated class or method,"
                                  " instance of such as class or method, or of type nnf.Var."
                                  " Attempted conversion of {var} to nnf.Var also failed and"
                                 f" yielded the following error message: {e}")
