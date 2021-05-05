@@ -62,11 +62,11 @@ class Encoding:
     def purge_propositions(self):
         """ Purges the propositional variables of an Encoding object """
         self.propositions = defaultdict(weakref.WeakValueDictionary)
-    
+
     def clear_constraints(self):
         """ Clears the constraints of an Encoding object """
         self.constraints = set()
-    
+
     def clear_debug_constraints(self):
         """Clear debug_constraints attribute in Encoding"""
         self.debug_constraints = dict()
@@ -525,6 +525,23 @@ class constraint:
     # Constraint creation for these are directed to
     # constraint._constraint_by_function.
 
+    def none_of(encoding: Encoding, **kwargs):
+        """None of the propositional variables are True.
+
+        Constraint is added with the @constraint decorator.
+
+        Arguments
+        ---------
+        encoding : Encoding
+            Given encoding.
+
+        Example
+        -------
+        ``@constraint.none_of(encoding)``
+
+        """
+        return constraint._decorate(encoding, cbuilder.none_of, **kwargs)
+
     def add_at_least_one(encoding: Encoding, *args):
         """At least one of the propositional variables are True
 
@@ -644,3 +661,22 @@ class constraint:
         return constraint._constraint_by_function(encoding,
                                                  cbuilder.implies_all,
                                                  left=left, right=right)
+
+    def add_none_of(encoding: Encoding, *args):
+        """None of the propositional variables are True
+
+        Constraint is added directly with this function.
+
+        Arguments
+        ---------
+        encoding : Encoding
+            Given encoding.
+
+        Example
+        -------
+        ``@constraint.add_none_of(encoding, [Obj, Class, Class.method])``
+
+        """
+        return constraint._constraint_by_function(encoding,
+                                                 cbuilder.none_of,
+                                                 args=args)
