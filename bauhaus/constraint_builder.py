@@ -130,7 +130,7 @@ class _ConstraintBuilder:
         """Builds a SAT constraint from a ConstraintBuilder instance.
 
         To handle a user using the groupby feature, the partition helper
-        function is used to partition a constraint's inputs. 
+        function is used to partition a constraint's inputs.
         We then apply the SAT constraint over each partitioned set of inputs.
 
         Note
@@ -449,3 +449,22 @@ class _ConstraintBuilder:
             clauses.extend(res)
             self.add_to_instance_constraints(tuple(left_vars), res)
         return And(clauses)
+
+
+    def none_of(self, inputs: list) -> NNF:
+        """None of the inputs are true.
+
+        Arguments
+        ---------
+        inputs : list[nnf.Var]
+
+        Returns
+        -------
+        theory : nnf.NNF
+            And(~a, ~b) for all a,b in input
+
+        """
+        if not inputs:
+            raise ValueError(f"Inputs are empty for {self}")
+
+        return Or(inputs).negate()
