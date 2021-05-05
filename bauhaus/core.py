@@ -1,7 +1,7 @@
 import weakref
 # add try import
 import nnf
-from nnf import Var, And, NNF
+from nnf import Var, And, NNF, Or
 from functools import wraps
 from collections import defaultdict
 import warnings
@@ -189,8 +189,30 @@ class Encoding:
             else:
                 print(clause)
 
+    def pprint(self, formula):
+        """Pretty print an NNF formula
+
+        Arguments
+        ---------
+        formula : NNF
+            Formula to be displayed.
+        """
+
+        def _process(f):
+            if isinstance(f, Var):
+                return {True: '', False: '¬'}[f.true] + str(f.name)
+            elif isinstance(f, And):
+                return '(' + ' ∧ '.join([_process(i) for i in f]) + ')'
+            elif isinstance(f, Or):
+                return '(' + ' ∨ '.join([_process(i) for i in f]) + ')'
+            else:
+                raise TypeError("Can only pprint an NNF object. Given %s" % type(f))
+
+        print(_process(formula))
+
 
 class CustomNNF:
+
     def __init__(self, typ, args):
         self.typ = typ
         self.args = args
