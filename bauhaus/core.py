@@ -174,6 +174,8 @@ class Encoding:
                           "Try running compile() on your encoding.")
             return self.debug_constraints
 
+        print('\n\t{Encoding Introspection}\n')
+
         for constraint, clause in self.debug_constraints.items():
             print(f"{constraint}: \n")
             # Check based on original constraint type
@@ -182,12 +184,17 @@ class Encoding:
                     for instance, values in constraint.instance_constraints.items():
                             print(f"{instance} =>")
                             for v in values:
-                                print(f"{v}")
+                                self.pprint(v)
                             print("\n")
-                print(f"Final {constraint._constraint.__name__}: {clause} \n")
+                print(f"Final {constraint._constraint.__name__}: ", end='')
+                self.pprint(clause)
             # Otherwise, it must be coming from a raw constraint
             else:
-                print(clause)
+                print('Raw constraint added:')
+                self.pprint(clause)
+                print()
+
+        print()
 
     def pprint(self, formula):
         """Pretty print an NNF formula
