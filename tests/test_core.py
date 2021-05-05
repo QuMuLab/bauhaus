@@ -55,7 +55,7 @@ class A2(object): pass
 
 def test_storing_decorator_constraint():
     objects = [A() for i in range(0,3)]
-    assert len(a.constraints) == 3
+    assert len(a.constraints) == 4
     for c in a.constraints:
         if c._constraint == cbuilder.implies_all:
             assert c._left == c._right == None
