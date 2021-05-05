@@ -5,7 +5,7 @@ import pytest
 """
 Unit tests for core functionalities and building constraints.
 
-See reference: 
+See reference:
 https://github.com/mrocklin/multipledispatch/blob/master/multipledispatch/tests/test_core.py
 """
 
@@ -44,7 +44,7 @@ a = Encoding()
 @constraint.at_most_k(a, 2)
 @proposition(a)
 class A(object):
-    
+
     @constraint.implies_all(a)
     def foo(self):
         return self
@@ -94,3 +94,34 @@ def test_storing_function_constraint():
         assert c._constraint is cbuilder.implies_all
         assert c._left == c._right
         assert c._left == (test,)
+
+
+# Test adding raw constraints
+c = Encoding()
+
+@constraint.exactly_one(c)
+@proposition(c)
+class C: pass
+
+@proposition(c)
+class D: pass
+
+def test_raw_constraints():
+    c1, c2, d1 = C(), C(), D()
+    c.add_constraint(~c1 | (c2 & d1))
+    T = c.compile()
+    assert T.satisfiable()
+
+# Test forbidding raw constraints
+
+d = Encoding()
+
+@proposition(d)
+class F:
+    def __invert__(self):
+        return -1
+
+def test_failed_raw_constraints():
+    x, y = F(), F()
+    with pytest.raises(TypeError):
+        d.add_constraint(x | y)

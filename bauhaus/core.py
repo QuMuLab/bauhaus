@@ -53,6 +53,7 @@ class Encoding:
         self.propositions = defaultdict(weakref.WeakValueDictionary)
         self.constraints = set()
         self.debug_constraints = dict()
+        self._raw_constraints = set()
 
     def __repr__(self) -> str:
         return (f"Encoding: \n"
@@ -62,14 +63,30 @@ class Encoding:
     def purge_propositions(self):
         """ Purges the propositional variables of an Encoding object """
         self.propositions = defaultdict(weakref.WeakValueDictionary)
-    
+
     def clear_constraints(self):
         """ Clears the constraints of an Encoding object """
         self.constraints = set()
-    
+
     def clear_debug_constraints(self):
         """Clear debug_constraints attribute in Encoding"""
         self.debug_constraints = dict()
+
+    def add_constraint(self, cons: NNF):
+        """Add an NNF constraint to the encoding.
+
+        Arguments
+        ---------
+        cons : NNF
+            Constraint to be added.
+        """
+        assert self._raw_constraints is not None, \
+            "Error: You can't add raw_constraints when objects have overloaded one of the boolean operators."
+        self._raw_constraints.add(cons)
+
+    def disable_raw_constraints(self):
+        """Disable the functionality for using raw_constraints"""
+        self._raw_constraints = None
 
     def compile(self, CNF=True) -> 'NNF':
         """ Convert constraints into a theory in
@@ -87,7 +104,7 @@ class Encoding:
             Conjunctive or Negation normal form of constraints.
 
         """
-        if not self.constraints:
+        if not self.constraints and not self._raw_constraints:
             raise ValueError(f"Constraints in {self} are empty."
                              " This can happen if no objects from"
                              " decorated classes are instantiated,"
@@ -102,6 +119,13 @@ class Encoding:
         theory = []
         self.clear_debug_constraints()
 
+        # raw constraints
+        for constraint in self._raw_constraints:
+            clause = constraint.compile()
+            theory.append(constraint.compile())
+            self.debug_constraints[constraint] = clause
+
+        # builder constraints
         for constraint in self.constraints:
             clause = constraint.build(self.propositions)
             if CNF:
@@ -152,13 +176,18 @@ class Encoding:
 
         for constraint, clause in self.debug_constraints.items():
             print(f"{constraint}: \n")
-            if constraint.instance_constraints:
-                for instance, values in constraint.instance_constraints.items():
-                        print(f"{instance} =>")
-                        for v in values:
-                            print(f"{v}")
-                        print("\n")
-            print(f"Final {constraint._constraint.__name__}: {clause} \n")
+            # Check based on original constraint type
+            if 'instance_constraints' in dir(constraint):
+                if constraint.instance_constraints:
+                    for instance, values in constraint.instance_constraints.items():
+                            print(f"{instance} =>")
+                            for v in values:
+                                print(f"{v}")
+                            print("\n")
+                print(f"Final {constraint._constraint.__name__}: {clause} \n")
+            # Otherwise, it must be coming from a raw constraint
+            else:
+                print(clause)
 
 
 def proposition(encoding: Encoding):
@@ -192,6 +221,56 @@ def proposition(encoding: Encoding):
 
     """
     def wrapper(cls):
+
+        if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)):
+            encoding.disable_raw_constraints()
+            print("Warning: Disabling the use of Encoding::add_constraint because of pre-existing operator overloading.")
+        else:
+            class CustomNNF:
+                def __init__(self, typ, args):
+                    self.typ = typ
+                    self.args = args
+
+                def __and__(self, other):
+                    if not isinstance(other, CustomNNF):
+                        other = CustomNNF('var', [other._var])
+                    return CustomNNF('and', [self, other])
+                def __or__(self, other):
+                    if not isinstance(other, CustomNNF):
+                        other = CustomNNF('var', [other._var])
+                    return CustomNNF('or', [self, other])
+                def __invert__(self):
+                    return CustomNNF('not', [self])
+
+                def compile(self):
+                    if self.typ == 'var':
+                        return self.args[0]
+                    elif self.typ == 'and':
+                        return self.args[0].compile() & self.args[1].compile()
+                    elif self.typ == 'or':
+                        return self.args[0].compile() | self.args[1].compile()
+                    elif self.typ == 'not':
+                        return self.args[0].compile().negate()
+
+            def _process(o):
+                if isinstance(o, CustomNNF):
+                    return o
+                else:
+                    return CustomNNF('var', [o._var])
+
+            def _and(left, right):
+                return _process(left) & _process(right)
+
+            def _or(left, right):
+                return _process(left) | _process(right)
+
+            def _neg(c):
+                return ~ _process(c)
+
+            cls.__and__ = _and
+            cls.__or__ = _or
+            cls.__invert__ = _neg
+
         @wraps(cls)
         def wrapped(*args, **kwargs):
             ret = cls(*args, **kwargs)
