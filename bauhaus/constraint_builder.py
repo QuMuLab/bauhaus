@@ -467,4 +467,4 @@ class _ConstraintBuilder:
         if not inputs:
             raise ValueError(f"Inputs are empty for {self}")
 
-        return And([~x for x in inputs])
+        return Or(inputs).negate()
