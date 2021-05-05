@@ -190,6 +190,33 @@ class Encoding:
                 print(clause)
 
 
+class CustomNNF:
+    def __init__(self, typ, args):
+        self.typ = typ
+        self.args = args
+
+    def __and__(self, other):
+        if not isinstance(other, CustomNNF):
+            other = CustomNNF('var', [other._var])
+        return CustomNNF('and', [self, other])
+    def __or__(self, other):
+        if not isinstance(other, CustomNNF):
+            other = CustomNNF('var', [other._var])
+        return CustomNNF('or', [self, other])
+    def __invert__(self):
+        return CustomNNF('not', [self])
+
+    def compile(self):
+        if self.typ == 'var':
+            return self.args[0]
+        elif self.typ == 'and':
+            return self.args[0].compile() & self.args[1].compile()
+        elif self.typ == 'or':
+            return self.args[0].compile() | self.args[1].compile()
+        elif self.typ == 'not':
+            return self.args[0].compile().negate()
+
+
 def proposition(encoding: Encoding):
     """Create a propositional variable from the decorated
     class or function.
@@ -225,33 +252,8 @@ def proposition(encoding: Encoding):
         if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)):
             encoding.disable_raw_constraints()
             print("Warning: Disabling the use of Encoding::add_constraint because of pre-existing operator overloading.")
+
         else:
-            class CustomNNF:
-                def __init__(self, typ, args):
-                    self.typ = typ
-                    self.args = args
-
-                def __and__(self, other):
-                    if not isinstance(other, CustomNNF):
-                        other = CustomNNF('var', [other._var])
-                    return CustomNNF('and', [self, other])
-                def __or__(self, other):
-                    if not isinstance(other, CustomNNF):
-                        other = CustomNNF('var', [other._var])
-                    return CustomNNF('or', [self, other])
-                def __invert__(self):
-                    return CustomNNF('not', [self])
-
-                def compile(self):
-                    if self.typ == 'var':
-                        return self.args[0]
-                    elif self.typ == 'and':
-                        return self.args[0].compile() & self.args[1].compile()
-                    elif self.typ == 'or':
-                        return self.args[0].compile() | self.args[1].compile()
-                    elif self.typ == 'not':
-                        return self.args[0].compile().negate()
-
             def _process(o):
                 if isinstance(o, CustomNNF):
                     return o
