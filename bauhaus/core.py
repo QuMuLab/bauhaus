@@ -122,7 +122,7 @@ class Encoding:
         # raw constraints
         for constraint in self._raw_constraints:
             clause = constraint.compile()
-            theory.append(constraint.compile())
+            theory.append(clause)
             self.debug_constraints[constraint] = clause
 
         # builder constraints
@@ -298,9 +298,14 @@ def proposition(encoding: Encoding):
             def _neg(c):
                 return ~ _process(c)
 
+            def compile(s):
+                return s._var
+
             cls.__and__ = _and
             cls.__or__ = _or
             cls.__invert__ = _neg
+            cls.compile = compile
+
 
         @wraps(cls)
         def wrapped(*args, **kwargs):
