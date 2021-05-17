@@ -521,9 +521,7 @@ class constraint:
                                     cbuilder.implies_all,
                                     left=left, right=right, **kwargs)
 
-    # Creating constraints from function invokations
-    # Constraint creation for these are directed to
-    # constraint._constraint_by_function.
+
 
     def none_of(encoding: Encoding, **kwargs):
         """None of the propositional variables are True.
@@ -541,6 +539,10 @@ class constraint:
 
         """
         return constraint._decorate(encoding, cbuilder.none_of, **kwargs)
+
+    # Creating constraints from function invokations
+    # Constraint creation for these are directed to
+    # constraint._constraint_by_function.
 
     def add_at_least_one(encoding: Encoding, *args):
         """At least one of the propositional variables are True
