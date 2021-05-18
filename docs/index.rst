@@ -21,6 +21,7 @@ Features
    - Exactly one
    - At most K
    - Implies all
+   - None of
 - Compile constraints into a theory in conjunctive or negation normal form
 - With ``python-nnf``, submit a theory to a SAT solver
 - Theory introspection
