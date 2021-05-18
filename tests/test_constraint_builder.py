@@ -1,5 +1,5 @@
 from bauhaus import core, constraint_builder
-from constraint_builder import _ConstraintBuilder
+from bauhaus.constraint_builder import _ConstraintBuilder
 
 def test_build_constraints():
     # assert correct constraints built
@@ -10,7 +10,7 @@ def test_build_constraints():
 def test_getting_inputs():
     # assert correct inputs collected
     # given constraint builder object and
-    # propositions 
+    # propositions
     pass
 
 # SAT constraints

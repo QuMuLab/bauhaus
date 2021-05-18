@@ -6,3 +6,9 @@ dist/
 build/
 
 bauhaus/__pycache__/
+
+.pytest_cache/
+
+.vscode/
+
+*.pyc
