@@ -49,9 +49,13 @@ class A(object):
     def foo(self):
         return self
 
+@constraint.none_of(a)
+@proposition(a)
+class A2(object): pass
+
 def test_storing_decorator_constraint():
     objects = [A() for i in range(0,3)]
-    assert len(a.constraints) == 3
+    assert len(a.constraints) == 4
     for c in a.constraints:
         if c._constraint == cbuilder.implies_all:
             assert c._left == c._right == None
@@ -63,6 +67,9 @@ def test_storing_decorator_constraint():
             print(c._func)
             assert c._func.__qualname__ == A.__qualname__
             assert c._k == 2
+            assert c._vars == None
+        elif c._constraint == cbuilder.none_of:
+            assert c._func.__qualname__ == A2.__qualname__
             assert c._vars == None
         else:
             print(c._constraint)
@@ -86,6 +93,7 @@ def test_storing_function_constraint():
         constraint.add_at_most_k(b, 0)
         constraint.add_implies_all(b)
         constraint.add_implies_all(b, left=[], right=[test])
+        constraint.add_none_of(b)
     assert len(b.constraints) == 0
 
     constraint.add_implies_all(b, left=test, right=test)

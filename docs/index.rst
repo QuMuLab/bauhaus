@@ -22,6 +22,7 @@ Features
    - At most K
    - Implies all
    - Arbitrary constraint specification over propositions
+   - None of
 - Compile constraints into a theory in conjunctive or negation normal form
 - With ``python-nnf``, submit a theory to a SAT solver
 - Theory introspection

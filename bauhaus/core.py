@@ -636,6 +636,25 @@ class constraint:
                                     cbuilder.implies_all,
                                     left=left, right=right, **kwargs)
 
+
+
+    def none_of(encoding: Encoding, **kwargs):
+        """None of the propositional variables are True.
+
+        Constraint is added with the @constraint decorator.
+
+        Arguments
+        ---------
+        encoding : Encoding
+            Given encoding.
+
+        Example
+        -------
+        ``@constraint.none_of(encoding)``
+
+        """
+        return constraint._decorate(encoding, cbuilder.none_of, **kwargs)
+
     # Creating constraints from function invokations
     # Constraint creation for these are directed to
     # constraint._constraint_by_function.
@@ -759,3 +778,22 @@ class constraint:
         return constraint._constraint_by_function(encoding,
                                                  cbuilder.implies_all,
                                                  left=left, right=right)
+
+    def add_none_of(encoding: Encoding, *args):
+        """None of the propositional variables are True
+
+        Constraint is added directly with this function.
+
+        Arguments
+        ---------
+        encoding : Encoding
+            Given encoding.
+
+        Example
+        -------
+        ``@constraint.add_none_of(encoding, [Obj, Class, Class.method])``
+
+        """
+        return constraint._constraint_by_function(encoding,
+                                                 cbuilder.none_of,
+                                                 args=args)
