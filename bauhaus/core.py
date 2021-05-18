@@ -1,7 +1,7 @@
 import weakref
 # add try import
 import nnf
-from nnf import Var, And, NNF
+from nnf import Var, And, NNF, Or
 from functools import wraps
 from collections import defaultdict
 import warnings
@@ -53,6 +53,7 @@ class Encoding:
         self.propositions = defaultdict(weakref.WeakValueDictionary)
         self.constraints = set()
         self.debug_constraints = dict()
+        self._custom_constraints = set()
 
     def __repr__(self) -> str:
         return (f"Encoding: \n"
@@ -71,6 +72,22 @@ class Encoding:
         """Clear debug_constraints attribute in Encoding"""
         self.debug_constraints = dict()
 
+    def add_constraint(self, constraint: NNF):
+        """Add an NNF constraint to the encoding.
+
+        Arguments
+        ---------
+        cons : NNF
+            Constraint to be added.
+        """
+        assert self._custom_constraints is not None, \
+            "Error: You can't add custom_constraints when objects have overloaded one of the boolean operators."
+        self._custom_constraints.add(constraint)
+
+    def disable_custom_constraints(self):
+        """Disable the functionality for using custom_constraints"""
+        self._custom_constraints = None
+
     def compile(self, CNF=True) -> 'NNF':
         """ Convert constraints into a theory in
         conjunctive normal form, or if specified,
@@ -87,7 +104,7 @@ class Encoding:
             Conjunctive or Negation normal form of constraints.
 
         """
-        if not self.constraints:
+        if not self.constraints and not self._custom_constraints:
             raise ValueError(f"Constraints in {self} are empty."
                              " This can happen if no objects from"
                              " decorated classes are instantiated,"
@@ -102,6 +119,13 @@ class Encoding:
         theory = []
         self.clear_debug_constraints()
 
+        # custom constraints
+        for constraint in self._custom_constraints:
+            clause = constraint.compile()
+            theory.append(clause)
+            self.debug_constraints[constraint] = clause
+
+        # builder constraints
         for constraint in self.constraints:
             clause = constraint.build(self.propositions)
             if CNF:
@@ -150,15 +174,94 @@ class Encoding:
                           "Try running compile() on your encoding.")
             return self.debug_constraints
 
+        print('\n\t{Encoding Introspection}\n')
+
         for constraint, clause in self.debug_constraints.items():
             print(f"{constraint}: \n")
-            if constraint.instance_constraints:
-                for instance, values in constraint.instance_constraints.items():
-                        print(f"{instance} =>")
-                        for v in values:
-                            print(f"{v}")
-                        print("\n")
-            print(f"Final {constraint._constraint.__name__}: {clause} \n")
+            # Check based on original constraint type
+            if 'instance_constraints' in dir(constraint):
+                if constraint.instance_constraints:
+                    for instance, values in constraint.instance_constraints.items():
+                            print(f"{instance} =>")
+                            for v in values:
+                                self.pprint(v)
+                            print("\n")
+                print(f"Final {constraint._constraint.__name__}: ", end='')
+                self.pprint(clause)
+            # Otherwise, it must be coming from a custom constraint
+            else:
+                print('Custom constraint added:')
+                self.pprint(clause)
+                print()
+
+        print()
+
+    def pprint(self, formula):
+        """Pretty print an NNF formula
+
+        Arguments
+        ---------
+        formula : NNF
+            Formula to be displayed.
+        """
+
+        def _process(f):
+            if isinstance(f, Var):
+                return {True: '', False: '¬'}[f.true] + str(f.name)
+            elif isinstance(f, And):
+                return '(' + ' ∧ '.join([_process(i) for i in f]) + ')'
+            elif isinstance(f, Or):
+                return '(' + ' ∨ '.join([_process(i) for i in f]) + ')'
+            else:
+                raise TypeError("Can only pprint an NNF object. Given %s" % type(f))
+
+        print(_process(formula))
+
+
+class CustomNNF:
+    """
+    CustomNNF is a thin wrapper around the python-nnf class hierarchy
+    that allows us to create arbitrary constraints with the bauhaus-
+    modified classes/objects, and then have these placed in the
+    theory when .compile() is called on the encoding.
+
+    The CustomNNF class shouldn't be used directly, but rather will
+    be implicitly created if/when custom constraints are created and
+    added to an encoding.
+
+    The CustomNNF::compile() method converts the nested CustomNNF
+    object into a pure python-nnf one.
+
+    Attributes
+    ----------
+    typ: the type of NNF element [var|and|or|not]
+    args: list of arguments for the NNF element
+    """
+
+    def __init__(self, typ, args):
+        self.typ = typ
+        self.args = args
+
+    def __and__(self, other):
+        if not isinstance(other, CustomNNF):
+            other = CustomNNF('var', [other._var])
+        return CustomNNF('and', [self, other])
+    def __or__(self, other):
+        if not isinstance(other, CustomNNF):
+            other = CustomNNF('var', [other._var])
+        return CustomNNF('or', [self, other])
+    def __invert__(self):
+        return CustomNNF('not', [self])
+
+    def compile(self):
+        if self.typ == 'var':
+            return self.args[0]
+        elif self.typ == 'and':
+            return self.args[0].compile() & self.args[1].compile()
+        elif self.typ == 'or':
+            return self.args[0].compile() | self.args[1].compile()
+        elif self.typ == 'not':
+            return self.args[0].compile().negate()
 
 
 def proposition(encoding: Encoding):
@@ -192,6 +295,40 @@ def proposition(encoding: Encoding):
 
     """
     def wrapper(cls):
+
+        if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)):
+            encoding.disable_custom_constraints()
+            warnings.warn("Warning: Disabling the use of Encoding::add_constraint because of pre-existing operator overloading.")
+
+        else:
+            # To allow for custom constraints over @proposition-enabled objects,
+            #  we inject the functionality to use &, |, and ~ on instances of
+            #  that class. These will ultimately result in CustomNNF objects
+            #  being created.
+            def _process(o):
+                if isinstance(o, CustomNNF):
+                    return o
+                else:
+                    return CustomNNF('var', [o._var])
+
+            def _and(left, right):
+                return _process(left) & _process(right)
+
+            def _or(left, right):
+                return _process(left) | _process(right)
+
+            def _neg(c):
+                return ~ _process(c)
+
+            def compile(s):
+                return s._var
+
+            cls.__and__ = _and
+            cls.__or__ = _or
+            cls.__invert__ = _neg
+            cls.compile = compile
+
+
         @wraps(cls)
         def wrapped(*args, **kwargs):
             ret = cls(*args, **kwargs)
