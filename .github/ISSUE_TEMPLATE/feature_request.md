@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ## Willingness to contribute
-The Bauhaus Community encourages new feature contributions. Would you or another member of your organization be willing to contribute an implementation of this feature?
+The Bauhaus Community encourages new feature contributions. Would you be willing to contribute an implementation of this feature?
 
 - [ ] Yes. I can contribute this feature independently.
 - [ ] Yes. I would be willing to contribute this feature with guidance from the Bauhaus community.
