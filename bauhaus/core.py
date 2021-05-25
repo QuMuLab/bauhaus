@@ -267,7 +267,7 @@ class CustomNNF:
         elif self.typ == 'not':
             return self.args[0].compile().negate()
         elif self.typ == 'imp':
-            return self.args[0].compile().negate | self.args[1].compile()
+            return self.args[0].compile().negate() | self.args[1].compile()
 
 
 def proposition(encoding: Encoding):
