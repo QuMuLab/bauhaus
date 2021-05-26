@@ -120,6 +120,12 @@ def test_raw_constraints():
     T = c.compile()
     assert T.satisfiable()
 
+def test_imp():
+    c3, c4, d2 = C(), C(), D()
+    c.add_constraint(c3 >> (c4 & d2))
+    T1 = c.compile()
+    assert T1.satisfiable()
+
 # Test forbidding raw constraints
 
 d = Encoding()

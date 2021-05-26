@@ -252,6 +252,10 @@ class CustomNNF:
         return CustomNNF('or', [self, other])
     def __invert__(self):
         return CustomNNF('not', [self])
+    def __rshift__(self, other):
+        if not isinstance(other, CustomNNF):
+            other = CustomNNF('var', [other._var])
+        return CustomNNF('imp', [self, other])
 
     def compile(self):
         if self.typ == 'var':
@@ -262,6 +266,8 @@ class CustomNNF:
             return self.args[0].compile() | self.args[1].compile()
         elif self.typ == 'not':
             return self.args[0].compile().negate()
+        elif self.typ == 'imp':
+            return self.args[0].compile().negate() | self.args[1].compile()
 
 
 def proposition(encoding: Encoding):
@@ -296,13 +302,13 @@ def proposition(encoding: Encoding):
     """
     def wrapper(cls):
 
-        if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)):
+        if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)) or ('__rshift__' in dir(cls)):
             encoding.disable_custom_constraints()
             warnings.warn("Warning: Disabling the use of Encoding::add_constraint because of pre-existing operator overloading.")
 
         else:
             # To allow for custom constraints over @proposition-enabled objects,
-            #  we inject the functionality to use &, |, and ~ on instances of
+            #  we inject the functionality to use &, |, ~ and >> on instances of
             #  that class. These will ultimately result in CustomNNF objects
             #  being created.
             def _process(o):
@@ -319,6 +325,9 @@ def proposition(encoding: Encoding):
 
             def _neg(c):
                 return ~ _process(c)
+            
+            def _imp(left, right):
+                return _process(left) >> _process(right)
 
             def compile(s):
                 return s._var
@@ -326,6 +335,7 @@ def proposition(encoding: Encoding):
             cls.__and__ = _and
             cls.__or__ = _or
             cls.__invert__ = _neg
+            cls.__rshift__ = _imp
             cls.compile = compile
 
 
