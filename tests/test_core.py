@@ -1,4 +1,4 @@
-from bauhaus.core import Encoding, constraint, proposition
+from bauhaus.core import Encoding, constraint, proposition, And, Or
 from bauhaus.constraint_builder import _ConstraintBuilder as cbuilder
 from nnf import Var
 import pytest
@@ -125,6 +125,13 @@ def test_imp():
     c.add_constraint(c3 >> (c4 & d2))
     T1 = c.compile()
     assert T1.satisfiable()
+
+def test_andor():
+    c1, c2, d1 = C(), C(), D()
+    c.add_constraint(And(~c1, (c2 & d1)))
+    c.add_constraint(Or(c1 >> c2, d1))
+    T = c.compile()
+    assert T.satisfiable()
 
 # Test forbidding raw constraints
 
