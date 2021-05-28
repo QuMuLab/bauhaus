@@ -130,6 +130,8 @@ def test_andor():
     c1, c2, d1 = C(), C(), D()
     c.add_constraint(And(~c1, (c2 & d1)))
     c.add_constraint(Or(c1 >> c2, d1))
+    c.add_constraint(And(Or([c1, c2]), d1))
+    c.add_constraint(Or(And({c1, c2}), d1))
     T = c.compile()
     assert T.satisfiable()
 
