@@ -1,4 +1,5 @@
 import weakref
+from collections.abc import Iterable
 # add try import
 import nnf
 from functools import wraps
@@ -269,11 +270,20 @@ class CustomNNF:
             return self.args[0].compile().negate() | self.args[1].compile()
 
 
+def _flatten_and_build_andor(args, andor):
+    all_args = []
+    for arg in args:
+        if isinstance(arg, Iterable):
+            all_args.extend(list(arg))
+        else:
+            all_args.append(arg)
+    return CustomNNF(andor, all_args)
+
 def And(*args):
-    return CustomNNF('and', args)
+    return _flatten_and_build_andor(args, 'and')
 
 def Or(*args):
-    return CustomNNF('or', args)
+    return _flatten_and_build_andor(args, 'or')
 
 
 def proposition(encoding: Encoding):
