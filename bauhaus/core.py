@@ -1,3 +1,4 @@
+from typing import Optional
 import weakref
 from collections.abc import Iterable
 # add try import
@@ -846,7 +847,7 @@ class constraint:
                                                  cbuilder.none_of,
                                                  args=args)
 
-def print_theory(theory: dict, format: str = "truth"):
+def print_theory(theory: Optional[dict] , format: str = "truth"):
     """Prints a solved theory in a human readable format.
 
     This function works best if your propositions impliment the str dunder
@@ -864,13 +865,16 @@ def print_theory(theory: dict, format: str = "truth"):
         objects: group output by object types.
         both: group output primarily by truth values, and secondarily by object type.
     """
+    if theory is None:
+        print("None")
+        return
     theory_list = list(theory.items())
     if format == "truth" or format == "both":
         theory_list.sort(key = lambda e : -1 if e[1] else 1)
         if format == "both":
             pass
-    print("Solved theory:")
 
+    print("Solved theory:")
     n = max(map(lambda e : len(str(e[0])), theory_list))
     for e in theory_list:
         space = n - len(str(e[0])) + 5
