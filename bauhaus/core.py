@@ -845,3 +845,36 @@ class constraint:
         return constraint._constraint_by_function(encoding,
                                                  cbuilder.none_of,
                                                  args=args)
+
+def print_theory(theory: dict, format: str = "truth"):
+    """Prints a solved theory in a human readable format.
+
+    This function works best if your propositions impliment the str dunder
+    override.
+
+    Arguments
+    ---------
+    theory : dict
+        The theory to print.
+    format : str
+        The format to print the theory in. One of "truth", "objects", or "both".
+        Defaults to truth.
+
+        truth: group output by truth values.
+        objects: group output by object types.
+        both: group output primarily by truth values, and secondarily by object type.
+    """
+    theory_list = list(theory.items())
+    if format == "truth" or format == "both":
+        theory_list.sort(key = lambda e : -1 if e[1] else 1)
+        if format == "both":
+            pass
+    print("Solved theory:")
+
+    n = max(map(lambda e : len(str(e[0])), theory_list))
+    for e in theory_list:
+        space = n - len(str(e[0])) + 5
+        if not e[1]:
+            space += 1
+        print(f"  {e[0]}: {str(e[1]):>{space}}")
+
