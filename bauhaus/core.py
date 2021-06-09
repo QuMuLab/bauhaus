@@ -868,11 +868,24 @@ def print_theory(theory: Optional[dict] , format: str = "truth"):
     if theory is None:
         print("None")
         return
+
+    if format not in ["truth", "objects", "both"]:
+        raise ValueError('format must be one of: "truth", "objects", or "both"')
+
     theory_list = list(theory.items())
-    if format == "truth" or format == "both":
+    if format == "truth":
         theory_list.sort(key = lambda e : -1 if e[1] else 1)
+    elif format == "objects" or format == "both":
+        theory_list.sort(key = lambda e : str(type(e[0])))
         if format == "both":
-            pass
+            theory_dict = defaultdict(list)
+            for e in theory_list:
+                if e[1]:
+                    theory_dict["true"].append(e)
+                else:
+                    theory_dict["false"].append(e)
+            theory_list = theory_dict["true"]
+            theory_list.extend(theory_dict["false"])
 
     print("Solved theory:")
     n = max(map(lambda e : len(str(e[0])), theory_list))
