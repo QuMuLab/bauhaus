@@ -1,7 +1,7 @@
 import weakref
+from collections.abc import Iterable
 # add try import
 import nnf
-from nnf import Var, And, NNF, Or
 from functools import wraps
 from collections import defaultdict
 import warnings
@@ -73,7 +73,7 @@ class Encoding:
         """Clear debug_constraints attribute in Encoding"""
         self.debug_constraints = dict()
 
-    def add_constraint(self, constraint: NNF):
+    def add_constraint(self, constraint: nnf.NNF):
         """Add an NNF constraint to the encoding.
 
         Arguments
@@ -89,7 +89,7 @@ class Encoding:
         """Disable the functionality for using custom_constraints"""
         self._custom_constraints = None
 
-    def compile(self, CNF=True) -> 'NNF':
+    def compile(self, CNF=True) -> 'nnf.NNF':
         """ Convert constraints into a theory in
         conjunctive normal form, or if specified,
         the simpler negation-normal form.
@@ -134,7 +134,7 @@ class Encoding:
             else:
                 warnings.warn(f"The {constraint} was not built and"
                             "will not be added to the theory.")
-        return And(theory)
+        return nnf.And(theory)
 
     def introspect(self):
         """Observing the origin of a theory from each
@@ -201,11 +201,11 @@ class Encoding:
         """
 
         def _process(f):
-            if isinstance(f, Var):
+            if isinstance(f, nnf.Var):
                 return {True: '', False: '¬'}[f.true] + str(f.name)
-            elif isinstance(f, And):
+            elif isinstance(f, nnf.And):
                 return '(' + ' ∧ '.join([_process(i) for i in f]) + ')'
-            elif isinstance(f, Or):
+            elif isinstance(f, nnf.Or):
                 return '(' + ' ∨ '.join([_process(i) for i in f]) + ')'
             else:
                 raise TypeError("Can only pprint an NNF object. Given %s" % type(f))
@@ -247,16 +247,38 @@ class CustomNNF:
         return CustomNNF('or', [self, other])
     def __invert__(self):
         return CustomNNF('not', [self])
+    def __rshift__(self, other):
+        if not isinstance(other, CustomNNF):
+            other = CustomNNF('var', [other._var])
+        return CustomNNF('imp', [self, other])
 
     def compile(self):
         if self.typ == 'var':
             return self.args[0]
         elif self.typ == 'and':
-            return self.args[0].compile() & self.args[1].compile()
+            return nnf.And(map(lambda x: x.compile(), self.args))
         elif self.typ == 'or':
-            return self.args[0].compile() | self.args[1].compile()
+            return nnf.Or(map(lambda x: x.compile(), self.args))
         elif self.typ == 'not':
             return self.args[0].compile().negate()
+        elif self.typ == 'imp':
+            return self.args[0].compile().negate() | self.args[1].compile()
+
+
+def _flatten_and_build_andor(args, andor):
+    all_args = []
+    for arg in args:
+        if isinstance(arg, Iterable):
+            all_args.extend(list(arg))
+        else:
+            all_args.append(arg)
+    return CustomNNF(andor, all_args)
+
+def And(*args):
+    return _flatten_and_build_andor(args, 'and')
+
+def Or(*args):
+    return _flatten_and_build_andor(args, 'or')
 
 
 def proposition(encoding: Encoding):
@@ -291,13 +313,13 @@ def proposition(encoding: Encoding):
     """
     def wrapper(cls):
 
-        if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)):
+        if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)) or ('__rshift__' in dir(cls)):
             encoding.disable_custom_constraints()
             warnings.warn("Warning: Disabling the use of Encoding::add_constraint because of pre-existing operator overloading.")
 
         else:
             # To allow for custom constraints over @proposition-enabled objects,
-            #  we inject the functionality to use &, |, and ~ on instances of
+            #  we inject the functionality to use &, |, ~ and >> on instances of
             #  that class. These will ultimately result in CustomNNF objects
             #  being created.
             def _process(o):
@@ -315,19 +337,23 @@ def proposition(encoding: Encoding):
             def _neg(c):
                 return ~ _process(c)
 
+            def _imp(left, right):
+                return _process(left) >> _process(right)
+
             def compile(s):
                 return s._var
 
             cls.__and__ = _and
             cls.__or__ = _or
             cls.__invert__ = _neg
+            cls.__rshift__ = _imp
             cls.compile = compile
 
 
         @wraps(cls)
         def wrapped(*args, **kwargs):
             ret = cls(*args, **kwargs)
-            ret._var = Var(ret)
+            ret._var = nnf.Var(ret)
             class_name = ret.__class__.__qualname__
             encoding.propositions[class_name][id(ret)] = ret
             return ret

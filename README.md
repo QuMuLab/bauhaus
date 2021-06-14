@@ -1,5 +1,5 @@
 # Bauhaus
-`bauhaus` is a Python package for spinning up propositional logic encodings from object-oriented Python code. 
+`bauhaus` is a Python package for spinning up propositional logic encodings from object-oriented Python code.
 
 ## Features
 - Create propositional variables from Python classes
@@ -16,7 +16,8 @@
 ## Installation
 
 Install `bauhaus` by running
-```
+
+```bash
 pip install bauhaus
 ```
 
@@ -24,21 +25,21 @@ pip install bauhaus
 
 Create Encoding objects that you intend to compile to an SAT. Encoding objects will store your model's propositional variables and constraints on the fly.
 
-```
+```python
 from bauhaus import Encoding, proposition, constraint
 e = Encoding()
 ```
 
 Create propositional variables by decorating class definitions with `@proposition`.
 
-```
+```python
 @proposition(e) # Each instance of A is stored as a proposition
 class A(object): pass
 ```
 
 Create constraints by decorating classes, methods, or invoking the constraint methods.
 
-```
+```python
 # Each instance of A implies the right side
 @constraint.implies_all(e, right=['hello'])
 # At most two of the A instances are true
@@ -57,13 +58,13 @@ class A(object):
     def method(self):
         return self.val
 
-# At most one of the inputs is true. 
+# At most one of the inputs is true.
 constraint.add_at_most_one(e, A, A.method, Var('B'))
 ```
 
 Compile your theory into conjunctive or negation normal form (note: the theory is truncated),
 
-```
+```python
 objects = [A(val) for val in range(1,4)]
 theory = e.compile()
 >> And({And({Or({Var(3), ~Var(A.3)}), Or({Var(1), ~Var(A.1)}),
@@ -74,10 +75,10 @@ theory = e.compile()
 And view the origin of each constraint, from the propositional object to the final constraint.
 (Note: the introspection is truncated)
 
-```
+```python
 e.introspect()
->> 
-constraint.at_most_k:  function = A  k = 2: 
+>>
+constraint.at_most_k:  function = A  k = 2:
 
 (~Var(A.3), ~Var(A.1)) =>
 Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})
@@ -91,7 +92,7 @@ Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})
 Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})
 
 
-Final at_most_k: And({Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})}) 
+Final at_most_k: And({Or({~Var(A.1), ~Var(A.2), ~Var(A.3)})})
 ...
 ...
 ```
