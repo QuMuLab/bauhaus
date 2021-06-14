@@ -2,6 +2,7 @@ from nnf import NNF, And, Or
 from itertools import product, combinations
 from .utils import ismethod, classname, flatten
 from .utils import unpack_variables as unpack
+from .errors import *
 import warnings
 from collections import defaultdict
 
@@ -172,33 +173,21 @@ class _ConstraintBuilder:
                 # retrieve dictionary of inputs
                 inputs = self.get_implication_inputs(propositions)
                 if not any(inputs.values()) and not right_vars:
-                    raise ValueError(f"The '{self}' cannot be built"
-                                     " as it is decorating a class and"
-                                     " the right implication variables are not"
-                                     " provided. If it is decorating a method,"
-                                     " ensure that the method's return is"
-                                     " valid for bauhaus or for the nnf library."
-                                     " Check your decorator signature and set"
-                                     " the 'right' keyword argument to such a value.")
+                    raise ImplicationConstraintRightConditionBuildError(self)
 
             constraints = []
             for input_set in self.partition(inputs):
-                constraints.append(self._constraint(self,
-                                                    input_set,
-                                                    left_vars,
-                                                    right_vars))
+                constraints.append(self._constraint(self, input_set, left_vars, right_vars))
             return And(constraints)
 
         inputs = self.get_inputs(propositions)
         if not inputs:
-            raise ValueError(inputs)
+            raise EmptyInputsError(self)
 
         constraints = []
         for input_set in self.partition(inputs):
             if self._constraint is _ConstraintBuilder.at_most_k:
-                constraints.append(self._constraint(self,
-                                                    input_set,
-                                                    k=self._k))
+                constraints.append(self._constraint(self, input_set, k=self._k))
             else:
                 constraints.append(self._constraint(self, input_set))
         return And(constraints)
@@ -211,7 +200,7 @@ class _ConstraintBuilder:
         Encoding.propositions and return its instances.
 
         If the ConstraintBuilder does not have the '_func' attribute,
-        then it was invoked as a function call.
+        then it was directly added from a 'add_constraint' function
         We gather and validate its arguments (self._vars).
 
         Arguments
@@ -225,14 +214,14 @@ class _ConstraintBuilder:
 
         """
 
-        # Constraint from function
+        # Constraint from direct constraint addition
         if not self._func:
             return unpack(self._vars, propositions)
         # Constraint from decorator
         else:
             ret = unpack([self._func], propositions)
             if not ret:
-                raise ValueError(f"The {self} resulted in an empty {ret}")
+                raise EmptyPropositionalVariablesFromDecorationError(self)
             return ret
 
     def get_implication_inputs(self, propositions) -> dict:
@@ -324,7 +313,7 @@ class _ConstraintBuilder:
 
         """
         if not inputs:
-            raise ValueError(f"Inputs are empty for {self}")
+            raise EmptyInputsError(self)
 
         return Or(inputs)
 
@@ -342,7 +331,7 @@ class _ConstraintBuilder:
 
         """
         if not inputs:
-            raise ValueError(f"Inputs are empty for {self}")
+            raise EmptyInputsError(self)
 
         clauses = []
         for var in inputs:
@@ -366,20 +355,19 @@ class _ConstraintBuilder:
         nnf.NNF
 
         """
+        if not inputs:
+            raise EmptyInputsError(self)
         if not 1 <= k <= len(inputs):
-            raise ValueError(f"The provided k={k} is greater"
-                             " than the number of propositional"
-                            f" variables (i.e. {len(inputs)} variables)"
-                            f" for {self}.")
+            raise InvalidConstraintSizeK(self, k, len(inputs))
         elif k == 1:
             return _ConstraintBuilder.at_most_one(inputs)
         if k >= len(inputs):
-            warnings.warn(f"The provided k={k} for building the at most K"
-                           " constraint is greater than or equal to"
-                          f" the number of variables, which is {len(inputs)}."
-                          f" We're setting k = {len(inputs) - 1} as a result.")
+            warnings.warn(f"The provided k={k} for building the at most K \
+                            constraint is greater than or equal to the number \
+                            of variables, which is {len(inputs)}. We're setting \
+                            k = {len(inputs) - 1} as a result.")
             k = len(inputs) - 1
-
+        
         clauses = set() # avoid adding duplicate clauses
         inputs = list(map(lambda var: ~var, inputs))
         # combinations from choosing k from n inputs for 1 <= k <n
@@ -406,11 +394,14 @@ class _ConstraintBuilder:
         nnf.NNF: And(at_most_one, at_least_one)
 
         """
+        if not inputs:
+            raise EmptyInputsError(self)
+
         at_most_one = _ConstraintBuilder.at_most_one(self, inputs)
         at_least_one = _ConstraintBuilder.at_least_one(self, inputs)
 
         if not(at_most_one and at_least_one):
-            raise ValueError
+            raise EmptyUnderlyingConstraintError(at_least_one, at_most_one, inputs)
         return And({at_most_one, at_least_one})
 
     def implies_all(self, inputs: dict, left: list, right: list) -> NNF:
@@ -465,6 +456,6 @@ class _ConstraintBuilder:
 
         """
         if not inputs:
-            raise ValueError(f"Inputs are empty for {self}")
+            raise EmptyInputsError(self)
 
         return Or(inputs).negate()

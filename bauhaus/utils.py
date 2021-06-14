@@ -1,5 +1,6 @@
 import sys
 import inspect
+from .errors import *
 from nnf import Var
 
 """Utilities for bauhaus library."""
@@ -59,6 +60,7 @@ def flatten(object):
 
     Returns object immediately if not a collections object.
     """
+    # TODO: replace instance type check with collections.abc.Iterable
     if not isinstance(object, (list, tuple, set)):
         return object
     for item in object:
@@ -136,6 +138,7 @@ def unpack_variables(T, propositions) -> list:
         elif isinstance(var, Var):
             inputs.add(var)
 
+        # TODO: replace instance type check with collections.abc.Iterable
         elif isinstance(var, (list, tuple, set)):
             inputs.update(unpack_variables(var, propositions))
 
@@ -144,8 +147,6 @@ def unpack_variables(T, propositions) -> list:
                 # convert to nnf.Var
                 inputs.add(Var(var))
             except Exception as e:
-                raise ValueError(f"Provided input {var} is not of an annotated class or method,"
-                                 " instance of such as class or method, or of type nnf.Var."
-                                 " Attempted conversion of {var} to nnf.Var also failed and"
-                                f" yielded the following error message: {e}")
+                raise ConversionToNNFVariableError(var, e)
+
     return list(inputs)
