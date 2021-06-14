@@ -25,8 +25,6 @@ class Error(Exception):
     pass
 
 """ core.py """
-
-#TODO
 class CustomConstraintOperatorOverloadError(Error):
 
     def __init__(self, constraint):
