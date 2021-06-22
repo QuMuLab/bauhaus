@@ -152,7 +152,7 @@ class Encoding:
                 )
         return nnf.And(theory)
 
-    def introspect(self, solution: Optional[dict] = None):
+    def introspect(self, solution: Optional[dict] = None, var_level=False):
         """Observing the origin of a theory from each
         propositional object to the final constraint.
 
@@ -182,6 +182,9 @@ class Encoding:
         ----
         solution : dictionary
             Optional; A solution object to use to highlight output.
+        var_level : boolean
+            Defaults to False; If True, output coloring will be based on the
+            variable instead of the literal.
         """
         if not self.debug_constraints:
             warnings.warn(
@@ -213,7 +216,7 @@ class Encoding:
 
         print()
 
-    def pprint(self, formula, solution: Optional[dict] = None):
+    def pprint(self, formula, solution: Optional[dict] = None, var_level=False):
         """Pretty print an NNF formula
 
         Arguments
@@ -225,14 +228,29 @@ class Encoding:
         def _process(f):
             if isinstance(f, nnf.Var):
                 if solution:
-                    color = {True: "\u001b[32m", False: "\u001b[31m"}[solution[f.name]]
-                    return (
-                        color
-                        + {True: "", False: "¬"}[f.true]
-                        + str(f.name)
-                        + "\u001b[0m"
-                    )
-                return {True: "", False: "¬"}[f.true] + str(f.name)
+                    if var_level:
+                        color = {True: "\u001b[32m", False: "\u001b[31m"}[
+                            solution[f.name]
+                        ]
+                        return (
+                            {True: "", False: "¬"}[f.true]
+                            + color
+                            + str(f.name)
+                            + "\u001b[0m"
+                        )
+                    else:
+                        val = solution[f.name]
+                        if not f.true:
+                            val = not val
+                        color = {True: "\u001b[32m", False: "\u001b[31m"}[val]
+                        return (
+                            color
+                            + {True: "", False: "¬"}[f.true]
+                            + str(f.name)
+                            + "\u001b[0m"
+                        )
+                else:
+                    return {True: "", False: "¬"}[f.true] + str(f.name)
             elif isinstance(f, nnf.And):
                 return "(" + " ∧ ".join([_process(i) for i in f]) + ")"
             elif isinstance(f, nnf.Or):
