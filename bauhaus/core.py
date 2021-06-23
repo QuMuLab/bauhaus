@@ -181,7 +181,7 @@ class Encoding:
         Args
         ----
         solution : dictionary
-            Optional; A solution object to use to highlight output.
+            Optional; A solution to use to highlight output.
         var_level : boolean
             Defaults to False; If True, output coloring will be based on the
             variable instead of the literal.
@@ -223,6 +223,11 @@ class Encoding:
         ---------
         formula : NNF
             Formula to be displayed.
+        solution : dictionary
+            Optional; A solution to use to highlight output.
+        var_level : boolean
+            Defaults to False; If True, output coloring will be based on the
+            variable instead of the literal.
         """
 
         def _process(f):
@@ -917,8 +922,7 @@ class constraint:
 def print_theory(theory: Optional[dict], format: str = "truth"):
     """Prints a solved theory in a human readable format.
 
-    This function works best if your propositions impliment the str dunder
-    override.
+    Propositions are printed according to their `str` or `repr` functions.
 
     Arguments
     ---------
