@@ -7,6 +7,7 @@ from collections import defaultdict
 import warnings
 from .constraint_builder import _ConstraintBuilder as cbuilder
 from .utils import flatten, ismethod, classname
+from .errors import *
 
 
 class Encoding:
@@ -60,8 +61,8 @@ class Encoding:
                 f"  propositions::{self.propositions.keys()} \n"
                 f"  constraints::{self.constraints}")
 
-    def purge_propositions(self):
-        """ Purges the propositional variables of an Encoding object """
+    def clear_propositions(self):
+        """ Clears the propositional variables of an Encoding object """
         self.propositions = defaultdict(weakref.WeakValueDictionary)
 
     def clear_constraints(self):
@@ -80,8 +81,8 @@ class Encoding:
         cons : NNF
             Constraint to be added.
         """
-        assert self._custom_constraints is not None, \
-            "Error: You can't add custom_constraints when objects have overloaded one of the boolean operators."
+        if self._custom_constraints is not None:
+            raise CustomConstraintOperatorOverloadError(constraint)
         self._custom_constraints.add(constraint)
 
     def disable_custom_constraints(self):
@@ -105,16 +106,10 @@ class Encoding:
 
         """
         if not self.constraints and not self._custom_constraints:
-            raise ValueError(f"Constraints in {self} are empty."
-                             " This can happen if no objects from"
-                             " decorated classes are instantiated,"
-                             " if no classes/methods are decorated"
-                             " with @constraint or no function"
-                             " calls of the form constraint.add_method")
+            raise EmptyConstraintsError(self)
+
         if not self.propositions.values():
-            raise ValueError(f"Constraints in {self} are empty."
-                             " This can happen if no objects from"
-                             " decorated classes are instantiated.")
+            raise EmptyPropositionalVariablesError(self)
 
         theory = []
         self.clear_debug_constraints()
@@ -425,18 +420,12 @@ class constraint:
         True if a valid groupby, and raises an Exception if not.
 
         """
-        classname = classname(decorated_class)
+        clsname = classname(decorated_class)
         if ismethod(decorated_class):
-            raise Exception("You can only use groupby on a class and not a method"
-                           f", as you have tried on {decorated_class.__qualname__}."
-                           f" Try using groupby on the {classname}"
-                           " class instead.")
+            raise GroupbyOnMethodError(decorated_class.__qualname__, clsname)
         if not (isinstance(parameter, str) or callable(parameter)):
             value_type = type(parameter).__name__
-            raise ValueError(f"The provided groupby value, {parameter},"
-                            f" is of type {value_type}. To use groupby,"
-                            f" a function or object attribute (string) must be provided"
-                            f" to partition the {classname} objects.")
+            raise GroupbyWithIncorrectTypeError(parameter, value_type, clsname)
         return True
 
 
@@ -486,12 +475,7 @@ class constraint:
             encoding.constraints.add(constraint)
             return
         else:
-            raise ValueError("Some or more of your provided"
-                             f" arguments for the {constraint_type.__name__}"
-                             " constraint were empty or invalid. Your"
-                             " provided arguments were: \n"
-                            f" args: {args}, "
-                            f" left: {left}, right: {right}")
+            raise ConstraintCreationError(constraint_type.__name__, args, left, right)
 
     @classmethod
     def _decorate(cls,
@@ -817,10 +801,7 @@ class constraint:
 
         """
         if not (left and right):
-            raise ValueError(f"You are trying to create an implies all"
-                              " constraint without providing either the"
-                              " left or right sides of the implication.\n"
-                             f" Your left: {left} and right: {right}")
+            raise ImplicationConstraintCreationError(left, right)
         left = tuple(flatten([left]))
         right = tuple(flatten([right]))
         return constraint._constraint_by_function(encoding,
