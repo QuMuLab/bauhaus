@@ -1,5 +1,5 @@
 from bauhaus.core import Encoding, proposition
-from nnf import Var
+from nnf import Var, flatten, And, Or
 
 if __name__ == "__main__":
     e = Encoding()
@@ -24,7 +24,59 @@ if __name__ == "__main__":
     nnf_formula = e.compile()
     nnf_formula = nnf_formula & imply_var
     nnf_formula = nnf_formula.negate()
+    print()
+    e.pprint(nnf_formula.simplify())
+    print(nnf_formula.solve())
+
+    # test nnf nesting - and
+    nnf_formula = Var(1)
+    for i in range(10):
+        nnf_formula = nnf_formula & Var(i)
+    nnf_formula_2 = Var(10)
+    for i in range(11, 20):
+        nnf_formula_2 = nnf_formula_2 & Var(i)
+    nnf_formula_3 = nnf_formula & nnf_formula_2
+    print()
+    print(nnf_formula)
+    print(nnf_formula_2)
+    print(nnf_formula_3)
+    print(flatten(nnf_formula_3))
+
+    # test nnf nesting - or
+    nnf_formula = Var(1)
+    for i in range(10):
+        nnf_formula = nnf_formula | Var(i)
+    nnf_formula_2 = Var(10)
+    for i in range(11, 20):
+        nnf_formula_2 = nnf_formula_2 | Var(i)
+    nnf_formula_3 = nnf_formula | nnf_formula_2
+    print()
+    print(nnf_formula)
+    print(nnf_formula_2)
+    print(nnf_formula_3)
+    print(flatten(nnf_formula_3))
+
+    #test nnf nesting - both and's and or's
+    print()
+    nnf_formula = Var(1)
+    for i in range(10):
+        nnf_formula = nnf_formula & (Var(i) | Var(i + 1))
+    print(nnf_formula)
+    e.pprint(nnf_formula)
+    e.pprint(flatten(nnf_formula))
 
     print()
-    print(nnf_formula.to_CNF())
-    print(nnf_formula.solve())
+    nnf_formula = Var(1)
+    for i in range(10):
+        nnf_formula = nnf_formula | (Var(i) & Var(i + 1))
+    print(nnf_formula)
+    e.pprint(nnf_formula)
+    e.pprint(flatten(nnf_formula))
+
+    p, q, r, s, u = Var("p"), Var("q"), Var("r"), Var("s"), Var("u")
+    nnf_formula = p | (((q | ((u | ((p | s) & r)) & s))))
+    print()
+    print(nnf_formula)
+    e.pprint(nnf_formula)
+    e.pprint(flatten(nnf_formula))
+
