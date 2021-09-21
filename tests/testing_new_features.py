@@ -36,11 +36,12 @@ if __name__ == "__main__":
     for i in range(11, 20):
         nnf_formula_2 = nnf_formula_2 & Var(i)
     nnf_formula_3 = nnf_formula & nnf_formula_2
-    print()
-    print(nnf_formula)
-    print(nnf_formula_2)
-    print(nnf_formula_3)
-    print(flatten(nnf_formula_3))
+    print("\nbefore")
+    e.pprint(nnf_formula_3)
+    print("after")
+    flat = flatten(nnf_formula_3)
+    e.pprint(flat)
+    assert nnf_formula_3.equivalent(flat)
 
     # test nnf nesting - or
     nnf_formula = Var(1)
@@ -50,33 +51,40 @@ if __name__ == "__main__":
     for i in range(11, 20):
         nnf_formula_2 = nnf_formula_2 | Var(i)
     nnf_formula_3 = nnf_formula | nnf_formula_2
-    print()
-    print(nnf_formula)
-    print(nnf_formula_2)
-    print(nnf_formula_3)
-    print(flatten(nnf_formula_3))
+    print("\nbefore")
+    e.pprint(nnf_formula_3)
+    print("after")
+    flat = flatten(nnf_formula_3)
+    e.pprint(flat)
+    assert nnf_formula_3.equivalent(flat)
 
     #test nnf nesting - both and's and or's
-    print()
     nnf_formula = Var(1)
     for i in range(10):
         nnf_formula = nnf_formula & (Var(i) | Var(i + 1))
-    print(nnf_formula)
+    print("\nbefore")
     e.pprint(nnf_formula)
-    e.pprint(flatten(nnf_formula))
+    print("after")
+    flat = flatten(nnf_formula)
+    e.pprint(flat)
+    assert nnf_formula.equivalent(flat)
 
-    print()
     nnf_formula = Var(1)
     for i in range(10):
         nnf_formula = nnf_formula | (Var(i) & Var(i + 1))
-    print(nnf_formula)
+    print("\nbefore")
     e.pprint(nnf_formula)
-    e.pprint(flatten(nnf_formula))
+    print("after")
+    flat = flatten(nnf_formula)
+    e.pprint(flat)
+    assert nnf_formula.equivalent(flat)
 
-    p, q, r, s, u = Var("p"), Var("q"), Var("r"), Var("s"), Var("u")
-    nnf_formula = p | (((q | ((u | ((p | s) & r)) & s))))
-    print()
-    print(nnf_formula)
+    x, a, y, z, b, c = Var("x"), Var("a"), Var("y"), Var("z"), Var("b"), Var("c")
+    nnf_formula = x | ((a & y) & z & (b | c))
+    print("\nbefore")
     e.pprint(nnf_formula)
-    e.pprint(flatten(nnf_formula))
+    print("after")
+    flat = flatten(nnf_formula)
+    e.pprint(flat)
+    assert nnf_formula.equivalent(flat)
 
