@@ -1,5 +1,5 @@
 from bauhaus.core import Encoding, proposition
-from nnf import Var, flatten, And, Or
+from nnf import Var, flatten_one_level, And, Or
 
 if __name__ == "__main__":
     e = Encoding()
@@ -21,70 +21,77 @@ if __name__ == "__main__":
     imply_prop = (a >> b) & (c | ~d)
 
     e.add_constraint(imply_prop)
-    nnf_formula = e.compile()
-    nnf_formula = nnf_formula & imply_var
-    nnf_formula = nnf_formula.negate()
+    nnf = e.compile()
+    nnf = nnf & imply_var
+    nnf = nnf.negate()
     print()
-    e.pprint(nnf_formula.simplify())
-    print(nnf_formula.solve())
+    e.pprint(nnf.simplify())
+    print(nnf.solve())
 
     # test nnf nesting - and
-    nnf_formula = Var(1)
+    nnf = Var(1)
     for i in range(10):
-        nnf_formula = nnf_formula & Var(i)
-    nnf_formula_2 = Var(10)
+        nnf = nnf & Var(i)
+    nnf_2 = Var(10)
     for i in range(11, 20):
-        nnf_formula_2 = nnf_formula_2 & Var(i)
-    nnf_formula_3 = nnf_formula & nnf_formula_2
+        nnf_2 = nnf_2 & Var(i)
+    nnf_3 = nnf & nnf_2
     print("\nbefore")
-    e.pprint(nnf_formula_3)
+    e.pprint(nnf_3)
     print("after")
-    flat = flatten(nnf_formula_3)
-    e.pprint(flat)
-    assert nnf_formula_3.equivalent(flat)
+    nnf = Var(1)
+    for i in range(10):
+        nnf = flatten_one_level(nnf & Var(i))
+    nnf_2 = Var(10)
+    for i in range(11, 20):
+        nnf_2 = flatten_one_level(nnf_2 & Var(i))
+    nnf_3_flat = flatten_one_level(nnf & nnf_2)
+    e.pprint(nnf_3_flat)
+    assert nnf_3_flat.equivalent(nnf_3)
 
     # test nnf nesting - or
-    nnf_formula = Var(1)
+    nnf = Var(1)
     for i in range(10):
-        nnf_formula = nnf_formula | Var(i)
-    nnf_formula_2 = Var(10)
+        nnf = nnf | Var(i)
+    nnf_2 = Var(10)
     for i in range(11, 20):
-        nnf_formula_2 = nnf_formula_2 | Var(i)
-    nnf_formula_3 = nnf_formula | nnf_formula_2
+        nnf_2 = nnf_2 | Var(i)
+    nnf_3 = nnf | nnf_2
     print("\nbefore")
-    e.pprint(nnf_formula_3)
+    e.pprint(nnf_3)
     print("after")
-    flat = flatten(nnf_formula_3)
-    e.pprint(flat)
-    assert nnf_formula_3.equivalent(flat)
+    nnf = Var(1)
+    for i in range(10):
+        nnf = flatten_one_level(nnf | Var(i))
+    nnf_2 = Var(10)
+    for i in range(11, 20):
+        nnf_2 = flatten_one_level(nnf_2 | Var(i))
+    nnf_3_flat = flatten_one_level(nnf | nnf_2)
+    e.pprint(nnf_3_flat)
+    assert nnf_3_flat.equivalent(nnf_3)
 
+    
     #test nnf nesting - both and's and or's
-    nnf_formula = Var(1)
+    nnf = Var(1)
     for i in range(10):
-        nnf_formula = nnf_formula & (Var(i) | Var(i + 1))
+        nnf = nnf & (Var(i) | Var(i + 1))
     print("\nbefore")
-    e.pprint(nnf_formula)
+    e.pprint(nnf)
     print("after")
-    flat = flatten(nnf_formula)
-    e.pprint(flat)
-    assert nnf_formula.equivalent(flat)
-
-    nnf_formula = Var(1)
+    flat = Var(1)
     for i in range(10):
-        nnf_formula = nnf_formula | (Var(i) & Var(i + 1))
-    print("\nbefore")
-    e.pprint(nnf_formula)
-    print("after")
-    flat = flatten(nnf_formula)
+        flat = flatten_one_level(flat & (Var(i) | Var(i + 1)))
     e.pprint(flat)
-    assert nnf_formula.equivalent(flat)
-
-    x, a, y, z, b, c = Var("x"), Var("a"), Var("y"), Var("z"), Var("b"), Var("c")
-    nnf_formula = x | ((a & y) & z & (b | c))
+    assert nnf.equivalent(flat)
+    
+    nnf = Var(1)
+    for i in range(10):
+        nnf = nnf | (Var(i) & Var(i + 1))
     print("\nbefore")
-    e.pprint(nnf_formula)
+    e.pprint(nnf)
     print("after")
-    flat = flatten(nnf_formula)
+    flat = Var(1)
+    for i in range(10):
+        flat = flatten_one_level(flat | (Var(i) & Var(i + 1)))
     e.pprint(flat)
-    assert nnf_formula.equivalent(flat)
-
+    assert nnf.equivalent(flat)
