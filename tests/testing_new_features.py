@@ -95,3 +95,11 @@ if __name__ == "__main__":
         flat = flatten_one_level(flat | (Var(i) & Var(i + 1)))
     e.pprint(flat)
     assert nnf.equivalent(flat)
+
+    nnf = And({Var(1), And({Var(2), Var(3), Or({Var(4), Var(5)})})})
+    print("\nbefore")
+    e.pprint(nnf)
+    flat = flatten_one_level(nnf)
+    print("after")
+    e.pprint(flat)
+    assert nnf.equivalent(flat)
