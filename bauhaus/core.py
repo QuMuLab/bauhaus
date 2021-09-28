@@ -62,51 +62,6 @@ class Encoding:
                 f"  propositions::{self.propositions.keys()} \n"
                 f"  constraints::{self.constraints}")
 
-    def vars(self):
-        """ Returns all variables used in the Encoding """
-        ret = set()
-        ret.update(self.compile().vars())
-        return ret
-
-    def size(self):
-        """ Returns the accumulated size of all constraints """
-        ret = 0
-        constraints = self.constraints | self._custom_constraints
-        for c in constraints:
-            ret += c.compile().size()
-        return ret
-
-    def valid(self):
-        """ Returns the validity of the compiled formula """
-        return self.compile().valid()
-
-    def negate(self):
-        """ Returns the negation of the compiled formula """
-        return self.compile().negate()
-
-    @config(sat_backend="kissat")
-    def is_satisfiable(self):
-        """ Returns the satisfiability of the compiled formula """
-        return self.compile().satisfiable()
-
-    @config(sat_backend="kissat")
-    def solve(self):
-        """ Solves the compiled formula """
-        return self.compile().solve()
-
-    def count_solutions(self, lits: nnf.NNF = None): 
-        """ Returns the number of solutions of the compiled formula """
-        compiled = self.compile()
-        if lits:
-            compiled = compiled & lits
-        if not compiled.satisfiable():
-            return 0
-        return dsharp.compile(compiled.to_CNF(), executable='bin/dsharp', smooth=True).model_count()
-
-    def likelihood(self, lit):
-        """ Returns the likelihood of a literal being true in this model """
-        return self.count_solutions(lit.compile()) / self.count_solutions()
-
     def purge_propositions(self):
         """ Purges the propositional variables of an Encoding object """
         self.propositions = defaultdict(weakref.WeakValueDictionary)
