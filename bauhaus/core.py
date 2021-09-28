@@ -60,6 +60,14 @@ class Encoding:
                 f"  propositions::{self.propositions.keys()} \n"
                 f"  constraints::{self.constraints}")
 
+    def vars(self):
+        """ Returns all variables used in the Encoding """
+        ret = set()
+        compiled = self.compile()
+        for c in compiled.children:
+            ret |= c.compile().vars()
+        return ret
+
     def purge_propositions(self):
         """ Purges the propositional variables of an Encoding object """
         self.propositions = defaultdict(weakref.WeakValueDictionary)
