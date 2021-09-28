@@ -13,12 +13,22 @@ if __name__ == "__main__":
         def __repr__(self):
             return f"A.{self.val}"
 
+        def __hash__(self):
+            return hash(self.val)
+
+        def __eq__(self, other):
+            if not isinstance(other, self.__class__):
+                return False
+            return self.val == other.val
+
     # figuring out limitations of bauhaus
     w, x, y, z = Var(1), Var(2), Var(3), Var(4)
     a, b, c, d = A(1), A(2), A(3), A(4)    
 
     # can ONLY make constraints using bauhaus annotated propositions, as these use CustomNNFs
     e.add_constraint(a & b)
+
+
     nnf = e.compile()
 
     # works
@@ -29,9 +39,8 @@ if __name__ == "__main__":
     a, b, c, d = A(1), A(2), A(3), A(4)      
     imply_prop = (a >> b) & (c | ~d)
 
+    
     e.add_constraint(imply_prop)
-
-    s = e.vars()
 
     nnf = e.compile()
     nnf = nnf & imply_var
@@ -133,12 +142,3 @@ if __name__ == "__main__":
         flat = flat | (Var(i) & Var(i + 1))
     e.pprint(flat)
     assert nnf.equivalent(flat)
-
-    print()
-    constraints = e.debug_constraints
-    for c in constraints:
-        print(c.compile())
-
-
-
-
