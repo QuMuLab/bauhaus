@@ -102,9 +102,9 @@ class Encoding:
             return 0
         return dsharp.compile(compiled.to_CNF(), executable='bin/dsharp', smooth=True).model_count()
 
-    def likelihood(self, lit: nnf.Var):
+    def likelihood(self, lit):
         """ Returns the likelihood of a literal being true in this model """
-        return self.count_solutions(lit) / self.count_solutions()
+        return self.count_solutions(lit.compile()) / self.count_solutions()
 
     def purge_propositions(self):
         """ Purges the propositional variables of an Encoding object """
