@@ -2,6 +2,7 @@ import weakref
 from collections.abc import Iterable
 # add try import
 import nnf
+from nnf import config
 from functools import wraps
 from collections import defaultdict
 import warnings
@@ -82,10 +83,12 @@ class Encoding:
         """ Returns the negation of the compiled formula """
         return self.compile().negate()
 
+    @config(sat_backend="kissat")
     def is_satisfiable(self):
         """ Returns the satisfiability of the compiled formula """
         return self.compile().satisfiable()
 
+    @config(sat_backend="kissat")
     def solve(self):
         """ Solves the compiled formula """
         return self.compile().solve()
