@@ -2,7 +2,7 @@ import weakref
 from collections.abc import Iterable
 # add try import
 import nnf
-from nnf import config
+from nnf import config, dsharp
 from functools import wraps
 from collections import defaultdict
 import warnings
@@ -100,11 +100,11 @@ class Encoding:
             compiled = compiled & lits
         if not compiled.satisfiable():
             return 0
-        return compiled.compile(compiled.to_CNF(), executable='bin/dsharp', smooth=True).model_count()
+        return dsharp.compile(compiled.to_CNF(), executable='bin/dsharp', smooth=True).model_count()
 
-    def likelihood(self, lit):
+    def likelihood(self, lit: nnf.Var):
         """ Returns the likelihood of a literal being true in this model """
-        return self.count_solutions([lit]) / self.count_solutions()
+        return self.count_solutions(lit) / self.count_solutions()
 
     def purge_propositions(self):
         """ Purges the propositional variables of an Encoding object """
