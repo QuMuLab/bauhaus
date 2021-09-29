@@ -316,7 +316,6 @@ class CustomNNF:
         elif self.typ == 'imp':
             return self.args[0].compile().negate() | self.args[1].compile()
 
-    
     def negate(self):
         """Return a new sentence that's true iff the original is false."""
         @memoize

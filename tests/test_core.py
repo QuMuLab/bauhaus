@@ -148,3 +148,18 @@ def test_failed_raw_constraints():
     x, y = F(), F()
     with pytest.raises(TypeError):
         d.add_constraint(x | y)
+
+f = Encoding()
+
+@proposition(f)
+class G:
+    def __init__(self, data):
+        self.data = data
+    def __repr__(self):
+        return self.data
+
+# test CustomNNF negate
+def test_custom_nnf_negate():
+    a, b, c = G("a"), G("b"), G("c")
+    assert ((a | b | c).negate()).compile().equivalent((~a & ~b & ~c).compile())
+    assert ((a & b & c).negate()).compile().equivalent((~a | ~b | ~c).compile())
