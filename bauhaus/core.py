@@ -93,7 +93,7 @@ class Encoding:
         """ Solves the compiled formula """
         return self.compile().solve()
 
-    def count_solutions(self, lits: nnf.NNF): 
+    def count_solutions(self, lits: nnf.NNF = None): 
         """ Returns the number of solutions of the compiled formula """
         compiled = self.compile()
         if lits:
