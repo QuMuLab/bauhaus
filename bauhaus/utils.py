@@ -153,9 +153,9 @@ def unpack_variables(T, propositions) -> list:
 
 def count_solutions(base_formula, lits=[]):
     if lits:
-        T = And(base_formula + lits)
+        T = base_formula & And(lits)
     else:
-        T = And(base_formula)
+        T = base_formula
 
     if not T.satisfiable():
         return 0
