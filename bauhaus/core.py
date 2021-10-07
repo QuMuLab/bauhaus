@@ -4,8 +4,6 @@ from collections.abc import Iterable
 
 # add try import
 import nnf
-from nnf import config, dsharp
-from nnf.util import memoize
 from functools import wraps
 from collections import defaultdict
 import warnings
