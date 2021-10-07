@@ -322,20 +322,6 @@ class CustomNNF:
         elif self.typ == "imp":
             return self.args[0].compile().negate() | self.args[1].compile()
 
-    def negate(self):
-        """Return a new sentence that's true iff the original is false."""
-        @memoize
-        def neg(node):
-            if isinstance(node, nnf.Var):
-                return CustomNNF('not', [CustomNNF('var', [node])])
-            elif self.typ == 'and':
-                return CustomNNF('or', [neg(child) for child in node.args])
-            elif self.typ == 'or':
-                return CustomNNF('and', [neg(child) for child in node.args])
-            else:
-                raise TypeError(node)
-
-        return neg(self)
 
 def _flatten_and_build_andor(args, andor):
     all_args = []
