@@ -916,7 +916,6 @@ class constraint:
         ``@constraint.add_none_of(encoding, [Obj, Class, Class.method])``
 
         """
-
         return constraint._constraint_by_function(encoding, cbuilder.none_of, args=args)
 
 
