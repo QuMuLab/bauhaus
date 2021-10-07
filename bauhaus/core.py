@@ -1,5 +1,7 @@
+from typing import Optional
 import weakref
 from collections.abc import Iterable
+
 # add try import
 import nnf
 from functools import wraps
@@ -56,16 +58,18 @@ class Encoding:
         self._custom_constraints = set()
 
     def __repr__(self) -> str:
-        return (f"Encoding: \n"
-                f"  propositions::{self.propositions.keys()} \n"
-                f"  constraints::{self.constraints}")
+        return (
+            f"Encoding: \n"
+            f"  propositions::{self.propositions.keys()} \n"
+            f"  constraints::{self.constraints}"
+        )
 
     def purge_propositions(self):
-        """ Purges the propositional variables of an Encoding object """
+        """Purges the propositional variables of an Encoding object"""
         self.propositions = defaultdict(weakref.WeakValueDictionary)
 
     def clear_constraints(self):
-        """ Clears the constraints of an Encoding object """
+        """Clears the constraints of an Encoding object"""
         self.constraints = set()
 
     def clear_debug_constraints(self):
@@ -80,16 +84,17 @@ class Encoding:
         cons : NNF
             Constraint to be added.
         """
-        assert self._custom_constraints is not None, \
-            "Error: You can't add custom_constraints when objects have overloaded one of the boolean operators."
+        assert (
+            self._custom_constraints is not None
+        ), "Error: You can't add custom_constraints when objects have overloaded one of the boolean operators."
         self._custom_constraints.add(constraint)
 
     def disable_custom_constraints(self):
         """Disable the functionality for using custom_constraints"""
         self._custom_constraints = None
 
-    def compile(self, CNF=True) -> 'nnf.NNF':
-        """ Convert constraints into a theory in
+    def compile(self, CNF=True) -> "nnf.NNF":
+        """Convert constraints into a theory in
         conjunctive normal form, or if specified,
         the simpler negation-normal form.
 
@@ -105,16 +110,20 @@ class Encoding:
 
         """
         if not self.constraints and not self._custom_constraints:
-            raise ValueError(f"Constraints in {self} are empty."
-                             " This can happen if no objects from"
-                             " decorated classes are instantiated,"
-                             " if no classes/methods are decorated"
-                             " with @constraint or no function"
-                             " calls of the form constraint.add_method")
+            raise ValueError(
+                f"Constraints in {self} are empty."
+                " This can happen if no objects from"
+                " decorated classes are instantiated,"
+                " if no classes/methods are decorated"
+                " with @constraint or no function"
+                " calls of the form constraint.add_method"
+            )
         if not self.propositions.values():
-            raise ValueError(f"Constraints in {self} are empty."
-                             " This can happen if no objects from"
-                             " decorated classes are instantiated.")
+            raise ValueError(
+                f"Constraints in {self} are empty."
+                " This can happen if no objects from"
+                " decorated classes are instantiated."
+            )
 
         theory = []
         self.clear_debug_constraints()
@@ -135,13 +144,15 @@ class Encoding:
                 try:
                     self.debug_constraints[constraint] = clause
                 except Exception as e:
-                    raise(e)
+                    raise (e)
             else:
-                warnings.warn(f"The {constraint} was not built and"
-                            "will not be added to the theory.")
+                warnings.warn(
+                    f"The {constraint} was not built and"
+                    "will not be added to the theory."
+                )
         return nnf.And(theory)
 
-    def introspect(self):
+    def introspect(self, solution: Optional[dict] = None, var_level=False):
         """Observing the origin of a theory from each
         propositional object to the final constraint.
 
@@ -167,51 +178,88 @@ class Encoding:
         object constraints, along with the final (succinct)
         constraint.
 
+        Args
+        ----
+        solution : dictionary
+            Optional; A solution to use to highlight output.
+        var_level : boolean
+            Defaults to False; If True, output coloring will be based on the
+            variable instead of the literal.
         """
         if not self.debug_constraints:
-            warnings.warn("Your theory has not been compiled yet,"
-                          "so we cannot provide a representation of it."
-                          "Try running compile() on your encoding.")
+            warnings.warn(
+                "Your theory has not been compiled yet,"
+                "so we cannot provide a representation of it."
+                "Try running compile() on your encoding."
+            )
             return self.debug_constraints
 
-        print('\n\t{Encoding Introspection}\n')
+        print("\n\t{Encoding Introspection}\n")
 
         for constraint, clause in self.debug_constraints.items():
             print(f"{constraint}: \n")
             # Check based on original constraint type
-            if 'instance_constraints' in dir(constraint):
+            if "instance_constraints" in dir(constraint):
                 if constraint.instance_constraints:
                     for instance, values in constraint.instance_constraints.items():
-                            print(f"{instance} =>")
-                            for v in values:
-                                self.pprint(v)
-                            print("\n")
-                print(f"Final {constraint._constraint.__name__}: ", end='')
-                self.pprint(clause)
+                        print(f"{instance} =>")
+                        for v in values:
+                            self.pprint(v, solution)
+                        print("\n")
+                print(f"Final {constraint._constraint.__name__}: ", end="")
+                self.pprint(clause, solution)
             # Otherwise, it must be coming from a custom constraint
             else:
-                print('Custom constraint added:')
-                self.pprint(clause)
+                print("Custom constraint added:")
+                self.pprint(clause, solution)
                 print()
 
         print()
 
-    def pprint(self, formula):
+    def pprint(self, formula, solution: Optional[dict] = None, var_level=False):
         """Pretty print an NNF formula
 
         Arguments
         ---------
         formula : NNF
             Formula to be displayed.
+        solution : dictionary
+            Optional; A solution to use to highlight output.
+        var_level : boolean
+            Defaults to False; If True, output coloring will be based on the
+            variable instead of the literal.
         """
 
         def _process(f):
             if isinstance(f, nnf.Var):
-                return {True: '', False: '¬'}[f.true] + str(f.name)
+                if solution:
+                    if var_level:
+                        color = {True: "\u001b[32m", False: "\u001b[31m"}[
+                            solution[f.name]
+                        ]
+                        return (
+                            {True: "", False: "¬"}[f.true]
+                            + color
+                            + str(f.name)
+                            + "\u001b[0m"
+                        )
+                    else:
+                        val = solution[f.name]
+                        if not f.true:
+                            val = not val
+                        color = {True: "\u001b[32m", False: "\u001b[31m"}[val]
+                        return (
+                            color
+                            + {True: "", False: "¬"}[f.true]
+                            + str(f.name)
+                            + "\u001b[0m"
+                        )
+                else:
+                    return {True: "", False: "¬"}[f.true] + str(f.name)
             elif isinstance(f, nnf.And):
-                return '(' + ' ∧ '.join([_process(i) for i in f]) + ')'
+                return "(" + " ∧ ".join([_process(i) for i in f]) + ")"
             elif isinstance(f, nnf.Or):
-                return '(' + ' ∨ '.join([_process(i) for i in f]) + ')'
+                return "(" + " ∨ ".join([_process(i) for i in f]) + ")"
             else:
                 raise TypeError("Can only pprint an NNF object. Given %s" % type(f))
 
@@ -244,29 +292,32 @@ class CustomNNF:
 
     def __and__(self, other):
         if not isinstance(other, CustomNNF):
-            other = CustomNNF('var', [other._var])
-        return CustomNNF('and', [self, other])
+            other = CustomNNF("var", [other._var])
+        return CustomNNF("and", [self, other])
+
     def __or__(self, other):
         if not isinstance(other, CustomNNF):
-            other = CustomNNF('var', [other._var])
-        return CustomNNF('or', [self, other])
+            other = CustomNNF("var", [other._var])
+        return CustomNNF("or", [self, other])
+
     def __invert__(self):
-        return CustomNNF('not', [self])
+        return CustomNNF("not", [self])
+
     def __rshift__(self, other):
         if not isinstance(other, CustomNNF):
-            other = CustomNNF('var', [other._var])
-        return CustomNNF('imp', [self, other])
+            other = CustomNNF("var", [other._var])
+        return CustomNNF("imp", [self, other])
 
     def compile(self):
-        if self.typ == 'var':
+        if self.typ == "var":
             return self.args[0]
-        elif self.typ == 'and':
+        elif self.typ == "and":
             return nnf.And(map(lambda x: x.compile(), self.args))
-        elif self.typ == 'or':
+        elif self.typ == "or":
             return nnf.Or(map(lambda x: x.compile(), self.args))
-        elif self.typ == 'not':
+        elif self.typ == "not":
             return self.args[0].compile().negate()
-        elif self.typ == 'imp':
+        elif self.typ == "imp":
             return self.args[0].compile().negate() | self.args[1].compile()
 
 
@@ -279,11 +330,13 @@ def _flatten_and_build_andor(args, andor):
             all_args.append(arg)
     return CustomNNF(andor, all_args)
 
+
 def And(*args):
-    return _flatten_and_build_andor(args, 'and')
+    return _flatten_and_build_andor(args, "and")
+
 
 def Or(*args):
-    return _flatten_and_build_andor(args, 'or')
+    return _flatten_and_build_andor(args, "or")
 
 
 def proposition(encoding: Encoding):
@@ -316,11 +369,19 @@ def proposition(encoding: Encoding):
         >> e.propositions = {'A': {id: object}}
 
     """
+
     def wrapper(cls):
 
-        if ('__and__' in dir(cls)) or ('__or__' in dir(cls)) or ('__invert__' in dir(cls)) or ('__rshift__' in dir(cls)):
+        if (
+            ("__and__" in dir(cls))
+            or ("__or__" in dir(cls))
+            or ("__invert__" in dir(cls))
+            or ("__rshift__" in dir(cls))
+        ):
             encoding.disable_custom_constraints()
-            warnings.warn("Warning: Disabling the use of Encoding::add_constraint because of pre-existing operator overloading.")
+            warnings.warn(
+                "Warning: Disabling the use of Encoding::add_constraint because of pre-existing operator overloading."
+            )
 
         else:
             # To allow for custom constraints over @proposition-enabled objects,
@@ -331,7 +392,7 @@ def proposition(encoding: Encoding):
                 if isinstance(o, CustomNNF):
                     return o
                 else:
-                    return CustomNNF('var', [o._var])
+                    return CustomNNF("var", [o._var])
 
             def _and(left, right):
                 return _process(left) & _process(right)
@@ -340,7 +401,7 @@ def proposition(encoding: Encoding):
                 return _process(left) | _process(right)
 
             def _neg(c):
-                return ~ _process(c)
+                return ~_process(c)
 
             def _imp(left, right):
                 return _process(left) >> _process(right)
@@ -354,7 +415,6 @@ def proposition(encoding: Encoding):
             cls.__rshift__ = _imp
             cls.compile = compile
 
-
         @wraps(cls)
         def wrapped(*args, **kwargs):
             ret = cls(*args, **kwargs)
@@ -362,7 +422,9 @@ def proposition(encoding: Encoding):
             class_name = ret.__class__.__qualname__
             encoding.propositions[class_name][id(ret)] = ret
             return ret
+
         return wrapped
+
     return wrapper
 
 
@@ -403,8 +465,9 @@ class constraint:
         ``constraint.add_at_least_one(e, *args)``
 
     """
+
     def _is_valid_grouby(decorated_class, parameter):
-        """ Validates if a groupby can be performed prior to
+        """Validates if a groupby can be performed prior to
         storing constraint information.
 
         We cannot check if the given parameter is an attribute at the
@@ -427,27 +490,32 @@ class constraint:
         """
         classname = classname(decorated_class)
         if ismethod(decorated_class):
-            raise Exception("You can only use groupby on a class and not a method"
-                           f", as you have tried on {decorated_class.__qualname__}."
-                           f" Try using groupby on the {classname}"
-                           " class instead.")
+            raise Exception(
+                "You can only use groupby on a class and not a method"
+                f", as you have tried on {decorated_class.__qualname__}."
+                f" Try using groupby on the {classname}"
+                " class instead."
+            )
         if not (isinstance(parameter, str) or callable(parameter)):
             value_type = type(parameter).__name__
-            raise ValueError(f"The provided groupby value, {parameter},"
-                            f" is of type {value_type}. To use groupby,"
-                            f" a function or object attribute (string) must be provided"
-                            f" to partition the {classname} objects.")
+            raise ValueError(
+                f"The provided groupby value, {parameter},"
+                f" is of type {value_type}. To use groupby,"
+                f" a function or object attribute (string) must be provided"
+                f" to partition the {classname} objects."
+            )
         return True
 
-
     @classmethod
-    def _constraint_by_function(cls,
-                               encoding: Encoding,
-                               constraint_type,
-                               args=None,
-                               k=None,
-                               left=None,
-                               right=None):
+    def _constraint_by_function(
+        cls,
+        encoding: Encoding,
+        constraint_type,
+        args=None,
+        k=None,
+        left=None,
+        right=None,
+    ):
 
         """
         `Private Method`:
@@ -486,21 +554,25 @@ class constraint:
             encoding.constraints.add(constraint)
             return
         else:
-            raise ValueError("Some or more of your provided"
-                             f" arguments for the {constraint_type.__name__}"
-                             " constraint were empty or invalid. Your"
-                             " provided arguments were: \n"
-                            f" args: {args}, "
-                            f" left: {left}, right: {right}")
+            raise ValueError(
+                "Some or more of your provided"
+                f" arguments for the {constraint_type.__name__}"
+                " constraint were empty or invalid. Your"
+                " provided arguments were: \n"
+                f" args: {args}, "
+                f" left: {left}, right: {right}"
+            )
 
     @classmethod
-    def _decorate(cls,
-                  encoding: Encoding,
-                  constraint_type,
-                  k=None,
-                  left=None,
-                  right=None,
-                  groupby=None):
+    def _decorate(
+        cls,
+        encoding: Encoding,
+        constraint_type,
+        k=None,
+        left=None,
+        right=None,
+        groupby=None,
+    ):
         """
         `Private Method`:
         Create _ConstraintBuilder objects from constraint.method
@@ -529,24 +601,24 @@ class constraint:
         Wrapper: Returns the function it decorated
 
         """
+
         def wrapper(func):
 
             if groupby:
                 assert cls._is_valid_grouby(func, groupby)
 
-            constraint = cbuilder(constraint_type,
-                                  func=func,
-                                  k=k,
-                                  left=left,
-                                  right=right,
-                                  groupby=groupby)
+            constraint = cbuilder(
+                constraint_type, func=func, k=k, left=left, right=right, groupby=groupby
+            )
             encoding.constraints.add(constraint)
 
             @wraps(func)
             def wrapped(*args, **kwargs):
                 ret = func(*args, **kwargs)
                 return ret
+
             return wrapped
+
         return wrapper
 
     def at_least_one(encoding: Encoding, **kwargs):
@@ -585,7 +657,7 @@ class constraint:
         return constraint._decorate(encoding, cbuilder.at_most_one, **kwargs)
 
     def exactly_one(encoding: Encoding, **kwargs):
-        """ Exactly one of the propositional variables are True.
+        """Exactly one of the propositional variables are True.
 
         Constraint is added with the @constraint decorator.
 
@@ -627,12 +699,12 @@ class constraint:
         if k < 1:
             raise ValueError(f"The provided k={k} is less than 1.")
         if k == 1:
-            warnings.warn(f"Warning: The provided k={k} will"
-                           " result in an 'at most one' constraint,"
-                           " but we'll proceed anyway.")
-        return constraint._decorate(encoding,
-                                    cbuilder.at_most_k,
-                                    k=k, **kwargs)
+            warnings.warn(
+                f"Warning: The provided k={k} will"
+                " result in an 'at most one' constraint,"
+                " but we'll proceed anyway."
+            )
+        return constraint._decorate(encoding, cbuilder.at_most_k, k=k, **kwargs)
 
     def implies_all(encoding: Encoding, left=None, right=None, **kwargs):
         """Left proposition(s) implies right proposition(s)
@@ -680,11 +752,9 @@ class constraint:
         """
         left = tuple(flatten([left])) if left else None
         right = tuple(flatten([right])) if right else None
-        return constraint._decorate(encoding,
-                                    cbuilder.implies_all,
-                                    left=left, right=right, **kwargs)
-
-
+        return constraint._decorate(
+            encoding, cbuilder.implies_all, left=left, right=right, **kwargs
+        )
 
     def none_of(encoding: Encoding, **kwargs):
         """None of the propositional variables are True.
@@ -722,9 +792,9 @@ class constraint:
         ``@constraint.add_at_least_one(encoding, [Obj, Class, Class.method])``
 
         """
-        return constraint._constraint_by_function(encoding,
-                                                 cbuilder.at_least_one,
-                                                 args=args)
+        return constraint._constraint_by_function(
+            encoding, cbuilder.at_least_one, args=args
+        )
 
     def add_at_most_one(encoding: Encoding, *args):
         """At most one of the propositional variables are True
@@ -741,12 +811,12 @@ class constraint:
         ``@constraint.add_at_most_one(encoding, [Obj, Class, Class.method])``
 
         """
-        return constraint._constraint_by_function(encoding,
-                                                 cbuilder.at_most_one,
-                                                 args=args)
+        return constraint._constraint_by_function(
+            encoding, cbuilder.at_most_one, args=args
+        )
 
     def add_exactly_one(encoding: Encoding, *args):
-        """ Exactly one of the propositional variables are True
+        """Exactly one of the propositional variables are True
 
         Constraint is added directly with this function.
 
@@ -760,9 +830,9 @@ class constraint:
         ``@constraint.add_exactly_one(encoding, [Obj, Class, Class.method])``
 
         """
-        return constraint._constraint_by_function(encoding,
-                                                 cbuilder.exactly_one,
-                                                 args=args)
+        return constraint._constraint_by_function(
+            encoding, cbuilder.exactly_one, args=args
+        )
 
     def add_at_most_k(encoding: Encoding, k: int, *args):
         """At most K of the propositional variables are True
@@ -788,12 +858,14 @@ class constraint:
         if k < 1:
             raise ValueError(f"The provided k={k} is less than 1.")
         if k == 1:
-            warnings.warn(f"Warning: The provided k={k} will"
-                           " result in an 'at most one' constraint,"
-                           " but we'll proceed anyway.")
-        return constraint._constraint_by_function(encoding,
-                                                 cbuilder.at_most_k,
-                                                 args=args, k=k)
+            warnings.warn(
+                f"Warning: The provided k={k} will"
+                " result in an 'at most one' constraint,"
+                " but we'll proceed anyway."
+            )
+        return constraint._constraint_by_function(
+            encoding, cbuilder.at_most_k, args=args, k=k
+        )
 
     def add_implies_all(encoding: Encoding, left, right):
         """Left proposition(s) implies right proposition(s)
@@ -817,15 +889,17 @@ class constraint:
 
         """
         if not (left and right):
-            raise ValueError(f"You are trying to create an implies all"
-                              " constraint without providing either the"
-                              " left or right sides of the implication.\n"
-                             f" Your left: {left} and right: {right}")
+            raise ValueError(
+                f"You are trying to create an implies all"
+                " constraint without providing either the"
+                " left or right sides of the implication.\n"
+                f" Your left: {left} and right: {right}"
+            )
         left = tuple(flatten([left]))
         right = tuple(flatten([right]))
-        return constraint._constraint_by_function(encoding,
-                                                 cbuilder.implies_all,
-                                                 left=left, right=right)
+        return constraint._constraint_by_function(
+            encoding, cbuilder.implies_all, left=left, right=right
+        )
 
     def add_none_of(encoding: Encoding, *args):
         """None of the propositional variables are True
@@ -842,6 +916,52 @@ class constraint:
         ``@constraint.add_none_of(encoding, [Obj, Class, Class.method])``
 
         """
-        return constraint._constraint_by_function(encoding,
-                                                 cbuilder.none_of,
-                                                 args=args)
+        return constraint._constraint_by_function(encoding, cbuilder.none_of, args=args)
+
+
+def print_theory(theory: Optional[dict], format: str = "truth"):
+    """Prints a solved theory in a human readable format.
+
+    Propositions are printed according to their `str` or `repr` functions.
+
+    Arguments
+    ---------
+    theory : dict
+        The theory to print.
+    format : str
+        The format to print the theory in. One of "truth", "objects", or "both".
+        Defaults to truth.
+
+        truth: group output by truth values.
+        objects: group output by object types.
+        both: group output primarily by truth values, and secondarily by object type.
+    """
+    if theory is None:
+        print("None")
+        return
+
+    if format not in ["truth", "objects", "both"]:
+        raise ValueError('format must be one of: "truth", "objects", or "both"')
+
+    theory_list = list(theory.items())
+    if format == "truth":
+        theory_list.sort(key=lambda e: -1 if e[1] else 1)
+    elif format == "objects" or format == "both":
+        theory_list.sort(key=lambda e: str(type(e[0])))
+        if format == "both":
+            theory_dict = defaultdict(list)
+            for e in theory_list:
+                if e[1]:
+                    theory_dict["true"].append(e)
+                else:
+                    theory_dict["false"].append(e)
+            theory_list = theory_dict["true"]
+            theory_list.extend(theory_dict["false"])
+
+    print("Solved theory:")
+    n = max(map(lambda e: len(str(e[0])), theory_list))
+    for e in theory_list:
+        space = n - len(str(e[0])) + 5
+        if not e[1]:
+            space += 1
+        print(f"  {e[0]}: {str(e[1]):>{space}}")
