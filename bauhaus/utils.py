@@ -1,6 +1,7 @@
 import sys
 import inspect
-from nnf import Var
+from nnf import Var, And
+from nnf import dsharp
 
 """Utilities for bauhaus library."""
 
@@ -149,3 +150,17 @@ def unpack_variables(T, propositions) -> list:
                                  " Attempted conversion of {var} to nnf.Var also failed and"
                                 f" yielded the following error message: {e}")
     return list(inputs)
+
+def count_solutions(base_formula, lits=[]):
+    if lits:
+        T = base_formula & And(lits)
+    else:
+        T = base_formula
+
+    if not T.satisfiable():
+        return 0
+
+    return dsharp.compile(T.to_CNF(), smooth=True).model_count()
+
+def likelihood(base_formula, lit):
+    return count_solutions(base_formula, [lit]) / count_solutions(base_formula)
