@@ -289,16 +289,24 @@ class CustomNNF:
     def __init__(self, typ, args):
         self.typ = typ
         self.args = args
+    
+    def _sub_args_if_needed(self, t):
+        if self.typ == t:
+            return self.args
+        else:
+            return [self]
 
     def __and__(self, other):
         if not isinstance(other, CustomNNF):
             other = CustomNNF("var", [other._var])
-        return CustomNNF("and", [self, other])
+        arguments = self._sub_args_if_needed("and") + other._sub_args_if_needed("and")
+        return CustomNNF("and", arguments)
 
     def __or__(self, other):
         if not isinstance(other, CustomNNF):
             other = CustomNNF("var", [other._var])
-        return CustomNNF("or", [self, other])
+        arguments = self._sub_args_if_needed("or") + other._sub_args_if_needed("or")
+        return CustomNNF("or", arguments)
 
     def __invert__(self):
         return CustomNNF("not", [self])

@@ -152,10 +152,18 @@ def unpack_variables(T, propositions) -> list:
     return list(inputs)
 
 def count_solutions(base_formula, lits=[]):
+    """Counts the number of solutions to a given formula."""
+
+    def _nnfify(lit):
+        if type(lit).__name__ == "CustomNNF":
+            assert lit.typ == 'not', "Literal must be a variable or negated variable."
+            return ~(lit.args[0].args[0])
+        else:
+            return lit._var
+
+    T = base_formula
     if lits:
-        T = base_formula & And(lits)
-    else:
-        T = base_formula
+        T = T & And([_nnfify(l) for l in lits])
 
     if not T.satisfiable():
         return 0
