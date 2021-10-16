@@ -3,6 +3,8 @@ import inspect
 from nnf import Var, And
 from nnf import dsharp
 
+import bauhaus.core as core
+
 """Utilities for bauhaus library."""
 
 
@@ -141,6 +143,14 @@ def unpack_variables(T, propositions) -> list:
             inputs.update(unpack_variables(var, propositions))
 
         else:
+            # consider CustomNNFs that only store a single Var
+            if isinstance(var, core.CustomNNF):
+                if len(var.args) == 1:
+                    if len(var.args[0].args) == 1:
+                        if var.typ == 'not':
+                            inputs.add(~var.args[0].args[0])
+                        else:
+                            inputs.add(var.args[0].args[0])
             try:
                 # convert to nnf.Var
                 inputs.add(Var(var))

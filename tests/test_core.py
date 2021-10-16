@@ -1,4 +1,4 @@
-from bauhaus.core import Encoding, constraint, proposition, And, Or
+from bauhaus.core import CustomNNF, Encoding, constraint, proposition, And, Or
 from bauhaus.constraint_builder import _ConstraintBuilder as cbuilder
 from nnf import Var
 import pytest
@@ -149,17 +149,50 @@ def test_failed_raw_constraints():
     with pytest.raises(TypeError):
         d.add_constraint(x | y)
 
-f = Encoding()
-
-@proposition(f)
-class G:
+g = Encoding()
+@proposition(g)
+class H:
     def __init__(self, data):
         self.data = data
-    def __repr__(self):
-        return self.data
 
-# test CustomNNF negate
-def test_custom_nnf_negate():
-    a, b, c = G("a"), G("b"), G("c")
-    assert ((a | b | c).negate()).compile().equivalent((~a & ~b & ~c).compile())
-    assert ((a & b & c).negate()).compile().equivalent((~a | ~b | ~c).compile())
+    def __repr__(self):
+        return str(self.data)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.data == other.data
+
+    def __hash__(self):
+        return hash(self.data)
+
+def test_duplicates():
+
+    def clear():
+        g.clear_constraints()
+        g.clear_debug_constraints()
+        g._custom_constraints = set() 
+
+    h1 = H(1)
+    h1_copy = H(1)
+    h2 = H(2)
+    h3 = H(3)
+
+    g.add_constraint(h1)
+    g.add_constraint(~h1_copy)
+
+    assert g.compile().solve() == None
+    clear()
+
+    g.add_constraint(h1 & ~h1_copy)
+    assert g.compile().solve() == None
+    clear()
+
+    g.add_constraint(h1 & h2)
+    g.add_constraint(~h1_copy & h3)
+    assert g.compile().solve() == None
+    clear()
+
+    constraint.add_implies_all(g, left=h1, right=~h1_copy)
+    constraint.add_exactly_one(g, h1)
+    assert g.compile().solve() == None
+    clear()
