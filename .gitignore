@@ -12,3 +12,5 @@ bauhaus/__pycache__/
 .vscode/
 
 *.pyc
+
+.venv/
