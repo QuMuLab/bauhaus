@@ -4,6 +4,7 @@ from nnf import Var, And
 from nnf import dsharp
 
 import bauhaus.core as core
+import warnings
 
 """Utilities for bauhaus library."""
 
@@ -141,16 +142,10 @@ def unpack_variables(T, propositions) -> list:
 
         elif isinstance(var, (list, tuple, set)):
             inputs.update(unpack_variables(var, propositions))
-
         else:
-            # consider CustomNNFs that only store a single Var
             if isinstance(var, core.CustomNNF):
-                if len(var.args) == 1:
-                    if len(var.args[0].args) == 1:
-                        if var.typ == 'not':
-                            inputs.add(~var.args[0].args[0])
-                        else:
-                            inputs.add(var.args[0].args[0])
+                warnings.warn(
+                    f"Provided input {var} is a literal, not a variable.")
             try:
                 # convert to nnf.Var
                 inputs.add(Var(var))
@@ -159,7 +154,7 @@ def unpack_variables(T, propositions) -> list:
                                  " instance of such as class or method, or of type nnf.Var."
                                  " Attempted conversion of {var} to nnf.Var also failed and"
                                 f" yielded the following error message: {e}")
-    return list(inputs)
+    return list(inputs)        
 
 def count_solutions(base_formula, lits=[]):
     """Counts the number of solutions to a given formula."""

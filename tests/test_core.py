@@ -158,98 +158,39 @@ class H:
         return str(self.data)
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.data == other.data
+        return isinstance(other, self.__class__) and hash(self) == hash(other)
 
     def __hash__(self):
         return hash(self.data)
 
 def test_duplicates():
-
-    def clear():
-        g.clear_constraints()
-        g.clear_debug_constraints()
-        g._custom_constraints = set() 
-
-    # want to ensure h1 and h1_copy are treated the same
-    # generally, we want to ensure that no matter how many H(1) are created,
-    # if it is negated in another constraint or otherwise, they must all be
-    # treated the same.
+    # want to ensure that warnings are raised whenever we send the
+    # constraint.add_* functions literals instead of variables.
     h1 = H(1)
-    h1_copy = H(1)
     h2 = H(2)
     h3 = H(3)
     h4 = H(4)
-    h1_copy_negated = ~h1_copy
 
-    # FIRST: testing custom constraints for duplication issues
+    with pytest.warns(UserWarning):
+        constraint.add_at_most_one(g, h1, h2, h3 & h4);
+        g.compile()
 
-    # h1 and the negation of its copy both true in a single constraint
-    g.add_constraint(h1 & h1_copy_negated)
-    assert g.compile().solve() == None
-    clear()
+    with pytest.warns(UserWarning):
+        constraint.add_at_most_k(g, 2, h1, h2, h3 & h4);
+        g.compile()
 
-    # h1 and the negation of its copy both true with multiple constraints
-    g.add_constraint(h1)
-    g.add_constraint(h1_copy_negated)
-    assert g.compile().solve() == None
-    clear()
+    with pytest.warns(UserWarning):
+        constraint.add_at_least_one(g, h1, h2, h3 & h4);
+        g.compile()
 
-    # same thing as above, trying a more complicated formula
-    g.add_constraint(h1 & (h2 | h4))
-    g.add_constraint(h1_copy_negated & (h3 | h4))
-    assert g.compile().solve() == None
-    clear()
+    with pytest.warns(UserWarning):
+        constraint.add_exactly_one(g, h1, h2, h3 & h4);
+        g.compile()
 
-    # h1 and the negation of its copy both true through >> in a 
-    # single constraint
-    g.add_constraint((h1 >> h1_copy_negated) & h1)
-    assert g.compile().solve() == None
-    clear()
-
-    # h1 and the negation of its copy both true through >> through 
-    # multiple constraints
-    g.add_constraint(h1 >> h1_copy_negated)
-    g.add_constraint(h1)
-    assert g.compile().solve() == None
-    clear()
-
-    # NEXT: testing "bauhaus" constraints
-
-    # h1 and the negation of its copy both true in a single constraint
-    constraint.add_exactly_one(g, h1 & h1_copy_negated)
-    assert g.compile().solve() == None
-    clear()
-
-    # h1 and the negation of its copy both true with multiple constraints
-    constraint.add_exactly_one(g, h1)
-    constraint.add_exactly_one(g, h1_copy_negated)
-    assert g.compile().solve() == None
-    clear()
-
-    # same thing as above, trying a more complicated formula
-    constraint.add_exactly_one(g, h1 & (h2 | h4))
-    constraint.add_exactly_one(g, h1_copy_negated & (h3 | h4))
-    assert g.compile().solve() == None
-    clear()
-
-    # h1 and the negation of its copy both true through >> in a 
-    # single constraint
-    constraint.add_exactly_one(g, (h1 >> h1_copy_negated) & h1)
-    assert g.compile().solve() == None
-    clear()
-
-    # h1 and the negation of its copy both true through >> through 
-    # multiple constraints
-    constraint.add_exactly_one(g, h1 >> h1_copy_negated)
-    constraint.add_exactly_one(g, h1)
-    assert g.compile().solve() == None
-    clear()
-
-    # using the implication bauhaus method
-    constraint.add_implies_all(g, left=h1, right=h1_copy_negated)
-    constraint.add_exactly_one(g, h1)
-    assert g.compile().solve() == None
-    clear()
-
-test_duplicates()
+    with pytest.warns(UserWarning):
+        constraint.add_implies_all(g, left=h1, right=h3 & h4);
+        g.compile()
+       
+    with pytest.warns(UserWarning):
+        constraint.add_none_of(g, h1, h2, h3 & h4);
+        g.compile()
