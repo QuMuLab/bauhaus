@@ -1,10 +1,9 @@
-from bauhaus.core import Encoding, constraint, proposition, And, Or
+from bauhaus.core import CustomNNF, Encoding, constraint, proposition, And, Or
 from bauhaus.constraint_builder import _ConstraintBuilder as cbuilder
 from nnf import Var
 import pytest
 """
 Unit tests for core functionalities and building constraints.
-
 See reference:
 https://github.com/mrocklin/multipledispatch/blob/master/multipledispatch/tests/test_core.py
 """
@@ -149,17 +148,49 @@ def test_failed_raw_constraints():
     with pytest.raises(TypeError):
         d.add_constraint(x | y)
 
-f = Encoding()
-
-@proposition(f)
-class G:
+g = Encoding()
+@proposition(g)
+class H:
     def __init__(self, data):
         self.data = data
-    def __repr__(self):
-        return self.data
 
-# test CustomNNF negate
-def test_custom_nnf_negate():
-    a, b, c = G("a"), G("b"), G("c")
-    assert ((a | b | c).negate()).compile().equivalent((~a & ~b & ~c).compile())
-    assert ((a & b & c).negate()).compile().equivalent((~a | ~b | ~c).compile())
+    def __repr__(self):
+        return str(self.data)
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and hash(self) == hash(other)
+
+    def __hash__(self):
+        return hash(self.data)
+
+def test_duplicates():
+    # want to ensure that warnings are raised whenever we send the
+    # constraint.add_* functions literals instead of variables.
+    h1 = H(1)
+    h2 = H(2)
+    h3 = H(3)
+    h4 = H(4)
+
+    with pytest.warns(UserWarning):
+        constraint.add_at_most_one(g, h1, h2, h3 & h4);
+        g.compile()
+
+    with pytest.warns(UserWarning):
+        constraint.add_at_most_k(g, 2, h1, h2, h3 & h4);
+        g.compile()
+
+    with pytest.warns(UserWarning):
+        constraint.add_at_least_one(g, h1, h2, h3 & h4);
+        g.compile()
+
+    with pytest.warns(UserWarning):
+        constraint.add_exactly_one(g, h1, h2, h3 & h4);
+        g.compile()
+
+    with pytest.warns(UserWarning):
+        constraint.add_implies_all(g, left=h1, right=h3 & h4);
+        g.compile()
+       
+    with pytest.warns(UserWarning):
+        constraint.add_none_of(g, h1, h2, h3 & h4);
+        g.compile()

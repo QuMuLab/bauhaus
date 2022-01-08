@@ -3,6 +3,9 @@ import inspect
 from nnf import Var, And
 from nnf import dsharp
 
+import bauhaus.core as core
+import warnings
+
 """Utilities for bauhaus library."""
 
 
@@ -139,8 +142,10 @@ def unpack_variables(T, propositions) -> list:
 
         elif isinstance(var, (list, tuple, set)):
             inputs.update(unpack_variables(var, propositions))
-
         else:
+            if isinstance(var, core.CustomNNF):
+                warnings.warn(
+                    f"Provided input {var} is a literal, not a variable.")
             try:
                 # convert to nnf.Var
                 inputs.add(Var(var))
