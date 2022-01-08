@@ -154,7 +154,7 @@ def unpack_variables(T, propositions) -> list:
                                  " instance of such as class or method, or of type nnf.Var."
                                  " Attempted conversion of {var} to nnf.Var also failed and"
                                 f" yielded the following error message: {e}")
-    return list(inputs)        
+    return list(inputs)
 
 def count_solutions(base_formula, lits=[]):
     """Counts the number of solutions to a given formula."""
