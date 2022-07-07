@@ -496,12 +496,12 @@ class constraint:
         True if a valid groupby, and raises an Exception if not.
 
         """
-        classname = classname(decorated_class)
+        class_name = classname(decorated_class)
         if ismethod(decorated_class):
             raise Exception(
                 "You can only use groupby on a class and not a method"
                 f", as you have tried on {decorated_class.__qualname__}."
-                f" Try using groupby on the {classname}"
+                f" Try using groupby on the {class_name}"
                 " class instead."
             )
         if not (isinstance(parameter, str) or callable(parameter)):
@@ -510,7 +510,7 @@ class constraint:
                 f"The provided groupby value, {parameter},"
                 f" is of type {value_type}. To use groupby,"
                 f" a function or object attribute (string) must be provided"
-                f" to partition the {classname} objects."
+                f" to partition the {class_name} objects."
             )
         return True
 
