@@ -173,7 +173,7 @@ def count_solutions(base_formula, lits=[]):
     if not T.satisfiable():
         return 0
 
-    return dsharp.compile(T.to_CNF(), smooth=True).model_count()
+    return dsharp.compile(T.to_CNF(simplify=False), smooth=True).model_count()
 
 def likelihood(base_formula, lit):
     return count_solutions(base_formula, [lit]) / count_solutions(base_formula)
