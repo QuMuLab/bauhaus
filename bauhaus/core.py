@@ -380,7 +380,16 @@ def proposition(encoding: Encoding):
 
     def wrapper(cls):
 
-        assert "_prop_name" in dir(cls), "_prop_name must be defined"
+        assert "_prop_name" in dir(cls), "Error: _prop_name must be defined in order for bauhaus to construct __repr__, __hash__, and __eq__"
+
+        def _init(self, val):
+            self.val = val
+
+        def _repr(self):
+            return self._prop_name()
+        
+        cls.__init__ = _init
+        cls.__repr__ = _repr
 
         if (
             ("__and__" in dir(cls))
@@ -424,9 +433,9 @@ def proposition(encoding: Encoding):
             cls.__invert__ = _neg
             cls.__rshift__ = _imp
             cls.compile = compile
-
+        
         def _hash(self):
-                return hash(str(self))
+            return hash(self.__repr__())
 
         def _eq(self, __value: object) -> bool:
             return hash(self) == hash(__value)
@@ -438,7 +447,7 @@ def proposition(encoding: Encoding):
         def wrapped(*args, **kwargs):
             ret = cls(*args, **kwargs)
             ret._var = nnf.Var(ret)
-            class_name = ret.__class__.__qualname__ 
+            class_name = ret.__class__.__qualname__
             encoding.propositions[class_name][id(ret)] = ret
             return ret
 
