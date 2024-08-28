@@ -380,6 +380,8 @@ def proposition(encoding: Encoding):
 
     def wrapper(cls):
 
+        assert "_prop_name" in dir(cls), "_prop_name must be defined"
+
         if (
             ("__and__" in dir(cls))
             or ("__or__" in dir(cls))
@@ -423,11 +425,20 @@ def proposition(encoding: Encoding):
             cls.__rshift__ = _imp
             cls.compile = compile
 
+        def _hash(self):
+                return hash(str(self))
+
+        def _eq(self, __value: object) -> bool:
+            return hash(self) == hash(__value)
+        
+        cls.__hash__ = _hash
+        cls.__eq__ = _eq
+
         @wraps(cls)
         def wrapped(*args, **kwargs):
             ret = cls(*args, **kwargs)
             ret._var = nnf.Var(ret)
-            class_name = ret.__class__.__qualname__
+            class_name = ret.__class__.__qualname__ 
             encoding.propositions[class_name][id(ret)] = ret
             return ret
 
