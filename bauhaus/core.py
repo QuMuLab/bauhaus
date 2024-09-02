@@ -382,13 +382,9 @@ def proposition(encoding: Encoding):
 
         assert "_prop_name" in dir(cls), "Error: _prop_name must be defined in order for bauhaus to construct __repr__, __hash__, and __eq__"
 
-        def _init(self, val):
-            self.val = val
-
         def _repr(self):
             return self._prop_name()
         
-        cls.__init__ = _init
         cls.__repr__ = _repr
 
         if (

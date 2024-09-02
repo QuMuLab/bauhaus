@@ -7,6 +7,9 @@ def test_constraint_construction_1():
 
     @proposition(e)
     class V(object):
+        def __init__(self, val):
+            self.val = val
+
         def _prop_name(self):
             return f"V.{self.val}"
 
@@ -28,6 +31,9 @@ def test_constraint_construction_2():
 
     @proposition(e)
     class V(object):
+        def __init__(self, val):
+            self.val = val
+            
         def _prop_name(self):
             return f"V.{self.val}"
 

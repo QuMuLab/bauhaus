@@ -33,6 +33,8 @@ e = Encoding()
 
 @proposition(e)
 class E(object): 
+    def __init__(self, val):
+        self.val = val
     def _prop_name(self):
         return f"V.{self.val}"
     pass
@@ -52,6 +54,8 @@ a = Encoding()
 @constraint.at_most_k(a, 2)
 @proposition(a)
 class A(object):
+    def __init__(self, val):
+        self.val = val
     def _prop_name(self):
         return f"V.{self.val}"
 
@@ -62,6 +66,8 @@ class A(object):
 @constraint.none_of(a)
 @proposition(a)
 class A2(object): 
+    def __init__(self, val):
+        self.val = val
     def _prop_name(self):
         return f"V.{self.val}"
     pass
@@ -94,8 +100,10 @@ b = Encoding()
 
 @proposition(b)
 class B(object): 
+    def __init__(self):
+        pass
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"B"
     pass
 
 def test_storing_function_constraint():
@@ -126,30 +134,34 @@ c = Encoding()
 @constraint.exactly_one(c)
 @proposition(c)
 class C: 
+    def __init__(self, val):
+        self.val = val
     def _prop_name(self):
         return f"V.{self.val}"
     pass
 
 @proposition(c)
 class D: 
+    def __init__(self):
+        pass
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"D"
     pass
 
 def test_raw_constraints():
-    c1, c2, d1 = C(1), C(2), D(3)
+    c1, c2, d1 = C(1), C(2), D()
     c.add_constraint(~c1 | (c2 & d1))
     T = c.compile()
     assert T.satisfiable()
 
 def test_imp():
-    c3, c4, d2 = C(1), C(2), D(3)
+    c3, c4, d2 = C(3), C(4), D()
     c.add_constraint(c3 >> (c4 & d2))
     T1 = c.compile()
     assert T1.satisfiable()
 
 def test_andor():
-    c1, c2, d1 = C(1), C(2), D(3)
+    c1, c2, d1 = C(5), C(6), D()
     c.add_constraint(And(~c1, (c2 & d1)))
     c.add_constraint(Or(c1 >> c2, d1))
     c.add_constraint(And(Or([c1, c2]), d1))
@@ -163,19 +175,23 @@ d = Encoding()
 
 @proposition(d)
 class F:
+    def __init__(self):
+        pass
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"F"
     def __invert__(self):
         return -1
 
 def test_failed_raw_constraints():
-    x, y = F(1), F(2)
+    x, y = F(), F()
     with pytest.raises(TypeError):
         d.add_constraint(x | y)
 
 g = Encoding()
 @proposition(g)
 class H:
+    def __init__(self, val):
+        self.val = val
     def _prop_name(self):
         return f"V.{self.val}"
     
