@@ -173,14 +173,15 @@ def test_andor():
 
 d = Encoding()
 
-@proposition(d)
-class F:
-    def __init__(self):
-        pass
-    def _prop_name(self):
-        return f"F"
-    def __invert__(self):
-        return -1
+with pytest.warns(UserWarning):
+    @proposition(d)
+    class F:
+        def __init__(self):
+            pass
+        def _prop_name(self):
+            return f"F"
+        def __invert__(self):
+            return -1
 
 def test_failed_raw_constraints():
     x, y = F(), F()
