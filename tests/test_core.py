@@ -18,7 +18,7 @@ class T(object):
 @proposition(s)
 class S(object): 
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"S"
     pass
 
 def test_compile():
