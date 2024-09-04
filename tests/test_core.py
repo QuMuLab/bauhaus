@@ -193,7 +193,7 @@ class H:
     def __init__(self, val):
         self.val = val
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"H.{self.val}"
     
 def test_duplicates():
     # want to ensure that warnings are raised whenever we send the
