@@ -69,7 +69,7 @@ class A2(object):
     def __init__(self, val):
         self.val = val
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"A2.{self.val}"
     pass
 
 def test_storing_decorator_constraint():
