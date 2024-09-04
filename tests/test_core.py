@@ -12,7 +12,7 @@ https://github.com/mrocklin/multipledispatch/blob/master/multipledispatch/tests/
 t, s = Encoding(), Encoding()
 class T(object): 
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"V"
     pass
 
 @proposition(s)
