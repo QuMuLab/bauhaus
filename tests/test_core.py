@@ -57,7 +57,7 @@ class A(object):
     def __init__(self, val):
         self.val = val
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"A.{self.val}"
 
     @constraint.implies_all(a)
     def foo(self):
