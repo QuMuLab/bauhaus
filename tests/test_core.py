@@ -36,7 +36,7 @@ class E(object):
     def __init__(self, val):
         self.val = val
     def _prop_name(self):
-        return f"V.{self.val}"
+        return f"E.{self.val}"
     pass
 
 def test_proposition():
